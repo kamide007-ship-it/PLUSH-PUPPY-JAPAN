@@ -143,7 +143,7 @@
       "price_jpy": 4950,
       "url": "https://www.plushpuppyjapan.com/view/item/000000000039",
       "image": "https://makeshop-multi-images.akamaized.net/PlushPuppyJP/itemimages/000000000039_vwBuinF.jpg",
-      "matches": ["oily", "show_prep", "daily"],
+      "matches": ["show_prep"],
       "coats": ["silky", "cotton", "wavy", "double"],
       "description_jp": "水を使わないパウダー型クレンザー。ショーリング前の足元清掃にプロが使う必需品。"
     },
