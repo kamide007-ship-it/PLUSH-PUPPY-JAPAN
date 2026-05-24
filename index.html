@@ -1,0 +1,2764 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="description" content="プラッシュパピー 被毛診断 - 愛犬の毛質と現在のコンディションから、最適なシャンプー・コンディショナー・フィニッシング剤をご提案します。">
+<meta name="theme-color" content="#43569f">
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="robots" content="index, follow">
+
+<!-- OGP (SNS共有時) -->
+<meta property="og:title" content="被毛診断 | Plush Puppy Japan">
+<meta property="og:description" content="愛犬の毛質と現在のコンディションから、最適なケア製品をご提案します。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PLUSH PUPPY JAPAN GROOMING PRODUCTS">
+
+<title>被毛診断 | PLUSH PUPPY JAPAN GROOMING PRODUCTS</title>
+
+<!-- Fonts (plushpuppyjapan.com準拠) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- Chart.js (CDN多段フォールバック対応)
+     優先順位: jsdelivr → unpkg → ローカル(assets/vendor/) -->
+<script>
+  (function loadChartJS() {
+    var sources = [
+      'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js',
+      'https://unpkg.com/chart.js@4.4.0/dist/chart.umd.min.js',
+      'assets/vendor/chart.umd.min.js'
+    ];
+    var idx = 0;
+    function tryLoad() {
+      if (idx >= sources.length) {
+        console.warn('Chart.js could not be loaded from any source. Radar chart will be unavailable.');
+        return;
+      }
+      var s = document.createElement('script');
+      s.src = sources[idx++];
+      s.async = false;
+      s.onerror = function () {
+        console.warn('Chart.js load failed:', s.src);
+        tryLoad();
+      };
+      document.head.appendChild(s);
+    }
+    tryLoad();
+  })();
+</script>
+
+<style>
+  /* ============================================
+     Plush Puppy Japan Design Tokens
+     (plushpuppyjapan.com から抽出した確定値)
+     ============================================ */
+  :root {
+    /* Primary - Plush Puppy Navy */
+    --pp-navy: #43569f;
+    --pp-navy-dark: #3a4889;
+    --pp-navy-light: #5d72b8;
+    --pp-navy-soft: #eef0f7;
+
+    /* Accent - Plush Puppy Orange */
+    --pp-orange: #ef9a11;
+    --pp-orange-dark: #d68910;
+
+    /* Neutrals */
+    --pp-text: #333333;
+    --pp-text-light: #666666;
+    --pp-text-muted: #999999;
+    --pp-white: #ffffff;
+    --pp-bg-soft: #f8f9fb;
+    --pp-border: #e5e7eb;
+    --pp-border-light: #f0f2f5;
+
+    /* Typography */
+    --font-jp: "Noto Sans JP", "Source Sans Pro", "Hiragino Kaku Gothic ProN",
+               游ゴシック体, YuGothic, "ヒラギノ角ゴ ProN W3", sans-serif;
+    --font-en: "Source Sans Pro", sans-serif;
+
+    /* Shape */
+    --radius-pill: 28px;
+    --radius-md: 8px;
+    --radius-sm: 4px;
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.06);
+    --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  /* ============================================
+     Reset & Base (クロスブラウザ対応強化)
+     ============================================ */
+  *, *::before, *::after {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent; /* iOS タップ時のハイライト除去 */
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    /* iOS Safariのバウンス無効化対応 */
+    overflow-x: hidden;
+  }
+  body {
+    margin: 0;
+    font-family: var(--font-jp);
+    color: var(--pp-text);
+    background: var(--pp-white);
+    font-size: 16px;
+    line-height: 1.8;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+    /* iPhoneのノッチ対応 */
+    padding-left: env(safe-area-inset-left, 0);
+    padding-right: env(safe-area-inset-right, 0);
+  }
+  a {
+    color: var(--pp-navy);
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  a:hover { opacity: 0.7; }
+  /* ボタン・入力のクロスブラウザリセット */
+  button, input, select, textarea {
+    font-family: inherit;
+    font-size: 100%;
+    margin: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+  button {
+    cursor: pointer;
+    background: none;
+    border: none;
+  }
+  button:focus,
+  input:focus,
+  select:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+  }
+  /* select の矢印を全ブラウザで統一表示 */
+  select.pp-select {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3e%3cpath d='M2 4l4 4 4-4' stroke='%2343569f' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 12px;
+    padding-right: 38px;
+  }
+  /* iOS Safari の input zoom 防止 (font-size 16px未満だとズームする) */
+  input, select, textarea {
+    font-size: 16px;
+  }
+  /* date input の iOS 表示崩れ防止 */
+  input[type="date"] {
+    -webkit-appearance: none;
+    min-height: 44px; /* タップしやすいサイズ */
+    line-height: 1.4;
+  }
+  input[type="date"]::-webkit-date-and-time-value {
+    text-align: left;
+  }
+  /* 画像のレスポンシブ */
+  img { max-width: 100%; height: auto; display: block; }
+
+  /* ============================================
+     Header (plushpuppyjapan.com 準拠)
+     ============================================ */
+  .pp-header {
+    background: white;
+    border-bottom: 1px solid var(--pp-border-light);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .pp-header__logo img {
+    height: 48px;
+    width: auto;
+    display: block;
+  }
+  .pp-header__title {
+    font-family: var(--font-en);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--pp-text);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .pp-header__title small {
+    display: block;
+    font-family: var(--font-jp);
+    font-size: 11px;
+    color: var(--pp-text-light);
+    letter-spacing: 0.15em;
+    font-weight: 400;
+    text-transform: none;
+    margin-top: 2px;
+  }
+  @media (max-width: 600px) {
+    .pp-header { padding: 12px 16px; }
+    .pp-header__logo img { height: 36px; }
+    .pp-header__title { font-size: 12px; }
+  }
+
+  /* ============================================
+     Container
+     ============================================ */
+  .pp-container {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+  }
+
+  /* ============================================
+     Hero (plushpuppyjapan.com 準拠)
+     ============================================ */
+  .pp-hero {
+    text-align: center;
+    padding: 30px 0 50px;
+  }
+  .pp-hero__title {
+    font-family: var(--font-en);
+    font-size: clamp(28px, 4vw, 36px);
+    font-weight: 700;
+    color: var(--pp-text);
+    letter-spacing: 0.02em;
+    margin: 0 0 6px;
+    line-height: 1.2;
+  }
+  .pp-hero__subtitle {
+    font-family: var(--font-jp);
+    font-size: 14px;
+    color: var(--pp-text-light);
+    margin: 0 0 18px;
+    letter-spacing: 0.3em;
+    font-weight: 500;
+  }
+  .pp-hero__divider {
+    width: 50px;
+    height: 3px;
+    background: var(--pp-orange);
+    margin: 16px auto 24px;
+    border: none;
+  }
+  .pp-hero__lead {
+    max-width: 640px;
+    margin: 0 auto;
+    font-size: 15px;
+    color: var(--pp-text-light);
+    line-height: 1.9;
+  }
+
+  /* ============================================
+     Section Title (plushpuppyjapan.com NEWS見出し風)
+     ============================================ */
+  .pp-section-title {
+    text-align: center;
+    margin: 60px 0 32px;
+  }
+  .pp-section-title__en {
+    font-family: var(--font-en);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--pp-text);
+    letter-spacing: 0.03em;
+    margin: 0;
+  }
+  .pp-section-title__jp {
+    font-size: 12px;
+    color: var(--pp-text-light);
+    margin: 6px 0 0;
+    letter-spacing: 0.3em;
+    font-weight: 500;
+  }
+  .pp-section-title::after {
+    content: '';
+    display: block;
+    width: 50px;
+    height: 3px;
+    background: var(--pp-orange);
+    margin: 18px auto 0;
+  }
+
+  /* ============================================
+     Step Indicator (plushpuppyjapan.comパンくず風)
+     ============================================ */
+  .pp-steps {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 36px;
+    flex-wrap: wrap;
+  }
+  .pp-steps li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-en);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--pp-text-muted);
+    letter-spacing: 0.1em;
+  }
+  .pp-steps li::after {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--pp-border);
+    margin-left: 8px;
+  }
+  .pp-steps li:last-child::after { display: none; }
+  .pp-steps li .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--pp-border-light);
+    color: var(--pp-text-muted);
+    font-size: 12px;
+    font-weight: 700;
+    transition: all 0.3s;
+  }
+  .pp-steps li.is-active { color: var(--pp-navy); }
+  .pp-steps li.is-active .num {
+    background: var(--pp-navy);
+    color: white;
+  }
+  .pp-steps li.is-done { color: var(--pp-orange); }
+  .pp-steps li.is-done .num {
+    background: var(--pp-orange);
+    color: white;
+  }
+
+  /* ============================================
+     Panel (各ステップ・結果コンテナ)
+     ============================================ */
+  .pp-panel {
+    background: white;
+    border: 1px solid var(--pp-border);
+    border-radius: var(--radius-md);
+    padding: 40px 36px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-card);
+  }
+  @media (max-width: 600px) {
+    .pp-panel { padding: 28px 20px; }
+  }
+  .pp-panel__title {
+    font-family: var(--font-jp);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--pp-text);
+    margin: 0 0 8px;
+  }
+  .pp-panel__hint {
+    font-size: 14px;
+    color: var(--pp-text-light);
+    margin: 0 0 28px;
+  }
+  .pp-panel__subtitle {
+    font-family: var(--font-jp);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--pp-text);
+    margin: 32px 0 4px;
+    padding-left: 12px;
+    border-left: 3px solid var(--pp-orange);
+  }
+  .pp-panel__caption {
+    font-size: 12px;
+    color: var(--pp-text-muted);
+    margin: 0 0 16px;
+    padding-left: 15px;
+  }
+
+  /* ============================================
+     Form
+     ============================================ */
+  .pp-field {
+    margin-bottom: 20px;
+  }
+  .pp-field__label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--pp-text);
+    margin-bottom: 8px;
+  }
+  .pp-field__label-en {
+    font-family: var(--font-en);
+    font-size: 11px;
+    color: var(--pp-text-muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-left: 8px;
+    font-weight: 600;
+  }
+  .pp-input, .pp-select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--pp-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-jp);
+    font-size: 15px;
+    color: var(--pp-text);
+    background: white;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .pp-input:focus, .pp-select:focus {
+    outline: none;
+    border-color: var(--pp-navy);
+    box-shadow: 0 0 0 3px rgba(67, 86, 159, 0.12);
+  }
+  .pp-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 480px) {
+    .pp-grid-2 { grid-template-columns: 1fr; }
+  }
+
+  /* ============================================
+     Checkbox / Radio Cards
+     ============================================ */
+  .pp-check-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+  }
+  .pp-check {
+    position: relative;
+    display: block;
+    cursor: pointer;
+  }
+  .pp-check input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .pp-check__body {
+    border: 1px solid var(--pp-border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px 14px 44px;
+    background: white;
+    transition: all 0.2s;
+    position: relative;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .pp-check__body::before {
+    content: '';
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--pp-border);
+    border-radius: 3px;
+    background: white;
+    transition: all 0.2s;
+  }
+  .pp-check__body::after {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-70%) rotate(45deg) scale(0);
+    width: 6px;
+    height: 11px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transition: transform 0.2s;
+  }
+  .pp-check input:checked + .pp-check__body {
+    background: var(--pp-navy-soft);
+    border-color: var(--pp-navy);
+  }
+  .pp-check input:checked + .pp-check__body::before {
+    background: var(--pp-navy);
+    border-color: var(--pp-navy);
+  }
+  .pp-check input:checked + .pp-check__body::after {
+    transform: translateY(-70%) rotate(45deg) scale(1);
+  }
+  .pp-check:hover .pp-check__body { border-color: var(--pp-navy-light); }
+  .pp-check__title {
+    font-weight: 500;
+    color: var(--pp-text);
+    display: block;
+  }
+  .pp-check__desc {
+    font-size: 12px;
+    color: var(--pp-text-light);
+    display: block;
+    margin-top: 2px;
+  }
+
+  /* ============================================
+     Buttons (plushpuppyjapan.com ピル型)
+     ============================================ */
+  .pp-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 36px;
+    flex-wrap: wrap;
+  }
+  .pp-btn {
+    font-family: var(--font-jp);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 13px 48px;
+    border-radius: var(--radius-pill);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+    line-height: 1.4;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .pp-btn--primary {
+    background: var(--pp-navy);
+    color: white;
+  }
+  .pp-btn--primary:hover {
+    background: var(--pp-navy-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(67, 86, 159, 0.3);
+  }
+  .pp-btn--ghost {
+    background: white;
+    color: var(--pp-navy);
+    border: 1.5px solid var(--pp-navy);
+  }
+  .pp-btn--ghost:hover {
+    background: var(--pp-navy);
+    color: white;
+  }
+  .pp-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  @media (max-width: 480px) {
+    .pp-actions { flex-direction: column-reverse; }
+    .pp-btn { width: 100%; }
+  }
+
+  /* ============================================
+     LEARN MORE link (plushpuppyjapan.com特徴的UI)
+     ============================================ */
+  .pp-learn {
+    font-family: var(--font-en);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--pp-orange);
+    letter-spacing: 0.15em;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    text-transform: uppercase;
+  }
+  .pp-learn::after {
+    content: '›';
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 1;
+    transition: transform 0.2s;
+  }
+  .pp-learn:hover {
+    color: var(--pp-orange-dark);
+    opacity: 1;
+  }
+  .pp-learn:hover::after { transform: translateX(3px); }
+
+  /* ============================================
+     Step Visibility
+     ============================================ */
+  .pp-step { display: none; }
+  .pp-step.is-active { display: block; }
+
+  /* ============================================
+     Result Section
+     ============================================ */
+  .pp-result { display: none; }
+  .pp-result.is-shown { display: block; animation: fadeUp 0.5s ease; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .pp-result__header {
+    text-align: center;
+    padding: 8px 0 20px;
+  }
+  .pp-result__type {
+    display: inline-block;
+    background: var(--pp-navy);
+    color: white;
+    font-family: var(--font-en);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    padding: 6px 20px;
+    border-radius: var(--radius-pill);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .pp-result__title {
+    font-family: var(--font-en);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--pp-text);
+    margin: 0 0 4px;
+  }
+  .pp-result__date {
+    font-size: 12px;
+    color: var(--pp-text-muted);
+    letter-spacing: 0.15em;
+  }
+
+  .pp-chart-wrap {
+    max-width: 420px;
+    margin: 24px auto 12px;
+    /* aspect-ratio フォールバック (iOS 14 以下対応) */
+    position: relative;
+    width: 100%;
+  }
+  .pp-chart-wrap::before {
+    content: '';
+    display: block;
+    padding-top: 100%; /* 1:1 アスペクト比 */
+  }
+  .pp-chart-wrap > canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100% !important;
+    height: 100% !important;
+  }
+  /* aspect-ratio対応ブラウザでは上書き */
+  @supports (aspect-ratio: 1) {
+    .pp-chart-wrap {
+      aspect-ratio: 1 / 1;
+    }
+    .pp-chart-wrap::before { display: none; }
+    .pp-chart-wrap > canvas {
+      position: static;
+      width: 100% !important;
+      height: 100% !important;
+    }
+  }
+  .pp-chart-legend {
+    text-align: center;
+    font-family: var(--font-en);
+    font-size: 11px;
+    color: var(--pp-text-muted);
+    margin-bottom: 24px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+  }
+
+  /* Summary row */
+  .pp-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1px;
+    background: var(--pp-border);
+    border: 1px solid var(--pp-border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin: 20px 0 24px;
+  }
+  .pp-summary__item {
+    background: white;
+    padding: 14px 18px;
+    text-align: center;
+  }
+  .pp-summary__label {
+    font-family: var(--font-en);
+    font-size: 10px;
+    color: var(--pp-text-muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .pp-summary__value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--pp-text);
+  }
+
+  /* Tag list */
+  .pp-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin: 16px 0 0;
+  }
+  .pp-tag {
+    background: var(--pp-navy-soft);
+    color: var(--pp-navy);
+    font-size: 12px;
+    padding: 5px 14px;
+    border-radius: var(--radius-pill);
+    font-weight: 500;
+  }
+
+  /* ============================================
+     Product Cards
+     ============================================ */
+  .pp-products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    margin-top: 8px;
+  }
+  .pp-product {
+    background: white;
+    border: 1px solid var(--pp-border-light);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    text-align: center;
+    transition: all 0.25s;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .pp-product:hover {
+    border-color: var(--pp-navy);
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+  }
+  .pp-product__rank {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: var(--pp-orange);
+    color: white;
+    font-family: var(--font-en);
+    font-size: 11px;
+    font-weight: 700;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0;
+  }
+  .pp-product__placeholder {
+    width: 100%;
+    /* aspect-ratio フォールバック */
+    position: relative;
+    padding-top: 100%;
+    background: var(--pp-bg-soft);
+    border-radius: var(--radius-sm);
+    margin-bottom: 16px;
+    color: var(--pp-text-muted);
+    font-family: var(--font-en);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  /* テキストを中央配置するための内側コンテンツ */
+  .pp-product__placeholder > span,
+  .pp-product__placeholder::after {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    text-align: center;
+  }
+  /* 実商品画像表示エリア (Plush Puppy 製品画像) */
+  .pp-product__image-wrap {
+    width: 100%;
+    position: relative;
+    padding-top: 100%; /* 1:1 アスペクト比 (aspect-ratio フォールバック) */
+    background: #ffffff;
+    border-radius: var(--radius-sm);
+    margin-bottom: 16px;
+    overflow: hidden;
+    border: 1px solid var(--pp-border-light);
+  }
+  .pp-product__image-wrap.is-fallback {
+    background: var(--pp-bg-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--pp-text-muted);
+    font-family: var(--font-en);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .pp-product__image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 8px;
+    background: white;
+    transition: transform 0.3s;
+  }
+  .pp-product:hover .pp-product__image {
+    transform: scale(1.05);
+  }
+  /* aspect-ratio対応ブラウザでは上書き */
+  @supports (aspect-ratio: 1) {
+    .pp-product__placeholder {
+      aspect-ratio: 1;
+      padding-top: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pp-product__placeholder > span,
+    .pp-product__placeholder::after {
+      position: static;
+      transform: none;
+    }
+    .pp-product__image-wrap {
+      aspect-ratio: 1;
+      padding-top: 0;
+    }
+  }
+  .pp-product__cat {
+    font-family: var(--font-en);
+    font-size: 10px;
+    color: var(--pp-text-muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+  .pp-product__name {
+    font-family: var(--font-jp);
+    font-size: 14px;
+    color: var(--pp-text);
+    margin: 0 0 6px;
+    line-height: 1.5;
+    font-weight: 500;
+    min-height: 42px;
+  }
+  .pp-product__why {
+    font-size: 12px;
+    color: var(--pp-text-light);
+    line-height: 1.7;
+    margin: 0 0 14px;
+    padding: 10px 12px;
+    background: var(--pp-bg-soft);
+    border-left: 2px solid var(--pp-orange);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    text-align: left;
+    flex-grow: 1;
+  }
+  .pp-product__price {
+    font-family: var(--font-en);
+    font-size: 18px;
+    color: var(--pp-text);
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .pp-product__price small {
+    font-size: 11px;
+    color: var(--pp-text-light);
+    margin-left: 4px;
+    font-weight: 400;
+  }
+  .pp-product__cta {
+    display: block;
+    background: var(--pp-navy);
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: var(--radius-pill);
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+    margin-top: auto;
+  }
+  .pp-product__cta:hover {
+    background: var(--pp-navy-dark);
+    opacity: 1;
+  }
+
+  /* ============================================
+     Show Schedule (NEWSリスト風)
+     ============================================ */
+  .pp-schedule {
+    margin-top: 8px;
+  }
+  .pp-schedule__note {
+    text-align: center;
+    font-size: 14px;
+    color: var(--pp-text-light);
+    margin-bottom: 24px;
+    padding: 14px;
+    background: var(--pp-bg-soft);
+    border-radius: var(--radius-sm);
+  }
+  .pp-schedule__note strong {
+    color: var(--pp-orange);
+    font-family: var(--font-en);
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 4px;
+  }
+  .pp-schedule__row {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 24px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--pp-border-light);
+    align-items: start;
+  }
+  .pp-schedule__row:last-child { border-bottom: none; }
+  .pp-schedule__row.is-now { background: linear-gradient(90deg, rgba(239, 154, 17, 0.06), transparent); }
+  .pp-schedule__when {
+    font-family: var(--font-en);
+    color: var(--pp-navy);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+  .pp-schedule__row.is-now .pp-schedule__when { color: var(--pp-orange); }
+  .pp-schedule__what {
+    font-size: 14px;
+    color: var(--pp-text);
+    line-height: 1.7;
+  }
+  @media (max-width: 600px) {
+    .pp-schedule__row { grid-template-columns: 1fr; gap: 4px; }
+  }
+
+  /* ============================================
+     Supplement Section
+     ============================================ */
+  .pp-supp-intro {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .pp-supp-intro__title {
+    font-family: var(--font-jp);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--pp-text);
+    margin: 0 0 6px;
+  }
+  .pp-supp-intro__lead {
+    font-size: 14px;
+    color: var(--pp-text-light);
+    max-width: 580px;
+    margin: 0 auto;
+    line-height: 1.8;
+  }
+  .pp-supp-intro__credit {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--pp-text-muted);
+    letter-spacing: 0.1em;
+  }
+  .pp-supp-intro__credit strong {
+    color: var(--pp-text);
+    font-weight: 500;
+  }
+
+  /* Essential supplement cards */
+  .pp-ess-supps {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  @media (max-width: 600px) {
+    .pp-ess-supps { grid-template-columns: 1fr; }
+  }
+  .pp-ess-supp {
+    background: white;
+    border: 1px solid var(--pp-border);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.25s;
+    position: relative;
+  }
+  .pp-ess-supp:hover {
+    border-color: var(--pp-navy);
+    box-shadow: var(--shadow-hover);
+  }
+  .pp-ess-supp__label {
+    font-family: var(--font-en);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--pp-orange);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .pp-ess-supp__name {
+    font-family: var(--font-jp);
+    font-size: 18px;
+    color: var(--pp-text);
+    font-weight: 700;
+    margin: 0 0 2px;
+    line-height: 1.35;
+  }
+  .pp-ess-supp__name-en {
+    font-family: var(--font-en);
+    font-size: 12px;
+    color: var(--pp-text-muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 14px;
+    font-weight: 600;
+  }
+  .pp-ess-supp__compo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .pp-ess-supp__compo span {
+    background: var(--pp-navy-soft);
+    color: var(--pp-navy);
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    font-weight: 500;
+  }
+  .pp-ess-supp__why {
+    font-size: 13px;
+    color: var(--pp-text-light);
+    line-height: 1.8;
+    margin: 0 0 16px;
+    flex-grow: 1;
+  }
+  .pp-ess-supp__why strong {
+    color: var(--pp-text);
+    font-weight: 700;
+  }
+  .pp-ess-supp__cta {
+    display: block;
+    text-align: center;
+    background: var(--pp-navy);
+    color: white;
+    text-decoration: none;
+    padding: 12px;
+    border-radius: var(--radius-pill);
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+  }
+  .pp-ess-supp__cta:hover {
+    background: var(--pp-navy-dark);
+    opacity: 1;
+  }
+  .pp-ess-supp__detail {
+    text-align: center;
+    margin-top: 4px;
+  }
+
+  /* Additional supplement ingredients */
+  .pp-supp-sub-title {
+    font-family: var(--font-jp);
+    font-size: 14px;
+    color: var(--pp-text);
+    font-weight: 500;
+    margin: 32px 0 14px;
+    padding-left: 12px;
+    border-left: 3px solid var(--pp-orange);
+  }
+  .pp-supp-additional {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .pp-supp-add-item {
+    background: var(--pp-bg-soft);
+    padding: 14px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--pp-border-light);
+  }
+  .pp-supp-add-item__tag {
+    font-family: var(--font-en);
+    font-size: 10px;
+    color: var(--pp-orange);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .pp-supp-add-item__name {
+    font-size: 14px;
+    color: var(--pp-text);
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+  .pp-supp-add-item__desc {
+    font-size: 12px;
+    color: var(--pp-text-light);
+    line-height: 1.6;
+  }
+
+  /* ============================================
+     CanineVet Banner (plushpuppyjapan.com準拠の写真風)
+     ============================================ */
+  .pp-cv-banner {
+    background: var(--pp-navy);
+    border-radius: var(--radius-md);
+    padding: 40px 32px;
+    text-align: center;
+    color: white;
+    margin-top: 16px;
+  }
+  .pp-cv-banner__tag {
+    font-family: var(--font-en);
+    font-size: 11px;
+    color: var(--pp-orange);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+  .pp-cv-banner__title {
+    font-family: var(--font-jp);
+    font-size: clamp(20px, 3vw, 26px);
+    font-weight: 700;
+    color: white;
+    margin: 0 0 10px;
+    line-height: 1.4;
+  }
+  .pp-cv-banner__sub {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0 0 24px;
+    line-height: 1.8;
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .pp-cv-banner__sub strong { color: white; font-weight: 700; }
+  .pp-cv-banner__cta {
+    display: inline-block;
+    background: var(--pp-orange);
+    color: white;
+    text-decoration: none;
+    padding: 14px 48px;
+    border-radius: var(--radius-pill);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+  }
+  .pp-cv-banner__cta:hover {
+    background: var(--pp-orange-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(239, 154, 17, 0.4);
+    opacity: 1;
+  }
+  .pp-cv-banner__meta {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 22px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+    flex-wrap: wrap;
+    letter-spacing: 0.05em;
+  }
+  .pp-cv-banner__meta span::before {
+    content: '✓ ';
+    color: var(--pp-orange);
+    font-weight: 700;
+  }
+
+  /* ============================================
+     Result Actions
+     ============================================ */
+  .pp-result__actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 40px 0 0;
+    flex-wrap: wrap;
+  }
+
+  /* ============================================
+     Footer (plushpuppyjapan.com準拠)
+     ============================================ */
+  .pp-footer {
+    background: var(--pp-bg-soft);
+    border-top: 1px solid var(--pp-border-light);
+    padding: 40px 24px 30px;
+    margin-top: 40px;
+    text-align: center;
+  }
+  .pp-footer__follow {
+    font-family: var(--font-en);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--pp-text);
+    letter-spacing: 0.25em;
+    margin: 0 0 14px;
+  }
+  .pp-footer__sns {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .pp-footer__sns a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: white;
+    border: 1px solid var(--pp-border);
+    border-radius: 50%;
+    transition: all 0.2s;
+  }
+  .pp-footer__sns a:hover {
+    background: var(--pp-navy);
+    border-color: var(--pp-navy);
+    opacity: 1;
+  }
+  .pp-footer__sns svg {
+    width: 16px;
+    height: 16px;
+    fill: var(--pp-text-light);
+    transition: fill 0.2s;
+  }
+  .pp-footer__sns a:hover svg { fill: white; }
+  .pp-footer__links {
+    margin-bottom: 14px;
+    font-size: 12px;
+  }
+  .pp-footer__links a {
+    color: var(--pp-text-light);
+    margin: 0 12px;
+  }
+  .pp-footer__copyright {
+    font-family: var(--font-en);
+    font-size: 11px;
+    color: var(--pp-text-muted);
+    margin: 8px 0 4px;
+    letter-spacing: 0.05em;
+  }
+  .pp-footer__powered {
+    font-size: 11px;
+    color: var(--pp-text-muted);
+  }
+  .pp-footer__powered strong {
+    color: var(--pp-text-light);
+    font-weight: 500;
+  }
+
+  /* ============================================
+     Disclaimer
+     ============================================ */
+  .pp-disclaimer {
+    margin-top: 24px;
+    padding: 16px 20px;
+    background: var(--pp-bg-soft);
+    border-radius: var(--radius-sm);
+    font-size: 11px;
+    color: var(--pp-text-muted);
+    line-height: 1.8;
+    text-align: center;
+  }
+
+  /* ============================================
+     New: 1ページ統合フォーム
+     ============================================ */
+  .pp-form-note {
+    background: #fff8eb;
+    border-left: 4px solid var(--pp-orange);
+    padding: 14px 18px;
+    margin: 0 0 32px;
+    font-size: 13px;
+    color: var(--pp-text);
+    line-height: 1.7;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  }
+  .pp-form-note strong { color: var(--pp-navy); font-weight: 700; }
+
+  .pp-section {
+    margin-bottom: 40px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--pp-border-light);
+  }
+  .pp-section:last-of-type {
+    border-bottom: none;
+    margin-bottom: 24px;
+    padding-bottom: 0;
+  }
+  .pp-section-head {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .pp-section-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: var(--pp-navy);
+    color: white;
+    font-family: var(--font-en);
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 50%;
+    flex-shrink: 0;
+    letter-spacing: 0.05em;
+  }
+  .pp-section-h {
+    font-family: var(--font-jp);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--pp-text);
+    margin: 0;
+    line-height: 1.3;
+  }
+  .pp-section-sub {
+    font-family: var(--font-en);
+    font-size: 11px;
+    color: var(--pp-text-muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin: 2px 0 0;
+    font-weight: 600;
+  }
+
+  .pp-submit {
+    text-align: center;
+    margin-top: 16px;
+    padding-top: 24px;
+    border-top: 2px solid var(--pp-navy-soft);
+  }
+  .pp-btn--lg {
+    padding: 18px 64px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    box-shadow: 0 6px 20px rgba(67, 86, 159, 0.25);
+  }
+  .pp-btn--lg:hover {
+    box-shadow: 0 10px 28px rgba(67, 86, 159, 0.4);
+  }
+  .pp-submit__note {
+    margin: 12px 0 0;
+    font-size: 12px;
+    color: var(--pp-text-muted);
+  }
+
+  /* ============================================
+     All Categories Grid (plushpuppyjapan.com PRODUCT CATEGORY 風)
+     ============================================ */
+  .pp-cat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 14px;
+  }
+  .pp-cat-tile {
+    display: block;
+    background: var(--pp-navy);
+    color: white;
+    text-decoration: none;
+    padding: 28px 20px;
+    border-radius: var(--radius-md);
+    text-align: center;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .pp-cat-tile:hover {
+    background: var(--pp-navy-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(67, 86, 159, 0.3);
+    opacity: 1;
+  }
+  .pp-cat-tile--accent {
+    background: var(--pp-orange);
+  }
+  .pp-cat-tile--accent:hover {
+    background: var(--pp-orange-dark);
+    box-shadow: 0 8px 20px rgba(239, 154, 17, 0.3);
+  }
+  .pp-cat-tile__en {
+    font-family: var(--font-en);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: white;
+    margin-bottom: 4px;
+  }
+  .pp-cat-tile__jp {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.85);
+    letter-spacing: 0.15em;
+    margin-bottom: 12px;
+  }
+  .pp-cat-tile__more {
+    font-family: var(--font-en);
+    font-size: 11px;
+    color: var(--pp-orange);
+    letter-spacing: 0.2em;
+    font-weight: 700;
+  }
+  .pp-cat-tile--accent .pp-cat-tile__more {
+    color: white;
+  }
+
+  /* ============================================
+     Print
+     ============================================ */
+  @media print {
+    .pp-header, .pp-step:not(.is-active), .pp-result__actions, .pp-footer { display: none; }
+    .pp-panel { box-shadow: none; border: 1px solid #ddd; page-break-inside: avoid; }
+    body { background: white; }
+    .pp-product { break-inside: avoid; }
+  }
+</style>
+</head>
+
+<body>
+
+<!-- JavaScript無効時のフォールバック -->
+<noscript>
+  <div style="background:#fff8eb;border-left:4px solid #ef9a11;padding:20px 24px;
+              margin:20px;border-radius:4px;font-family:'Noto Sans JP',sans-serif;
+              color:#333;line-height:1.8;">
+    <strong style="color:#43569f;">JavaScriptが無効になっています</strong><br>
+    この被毛診断ツールは JavaScript を必要とします。
+    ブラウザの設定で JavaScript を有効にしてからご利用ください。<br>
+    <a href="https://www.plushpuppyjapan.com/view/page/recommendation"
+       style="color:#43569f;text-decoration:underline;">
+      犬種別おすすめ商品ページはこちら
+    </a>
+  </div>
+</noscript>
+
+
+<!-- ============================================
+     HEADER (plushpuppyjapan.com 準拠)
+     ============================================ -->
+<header class="pp-header">
+  <a class="pp-header__logo" href="https://www.plushpuppyjapan.com" target="_blank" rel="noopener">
+    <img src="https://shop29-makeshop.akamaized.net/shopimages/PlushPuppyJP/logo.png"
+         alt="PLUSH PUPPY JAPAN GROOMING PRODUCTS"
+         onerror="this.style.display='none'">
+  </a>
+  <div class="pp-header__title">
+    COAT DIAGNOSIS
+    <small>被毛診断</small>
+  </div>
+</header>
+
+<div class="pp-container">
+
+  <!-- ============================================
+       HERO
+       ============================================ -->
+  <section class="pp-hero">
+    <h1 class="pp-hero__title">Coat Diagnosis</h1>
+    <p class="pp-hero__subtitle">被毛診断</p>
+    <hr class="pp-hero__divider">
+    <p class="pp-hero__lead">
+      全ての犬種を思い通りの仕上がりに。<br>
+      愛犬の毛質と現在のコンディションから、最適な
+      シャンプー・コンディショナー・フィニッシング剤をご提案します。
+    </p>
+  </section>
+
+  <!-- ============================================
+  <!-- ============================================
+       FORM (1ページ統合・任意入力対応)
+       ============================================ -->
+  <section class="pp-panel">
+    <p class="pp-form-note">
+      <strong>入力は任意です。</strong>
+      わかる項目だけご入力ください。詳しいほどパーソナライズされた診断になりますが、
+      何も選ばなくても基本的な推奨を表示します。
+    </p>
+
+    <!-- セクション 01 プロフィール -->
+    <div class="pp-section">
+      <div class="pp-section-head">
+        <span class="pp-section-num">01</span>
+        <div>
+          <h2 class="pp-section-h">愛犬のプロフィール</h2>
+          <p class="pp-section-sub">Basic Profile</p>
+        </div>
+      </div>
+
+      <div class="pp-grid-2">
+        <div class="pp-field">
+          <label class="pp-field__label" for="dogName">
+            愛犬のお名前 <span class="pp-field__label-en">Name</span>
+          </label>
+          <input type="text" id="dogName" class="pp-input" placeholder="例:シャネル (任意)">
+        </div>
+        <div class="pp-field">
+          <label class="pp-field__label" for="breed">
+            犬種 <span class="pp-field__label-en">Breed</span>
+          </label>
+          <select id="breed" class="pp-select">
+            <option value="">わからない / 選ばない</option>
+            <optgroup label="シルキーコート">
+              <option value="maltese">マルチーズ</option>
+              <option value="yorkie">ヨークシャテリア</option>
+              <option value="shih_tzu">シーズー</option>
+              <option value="afghan">アフガンハウンド</option>
+              <option value="lhasa_apso">ラサ アプソ</option>
+              <option value="silky_terrier">シルキーテリア</option>
+            </optgroup>
+            <optgroup label="プードル (サイズ別)">
+              <option value="poodle_toy">プードル (トイ)</option>
+              <option value="poodle_mini">プードル (ミニチュア)</option>
+              <option value="poodle_med">プードル (ミディアム)</option>
+              <option value="poodle_std">プードル (スタンダード)</option>
+            </optgroup>
+            <optgroup label="その他コットンコート">
+              <option value="bichon">ビションフリーゼ</option>
+              <option value="bedlington">ベドリントンテリア</option>
+              <option value="havanese">ハバニーズ</option>
+            </optgroup>
+            <optgroup label="ダブルコート">
+              <option value="pomeranian">ポメラニアン</option>
+              <option value="shiba">柴犬</option>
+              <option value="corgi">コーギー</option>
+              <option value="husky">ハスキー</option>
+              <option value="samoyed">サモエド</option>
+              <option value="chow_chow">チャウチャウ</option>
+              <option value="german_shepherd">ジャーマンシェパード</option>
+              <option value="collie_rough">コリー (ラフ)</option>
+              <option value="aussie_shepherd">オーストラリアンシェパード</option>
+            </optgroup>
+            <optgroup label="シュナウザー (サイズ別)">
+              <option value="schnauzer_mini">シュナウザー (ミニチュア)</option>
+              <option value="schnauzer_std">シュナウザー (スタンダード)</option>
+              <option value="schnauzer_giant">シュナウザー (ジャイアント)</option>
+            </optgroup>
+            <optgroup label="その他ハーシュ / テリア">
+              <option value="west_highland">ウエストハイランドホワイトテリア</option>
+              <option value="scottish_terrier">スコティッシュテリア</option>
+              <option value="airedale">エアデールテリア</option>
+              <option value="cairn">ケアンテリア</option>
+              <option value="jack_russell_rough">ジャックラッセル (ラフ)</option>
+              <option value="border_terrier">ボーダーテリア</option>
+            </optgroup>
+            <optgroup label="ダックスフンド (タイプ別)">
+              <option value="dachshund_smooth">ダックスフンド (スムース)</option>
+              <option value="dachshund_long">ダックスフンド (ロング)</option>
+              <option value="dachshund_wire">ダックスフンド (ワイヤー)</option>
+            </optgroup>
+            <optgroup label="チワワ (タイプ別)">
+              <option value="chihuahua_smooth">チワワ (スムース)</option>
+              <option value="chihuahua_long">チワワ (ロング)</option>
+            </optgroup>
+            <optgroup label="ウェービー / フェザリング">
+              <option value="cocker">コッカースパニエル</option>
+              <option value="cavalier">キャバリア</option>
+              <option value="setter">セッター</option>
+              <option value="gordon_setter">ゴードンセッター</option>
+              <option value="papillon">パピヨン</option>
+            </optgroup>
+            <optgroup label="スムースコート (短毛)">
+              <option value="french_bulldog">フレンチブルドッグ</option>
+              <option value="boxer">ボクサー</option>
+              <option value="doberman">ドーベルマン</option>
+              <option value="pug">パグ</option>
+              <option value="beagle">ビーグル</option>
+              <option value="staffy">スタッフォードシャーブルテリア</option>
+              <option value="whippet">ウィペット / グレーハウンド</option>
+            </optgroup>
+            <option value="other">その他 / MIX</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="pp-grid-2">
+        <div class="pp-field">
+          <label class="pp-field__label" for="age">
+            年齢 <span class="pp-field__label-en">Age</span>
+          </label>
+          <select id="age" class="pp-select">
+            <option value="">わからない / 選ばない</option>
+            <option value="puppy">パピー (〜1歳)</option>
+            <option value="young">ヤング (1〜3歳)</option>
+            <option value="adult">アダルト (3〜7歳)</option>
+            <option value="senior">シニア (7歳以上)</option>
+          </select>
+        </div>
+        <div class="pp-field">
+          <label class="pp-field__label" for="color">
+            毛色 <span class="pp-field__label-en">Color</span>
+          </label>
+          <select id="color" class="pp-select">
+            <option value="">わからない / 選ばない</option>
+            <option value="white">ホワイト / 淡色</option>
+            <option value="black">ブラック</option>
+            <option value="brown">ブラウン / レッド</option>
+            <option value="parti">パーティ / 多色</option>
+            <option value="silver">シルバー / グレー</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- セクション 02 コート状態 -->
+    <div class="pp-section">
+      <div class="pp-section-head">
+        <span class="pp-section-num">02</span>
+        <div>
+          <h2 class="pp-section-h">現在のコート状態</h2>
+          <p class="pp-section-sub">Coat Condition (複数選択可)</p>
+        </div>
+      </div>
+
+      <div class="pp-check-group" id="conditionGroup">
+        <label class="pp-check">
+          <input type="checkbox" data-issue="low_shine">
+          <div class="pp-check__body">
+            <span class="pp-check__title">艶がない</span>
+            <span class="pp-check__desc">パサつき・くすみが気になる</span>
+          </div>
+        </label>
+        <label class="pp-check">
+          <input type="checkbox" data-issue="low_moisture">
+          <div class="pp-check__body">
+            <span class="pp-check__title">乾燥している</span>
+            <span class="pp-check__desc">うるおい不足・静電気</span>
+          </div>
+        </label>
+        <label class="pp-check">
+          <input type="checkbox" data-issue="oily">
+          <div class="pp-check__body">
+            <span class="pp-check__title">油分が多い</span>
+            <span class="pp-check__desc">べたつき・におい</span>
+          </div>
+        </label>
+        <label class="pp-check">
+          <input type="checkbox" data-issue="breakage">
+          <div class="pp-check__body">
+            <span class="pp-check__title">毛切れ</span>
+            <span class="pp-check__desc">先端のダメージ・パサつき</span>
+          </div>
+        </label>
+        <label class="pp-check">
+          <input type="checkbox" data-issue="matting">
+          <div class="pp-check__body">
+            <span class="pp-check__title">毛玉になりやすい</span>
+            <span class="pp-check__desc">絡まり・もつれ</span>
+          </div>
+        </label>
+        <label class="pp-check">
+          <input type="checkbox" data-issue="low_volume">
+          <div class="pp-check__body">
+            <span class="pp-check__title">ボリューム不足</span>
+            <span class="pp-check__desc">薄毛感・ぺたんとする</span>
+          </div>
+        </label>
+        <label class="pp-check">
+          <input type="checkbox" data-issue="static">
+          <div class="pp-check__body">
+            <span class="pp-check__title">静電気</span>
+            <span class="pp-check__desc">広がり・fly-away</span>
+          </div>
+        </label>
+        <label class="pp-check">
+          <input type="checkbox" data-issue="yellowing">
+          <div class="pp-check__body">
+            <span class="pp-check__title">白毛のくすみ</span>
+            <span class="pp-check__desc">黄ばみ・色冴え不足</span>
+          </div>
+        </label>
+        <label class="pp-check">
+          <input type="checkbox" data-issue="sensitive_skin">
+          <div class="pp-check__body">
+            <span class="pp-check__title">敏感肌</span>
+            <span class="pp-check__desc">かゆみ・赤み</span>
+          </div>
+        </label>
+        <label class="pp-check">
+          <input type="checkbox" data-issue="shedding">
+          <div class="pp-check__body">
+            <span class="pp-check__title">換毛期 / 抜け毛</span>
+            <span class="pp-check__desc">アンダーコートの大量抜け</span>
+          </div>
+        </label>
+        <label class="pp-check">
+          <input type="checkbox" data-issue="soft_coat">
+          <div class="pp-check__body">
+            <span class="pp-check__title">ハーシュコートが柔らかい</span>
+            <span class="pp-check__desc">本来の硬さを失っている</span>
+          </div>
+        </label>
+        <label class="pp-check">
+          <input type="checkbox" data-issue="all_good">
+          <div class="pp-check__body">
+            <span class="pp-check__title">特に問題なし</span>
+            <span class="pp-check__desc">維持・予防ケア中心</span>
+          </div>
+        </label>
+      </div>
+
+      <h3 class="pp-panel__subtitle" style="margin-top:28px;">現在のコート評価</h3>
+      <p class="pp-panel__caption">レーダーチャートに反映されます (デフォルト「普通」)</p>
+
+      <div class="pp-grid-2">
+        <div class="pp-field">
+          <label class="pp-field__label">艶 <span class="pp-field__label-en">Shine</span></label>
+          <select class="pp-select" data-score="shine">
+            <option value="2">物足りない</option>
+            <option value="3" selected>普通</option>
+            <option value="4">良好</option>
+            <option value="5">とても艶やか</option>
+          </select>
+        </div>
+        <div class="pp-field">
+          <label class="pp-field__label">密度・毛量 <span class="pp-field__label-en">Density</span></label>
+          <select class="pp-select" data-score="density">
+            <option value="2">少なめ</option>
+            <option value="3" selected>普通</option>
+            <option value="4">多い</option>
+            <option value="5">豊富</option>
+          </select>
+        </div>
+        <div class="pp-field">
+          <label class="pp-field__label">水分・しっとり感 <span class="pp-field__label-en">Moisture</span></label>
+          <select class="pp-select" data-score="moisture">
+            <option value="2">乾燥気味</option>
+            <option value="3" selected>普通</option>
+            <option value="4">しっとり</option>
+            <option value="5">うるおい十分</option>
+          </select>
+        </div>
+        <div class="pp-field">
+          <label class="pp-field__label">ハリ・コシ <span class="pp-field__label-en">Elasticity</span></label>
+          <select class="pp-select" data-score="elasticity">
+            <option value="2">弱め</option>
+            <option value="3" selected>普通</option>
+            <option value="4">しっかり</option>
+            <option value="5">理想的</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- セクション 03 目的 -->
+    <div class="pp-section">
+      <div class="pp-section-head">
+        <span class="pp-section-num">03</span>
+        <div>
+          <h2 class="pp-section-h">ケアの目的</h2>
+          <p class="pp-section-sub">Care Goal</p>
+        </div>
+      </div>
+
+      <div class="pp-check-group" id="goalGroup">
+        <label class="pp-check">
+          <input type="radio" name="goal" value="daily" checked>
+          <div class="pp-check__body">
+            <span class="pp-check__title">日常ケア</span>
+            <span class="pp-check__desc">毎日を健やかに、美しく</span>
+          </div>
+        </label>
+        <label class="pp-check">
+          <input type="radio" name="goal" value="show_prep">
+          <div class="pp-check__body">
+            <span class="pp-check__title">ショー準備</span>
+            <span class="pp-check__desc">競技会・ドッグショー対策</span>
+          </div>
+        </label>
+        <label class="pp-check">
+          <input type="radio" name="goal" value="skin_care">
+          <div class="pp-check__body">
+            <span class="pp-check__title">敏感肌ケア</span>
+            <span class="pp-check__desc">優しい配合で肌をいたわる</span>
+          </div>
+        </label>
+        <label class="pp-check">
+          <input type="radio" name="goal" value="shedding">
+          <div class="pp-check__body">
+            <span class="pp-check__title">換毛期対策</span>
+            <span class="pp-check__desc">抜け毛・アンダーコート</span>
+          </div>
+        </label>
+      </div>
+
+      <div id="showDateField" class="pp-field" style="display:none; margin-top:24px;">
+        <label class="pp-field__label" for="showDate">
+          ショー予定日 <span class="pp-field__label-en">Show Date</span>
+        </label>
+        <input type="date" id="showDate" class="pp-input">
+        <p class="pp-panel__hint" style="margin-top:6px;">残り日数に応じた段階別ケアプログラムを表示します</p>
+      </div>
+    </div>
+
+    <!-- 診断ボタン (1個だけ) -->
+    <div class="pp-submit">
+      <button class="pp-btn pp-btn--primary pp-btn--lg" onclick="runDiagnosis()">
+        この内容で診断する
+      </button>
+      <p class="pp-submit__note">入力していない項目は一般的な推奨で補完されます</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       RESULT
+       ============================================ -->
+  <section class="pp-result" id="result">
+
+    <div class="pp-panel">
+      <div class="pp-result__header">
+        <span class="pp-result__type" id="resultCoatType">SILKY COAT</span>
+        <h2 class="pp-result__title">Coat Diagnosis Result</h2>
+        <p class="pp-result__date" id="resultDate"></p>
+      </div>
+
+      <div class="pp-chart-wrap">
+        <canvas id="radar"></canvas>
+      </div>
+      <p class="pp-chart-legend">Current Condition Assessment</p>
+
+      <div class="pp-summary">
+        <div class="pp-summary__item">
+          <div class="pp-summary__label">Name</div>
+          <div class="pp-summary__value" id="resultDogName">—</div>
+        </div>
+        <div class="pp-summary__item">
+          <div class="pp-summary__label">Breed</div>
+          <div class="pp-summary__value" id="resultBreed">—</div>
+        </div>
+        <div class="pp-summary__item">
+          <div class="pp-summary__label">Coat Type</div>
+          <div class="pp-summary__value" id="resultType">—</div>
+        </div>
+        <div class="pp-summary__item">
+          <div class="pp-summary__label">Goal</div>
+          <div class="pp-summary__value" id="resultGoal">—</div>
+        </div>
+      </div>
+
+      <div class="pp-tags" id="resultTags"></div>
+    </div>
+
+    <!-- Recommended Products -->
+    <div class="pp-panel">
+      <div class="pp-section-title" style="margin-top:0;">
+        <div class="pp-section-title__en">Recommended Products</div>
+        <div class="pp-section-title__jp">あなたの愛犬専用ケアプログラム</div>
+      </div>
+      <div class="pp-products" id="productList"></div>
+    </div>
+
+    <!-- Show Schedule (conditional) -->
+    <div class="pp-panel" id="showScheduleSection" style="display:none;">
+      <div class="pp-section-title" style="margin-top:0;">
+        <div class="pp-section-title__en">Show Preparation Program</div>
+        <div class="pp-section-title__jp">ショー対策スケジュール</div>
+      </div>
+      <div class="pp-schedule" id="showSchedule"></div>
+    </div>
+
+    <!-- Supplement -->
+    <div class="pp-panel">
+      <div class="pp-section-title" style="margin-top:0;">
+        <div class="pp-section-title__en">Inner Care Supplements</div>
+        <div class="pp-section-title__jp">内側からのケア・サプリメント</div>
+      </div>
+
+      <div class="pp-supp-intro">
+        <h3 class="pp-supp-intro__title">健やかな被毛は、体の中から</h3>
+        <p class="pp-supp-intro__lead">
+          外側からの Plush Puppy ケアと、内側からの CanineVet サプリメントを組み合わせることで、
+          被毛と皮膚の健康を総合的にサポートします。特にコートケアには、以下の 2 製品が基本です。
+        </p>
+        <p class="pp-supp-intro__credit">
+          supervised by <strong>Dr. Kentaro Kamide, DVM</strong> / 獣医師 上手 健太郎 監修
+        </p>
+      </div>
+
+      <!-- 必須2製品 -->
+      <div class="pp-ess-supps">
+        <div class="pp-ess-supp">
+          <div class="pp-ess-supp__label">Essential 01</div>
+          <h4 class="pp-ess-supp__name">MSM アミノコンプリート</h4>
+          <p class="pp-ess-supp__name-en">MSM &amp; Amino Complete</p>
+          <div class="pp-ess-supp__compo">
+            <span>有機イオウ (MSM)</span>
+            <span>必須アミノ酸</span>
+            <span>BCAA</span>
+          </div>
+          <p class="pp-ess-supp__why">
+            MSM (メチルスルフォニルメタン) は<strong>被毛・爪・皮膚に多く含まれる有機イオウ成分</strong>。
+            アミノ酸 (メチオニン・システイン) と組み合わせることで、被毛の主成分であるケラチンとコラーゲンの
+            健やかな生成をサポートします。
+          </p>
+          <a href="https://www.caninevet.jp/canineサプリメント/msm-アミノコンプリート/"
+             target="_blank" rel="noopener" class="pp-ess-supp__cta">
+            CanineVet で購入する
+          </a>
+          <div class="pp-ess-supp__detail">
+            <a href="https://www.caninevet.jp/canineサプリメント/msm-アミノコンプリート/"
+               target="_blank" rel="noopener" class="pp-learn">View Details</a>
+          </div>
+        </div>
+
+        <div class="pp-ess-supp">
+          <div class="pp-ess-supp__label">Essential 02</div>
+          <h4 class="pp-ess-supp__name">FOR ANTIOXIDANT</h4>
+          <p class="pp-ess-supp__name-en">Asta-Melon · Vitamin E · Cysteine</p>
+          <div class="pp-ess-supp__compo">
+            <span>アスタキサンチン</span>
+            <span>ビタミンE</span>
+            <span>システイン</span>
+          </div>
+          <p class="pp-ess-supp__why">
+            メロン由来のアスタキサンチン (Asta-Melon) とビタミンE による<strong>強力な抗酸化サポート</strong>。
+            システイン (含硫アミノ酸) は被毛のケラチンを構成する重要成分。
+            紫外線や酸化ストレスから被毛・皮膚を守ります。
+          </p>
+          <a href="https://www.caninevet.jp/canineサプリメント/for-antioxidant-asta-melon-vitamine-cysteine/"
+             target="_blank" rel="noopener" class="pp-ess-supp__cta">
+            CanineVet で購入する
+          </a>
+          <div class="pp-ess-supp__detail">
+            <a href="https://www.caninevet.jp/canineサプリメント/for-antioxidant-asta-melon-vitamine-cysteine/"
+               target="_blank" rel="noopener" class="pp-learn">View Details</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 補足成分 -->
+      <h5 class="pp-supp-sub-title">愛犬の状態に応じた追加サポート成分</h5>
+      <div class="pp-supp-additional" id="supplementIngredients"></div>
+
+      <!-- 大型バナー -->
+      <div class="pp-cv-banner">
+        <div class="pp-cv-banner__tag">CanineVet — Supervised by Veterinarian</div>
+        <h4 class="pp-cv-banner__title">獣医師 上手 健太郎 監修<br>プロフェッショナル サプリメント</h4>
+        <p class="pp-cv-banner__sub">
+          馬と犬の栄養学を専門とする獣医師 <strong>上手 健太郎</strong> 先生が、
+          競技動物のために開発したサプリメントライン。
+          内側からのケアで、Plush Puppy の効果を最大限に引き出します。
+        </p>
+        <a href="https://www.caninevet.jp" target="_blank" rel="noopener" class="pp-cv-banner__cta">
+          CanineVet で購入する
+        </a>
+        <div class="pp-cv-banner__meta">
+          <span>上手獣医師 監修・開発</span>
+          <span>国内発送</span>
+          <span>5,500円以上送料無料</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- All Categories / 全製品ラインナップへの導線 -->
+    <div class="pp-panel">
+      <div class="pp-section-title" style="margin-top:0;">
+        <div class="pp-section-title__en">Explore All Products</div>
+        <div class="pp-section-title__jp">全製品ラインナップ</div>
+      </div>
+      <p style="text-align:center; color:var(--pp-text-light); font-size:14px; max-width:560px; margin:0 auto 28px;">
+        診断結果に表示されていない製品もあります。<br>
+        カテゴリから愛犬に合う製品をご覧ください。
+      </p>
+      <div class="pp-cat-grid">
+        <a href="https://www.plushpuppyjapan.com/view/category/shampoo" target="_blank" rel="noopener" class="pp-cat-tile">
+          <div class="pp-cat-tile__en">SHAMPOOS</div>
+          <div class="pp-cat-tile__jp">シャンプー</div>
+          <div class="pp-cat-tile__more">VIEW ALL ›</div>
+        </a>
+        <a href="https://www.plushpuppyjapan.com/view/category/conditioner" target="_blank" rel="noopener" class="pp-cat-tile">
+          <div class="pp-cat-tile__en">CONDITIONERS</div>
+          <div class="pp-cat-tile__jp">コンディショナー</div>
+          <div class="pp-cat-tile__more">VIEW ALL ›</div>
+        </a>
+        <a href="https://www.plushpuppyjapan.com/view/category/finishing" target="_blank" rel="noopener" class="pp-cat-tile">
+          <div class="pp-cat-tile__en">FINISHING</div>
+          <div class="pp-cat-tile__jp">フィニッシング</div>
+          <div class="pp-cat-tile__more">VIEW ALL ›</div>
+        </a>
+        <a href="https://www.plushpuppyjapan.com/view/category/brush" target="_blank" rel="noopener" class="pp-cat-tile">
+          <div class="pp-cat-tile__en">BRUSHWARE</div>
+          <div class="pp-cat-tile__jp">ブラシ</div>
+          <div class="pp-cat-tile__more">VIEW ALL ›</div>
+        </a>
+        <a href="https://www.plushpuppyjapan.com/view/category/ct13" target="_blank" rel="noopener" class="pp-cat-tile">
+          <div class="pp-cat-tile__en">PETITES</div>
+          <div class="pp-cat-tile__jp">お試しサイズ</div>
+          <div class="pp-cat-tile__more">VIEW ALL ›</div>
+        </a>
+        <a href="https://www.plushpuppyjapan.com/view/page/recommendation" target="_blank" rel="noopener" class="pp-cat-tile pp-cat-tile--accent">
+          <div class="pp-cat-tile__en">BREED GUIDE</div>
+          <div class="pp-cat-tile__jp">犬種別おすすめ</div>
+          <div class="pp-cat-tile__more">VIEW ALL ›</div>
+        </a>
+      </div>
+      <div style="text-align:center; margin-top:24px; padding-top:24px; border-top:1px solid var(--pp-border-light);">
+        <a href="https://www.plushpuppyjapan.com" target="_blank" rel="noopener" class="pp-btn pp-btn--primary">
+          Plush Puppy Japan 公式サイトへ
+        </a>
+        <p style="margin-top:10px; font-size:11px; color:var(--pp-text-muted); letter-spacing:0.1em;">
+          オーストラリア本国の情報は
+          <a href="https://plushpuppy.com.au" target="_blank" rel="noopener" style="color:var(--pp-text-light); text-decoration:underline;">plushpuppy.com.au</a>
+          をご覧ください
+        </p>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="pp-result__actions">
+      <button class="pp-btn pp-btn--ghost" onclick="resetDiagnosis()">もう一度診断する</button>
+      <button class="pp-btn pp-btn--primary" onclick="window.print()">レポートを印刷 / PDF保存</button>
+    </div>
+
+    <p class="pp-disclaimer">
+      本診断は被毛ケア製品選びの参考としてご利用ください。<br>
+      皮膚疾患などの症状がある場合は獣医師にご相談ください。<br>
+      製品は健康補助・グルーミング用品であり、医薬品ではありません。
+    </p>
+
+  </section>
+
+</div>
+
+<!-- ============================================
+     FOOTER (plushpuppyjapan.com 準拠)
+     ============================================ -->
+<footer class="pp-footer">
+  <div class="pp-footer__follow">FOLLOW US</div>
+  <div class="pp-footer__sns">
+    <a href="https://www.facebook.com/plushpuppyjapan" target="_blank" rel="noopener" aria-label="Facebook">
+      <svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12c0 6 4.4 11 10.1 11.9V15.5H7v-3.5h3.1V9.4c0-3.1 1.8-4.8 4.6-4.8 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8V24C19.6 23 24 18 24 12c0-6.6-5.4-12-12-12z"/></svg>
+    </a>
+    <a href="https://www.instagram.com/plushpuppyjapan/" target="_blank" rel="noopener" aria-label="Instagram">
+      <svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.2.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.2.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2-.1-1.2-.1-1.6-.1-4.8s0-3.6.1-4.8c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4 1.2-.1 1.6-.1 4.8-.1zM12 0C8.7 0 8.3 0 7.1.1 5.8.1 5 .3 4.2.6c-.8.3-1.5.7-2.2 1.4C1.3 2.7.9 3.4.6 4.2.3 5 .1 5.8.1 7.1 0 8.3 0 8.7 0 12s0 3.7.1 4.9c.1 1.3.3 2.1.6 2.9.3.8.7 1.5 1.4 2.2.7.7 1.4 1.1 2.2 1.4.8.3 1.6.5 2.9.6 1.3.1 1.7.1 4.9.1s3.7 0 4.9-.1c1.3-.1 2.1-.3 2.9-.6.8-.3 1.5-.7 2.2-1.4.7-.7 1.1-1.4 1.4-2.2.3-.8.5-1.6.6-2.9.1-1.3.1-1.7.1-4.9s0-3.7-.1-4.9c-.1-1.3-.3-2.1-.6-2.9-.3-.8-.7-1.5-1.4-2.2-.7-.7-1.4-1.1-2.2-1.4-.8-.3-1.6-.5-2.9-.6C15.7 0 15.3 0 12 0z"/><path d="M12 5.8c-3.4 0-6.2 2.8-6.2 6.2s2.8 6.2 6.2 6.2 6.2-2.8 6.2-6.2-2.8-6.2-6.2-6.2zm0 10.3c-2.3 0-4.1-1.8-4.1-4.1s1.8-4.1 4.1-4.1 4.1 1.8 4.1 4.1-1.8 4.1-4.1 4.1z"/><circle cx="18.4" cy="5.6" r="1.4"/></svg>
+    </a>
+  </div>
+  <div class="pp-footer__links">
+    <a href="https://www.plushpuppyjapan.com/view/policy" target="_blank" rel="noopener">個人情報保護方針</a>
+    <a href="https://www.plushpuppyjapan.com/view/contract" target="_blank" rel="noopener">特定商取引法表示</a>
+  </div>
+  <div class="pp-footer__copyright">© Plush Puppy Japan Grooming Products.</div>
+  <div class="pp-footer__powered">
+    Coat Diagnosis — supplements supervised by <strong>Dr. Kentaro Kamide, DVM</strong>
+  </div>
+</footer>
+
+<!-- ============================================
+     SCRIPTS
+     ============================================ -->
+<script>
+/* ============================================
+   Plush Puppy Japan 製品マスタ
+   (URLは現状カテゴリページ、次セッションで個別商品IDに更新予定)
+   ============================================ */
+/* ============================================
+   Plush Puppy Japan 製品マスタ
+   - url: 個別商品ページへの直リンク
+   - image: makeshop CDN の実商品画像
+   - 価格は plushpuppyjapan.com カテゴリページから抽出 (2026-05)
+   ============================================ */
+const IMG_BASE = 'https://makeshop-multi-images.akamaized.net/PlushPuppyJP/itemimages/';
+const ITEM_BASE = 'https://www.plushpuppyjapan.com/view/item/';
+
+const PRODUCTS = [
+  // ========== SHAMPOOS ==========
+  { id:'pp_all_purpose', cat:'shampoo', name:'ナチュラル オールパーパス シャンプー', en:'Natural All Purpose Shampoo',
+    price:5060, size:'500ml',
+    url: ITEM_BASE + '000000000018',
+    image: IMG_BASE + '000000000018_3qB3RoH.jpg',
+    matches:['all_good','daily','low_shine'], coats:['all'],
+    desc:'全犬種に使える定番ベース。日常ケアの基準点として最適です。' },
+  { id:'pp_whitening', cat:'shampoo', name:'ハーバル ホワイトニング シャンプー', en:'Herbal Whitening Shampoo',
+    price:5170, size:'500ml',
+    url: ITEM_BASE + '000000000007',
+    image: IMG_BASE + '000000000007_vCS53WX.jpg',
+    matches:['yellowing','white'], coats:['all'],
+    desc:'ヘンナ・ジンセン配合。白毛や淡色被毛のくすみを抑え、本来の色冴えを引き出します。' },
+  { id:'pp_bodybuilding', cat:'shampoo', name:'ナチュラル ボディビルディング シャンプー', en:'Natural Body Building Shampoo',
+    price:4950, size:'500ml',
+    url: ITEM_BASE + '000000000028',
+    image: IMG_BASE + '000000000028_OI6GPOE.jpg',
+    matches:['low_volume','show_prep'], coats:['cotton','cotton_toy','cotton_mini','cotton_med','cotton_std','double','wavy'],
+    desc:'小麦胚芽配合でボリュームと毛量感を演出。プードル・ビションなどコットン系の定番。' },
+  { id:'pp_conditioning_shampoo', cat:'shampoo', name:'ナチュラル コンディショニング シャンプー', en:'Natural Conditioning Shampoo',
+    price:4730, size:'500ml',
+    url: ITEM_BASE + '000000000013',
+    image: IMG_BASE + '000000000013_h6aUj4f.jpg',
+    matches:['low_moisture','breakage','static'], coats:['silky','wavy','dachshund_long','chihuahua_long'],
+    desc:'イブニングプリムローズ配合。乾燥した被毛に深い保湿と柔軟性をもたらします。' },
+  { id:'pp_sensitive', cat:'shampoo', name:'センサティブ スキン シャンプー', en:'Sensitive Skin Shampoo',
+    price:6930, size:'500ml',
+    url: ITEM_BASE + '000000000023',
+    image: IMG_BASE + '000000000023_bCDJi0W.jpg',
+    matches:['sensitive_skin'], coats:['all'],
+    desc:'敏感な肌のために設計された低刺激処方。かゆみが気になる愛犬のデイリーケアに。' },
+  { id:'pp_deep_cleansing', cat:'shampoo', name:'ディープ クレンジング シャンプー', en:'Deep Cleansing Shampoo',
+    price:5500, size:'500ml',
+    url: ITEM_BASE + '000000000024',
+    image: IMG_BASE + '000000000024_i3pXMN4.jpg',
+    matches:['oily','shedding'], coats:['double','all'],
+    desc:'海藻・緑茶配合で毛穴と被毛の余分な油分をしっかりオフ。換毛期や脂性タイプに。' },
+  { id:'pp_texture_plus', cat:'shampoo', name:'テクスチャープラス シャンプー', en:'Texture Plus Shampoo',
+    price:5170, size:'500ml',
+    url: ITEM_BASE + '000000000031',
+    image: IMG_BASE + '000000000031_r6H1ru3.jpg',
+    matches:['soft_coat'], coats:['harsh','harsh_mini','harsh_std','harsh_giant','dachshund_wire'],
+    desc:'ハーシュコート専用。テリア種・ワイヤーが本来持つ硬さとテクスチャを取り戻します。' },
+  { id:'pp_black_opal', cat:'shampoo', name:'ブラック オパール シャンプー', en:'Black Opal Shampoo',
+    price:6160, size:'500ml',
+    url: ITEM_BASE + '000000000022',
+    image: IMG_BASE + '000000000022_IIPpgG2.jpg',
+    matches:['low_shine','daily'], coats:['black_coat','smooth'],
+    desc:'黒・濃色専用。被毛本来の深みと光沢を引き出します。' },
+  { id:'pp_wonder_wash', cat:'shampoo', name:'ワンダー ウォッシュ (リンス不要)', en:'Wonder Wash',
+    price:3410, size:'500ml',
+    url: ITEM_BASE + '000000000036',
+    image: IMG_BASE + '000000000036_AzM4G4m.jpg',
+    matches:['daily','show_prep'], coats:['all'],
+    desc:'水を使わないインスタントシャンプー。ショー当日や緊急時にすぐ清潔に。' },
+  { id:'pp_face_it', cat:'shampoo', name:'洗顔シャンプー レッツ フェイス イット', en:"Let's Face It",
+    price:3740, size:'250ml',
+    url: ITEM_BASE + '000000000034',
+    image: IMG_BASE + '000000000034_c8ceaIG.jpg',
+    matches:['sensitive_skin','daily'], coats:['all'],
+    desc:'目元・顔専用の低刺激処方。涙やけや目周りの汚れを優しくケア。' },
+  { id:'pp_powder_puff', cat:'shampoo', name:'パウダーパフ (ドライシャンプー) レギュラー', en:'Powder Puff Regular',
+    price:4950, size:'200g',
+    url: ITEM_BASE + '000000000039',
+    image: IMG_BASE + '000000000039_vwBuinF.jpg',
+    matches:['oily','show_prep','daily'], coats:['silky','cotton','wavy','double'],
+    desc:'水を使わないパウダー型クレンザー。ショーリング前の足元清掃にプロが使う必需品。' },
+
+  // ========== CONDITIONERS ==========
+  { id:'pp_silk_protein_100', cat:'conditioner', name:'ナチュラル シルクプロテイン コンディショナー 100ml', en:'Silk Protein Conditioner 100ml',
+    price:1430, size:'100ml',
+    url: ITEM_BASE + '000000000103',
+    image: IMG_BASE + '000000000103_kxIlY2M.jpg',
+    matches:['low_shine','breakage','low_moisture'], coats:['silky','wavy','dachshund_long','chihuahua_long'],
+    desc:'お試しサイズ。シルクプロテインがダメージを補修し、艶やかなシルキーコートへ。' },
+  { id:'pp_silk_protein_500', cat:'conditioner', name:'ナチュラル シルクプロテイン コンディショナー 500ml', en:'Silk Protein Conditioner 500ml',
+    price:4730, size:'500ml',
+    url: ITEM_BASE + '000000000054',
+    image: IMG_BASE + '000000000054_sz0w8Al.jpg',
+    matches:['low_shine','breakage','low_moisture'], coats:['silky','wavy'],
+    desc:'シルクプロテインがダメージを補修。指通りの良い艶やかなシルキーコートへ。' },
+  { id:'pp_tlc', cat:'conditioner', name:'T.L.C コートコンディショナー', en:'T.L.C Coat Conditioner',
+    price:4730, size:'500ml',
+    url: ITEM_BASE + '000000000091',
+    image: IMG_BASE + '000000000091_t1rLgZP.jpg',
+    matches:['static','low_moisture','daily','matting'], coats:['all'],
+    desc:'リーブイン / リンスアウト両用。毎日のブラッシング前の必需品。' },
+  { id:'pp_coat_rescue', cat:'conditioner', name:'コート レスキュー', en:'Coat Rescue Treatment',
+    price:3630, size:'250ml',
+    url: ITEM_BASE + '000000000090',
+    image: IMG_BASE + '000000000090_OnOhkso.jpg',
+    matches:['breakage','low_moisture','show_prep'], coats:['silky','cotton','cotton_toy','cotton_mini','wavy'],
+    desc:'集中保湿トリートメント。ショー前14日のリカバリーケアに最適です。' },
+
+  // ========== FINISHING ==========
+  { id:'pp_omg', cat:'finishing', name:'OMG グルーミングスプレー', en:'OMG Grooming Spray',
+    price:1210, size:'100ml',
+    url: ITEM_BASE + '000000000101',
+    image: IMG_BASE + '000000000101_bVmGZlh.jpg',
+    matches:['matting','static','daily'], coats:['all'],
+    desc:'毛玉やもつれを優しくほどく仕上げスプレー。デイリーブラッシングのお供に。' },
+  { id:'pp_volumising_cream', cat:'finishing', name:'ボリューマイジング クリーム', en:'Volumising Cream',
+    price:5060, size:'225g',
+    url: ITEM_BASE + '000000000080',
+    image: IMG_BASE + '000000000080_MKi9fLi.jpg',
+    matches:['low_volume','show_prep'], coats:['cotton','cotton_toy','cotton_mini','cotton_med','cotton_std','double','wavy'],
+    desc:'ショー当日の決め技。理想のシルエットとボリュームを演出します。' },
+  { id:'pp_volumising_spray', cat:'finishing', name:'ボリューマイジング スプレー', en:'Volumising Spray',
+    price:4730, size:'500ml',
+    url: ITEM_BASE + '000000000082',
+    image: IMG_BASE + '000000000082_H9X2LoW.jpg',
+    matches:['low_volume','daily'], coats:['cotton','cotton_toy','cotton_mini','wavy'],
+    desc:'軽い使用感のボリュームスプレー。日常使いでふんわり感をキープ。' },
+  { id:'pp_chalkestral', cat:'finishing', name:'チョーケストラル (チョーク下地材)', en:'Chalkestral',
+    price:4290, size:'250g',
+    url: ITEM_BASE + '000000000055',
+    image: IMG_BASE + '000000000055_Qop9RHb.jpg',
+    matches:['show_prep','yellowing'], coats:['silky','cotton','harsh'],
+    desc:'ショー仕上げ用のチョーク下地。白毛・淡色を際立たせるプロの一手。' },
+  { id:'pp_hold', cat:'finishing', name:'HOLD コートシェーパー', en:'HOLD Coat Shaper',
+    price:3190, size:'',
+    url: ITEM_BASE + '000000000095',
+    image: IMG_BASE + '000000000095_boyvKKB.jpg',
+    matches:['show_prep','low_volume'], coats:['cotton_std','cotton_med','double','harsh'],
+    desc:'シェイプを固定する仕上げ材。ショーリングでフォルムを長時間キープ。' },
+  { id:'pp_shine_comb', cat:'finishing', name:'シャイン アンド コーム', en:'Shine and Comb',
+    price:5830, size:'250ml',
+    url: ITEM_BASE + '000000000056',
+    image: IMG_BASE + '000000000056_R8GL6up.jpg',
+    matches:['low_shine','daily'], coats:['silky','smooth','dachshund_smooth','chihuahua_smooth','black_coat'],
+    desc:'スムース系・短毛種の艶出しに。塗布してコーミングするだけで光沢が増します。' },
+  { id:'pp_seabreeze', cat:'finishing', name:'シーブリーズ オイル', en:'Seabreeze Oil',
+    price:5390, size:'200ml',
+    url: ITEM_BASE + '000000000045',
+    image: IMG_BASE + '000000000045_zaGLqiF.jpg',
+    matches:['low_moisture','breakage'], coats:['all'],
+    desc:'カレンデュラ・小麦胚芽・イブニングプリムローズ配合の万能オイル。コートと皮膚を健やかに。' },
+  { id:'pp_pixie_dust', cat:'finishing', name:'ピクシー ダスト', en:'Pixie Dust',
+    price:4620, size:'125g',
+    url: ITEM_BASE + '000000000050',
+    image: IMG_BASE + '000000000050_VC2G9KO.jpg',
+    matches:['show_prep','yellowing'], coats:['silky','cotton','cotton_toy'],
+    desc:'仕上げ用パウダー。輝きと色冴えを最後に添えるショーグルーマーの定番。' },
+  { id:'pp_fairy_frost', cat:'finishing', name:'フェアリーフロスト レギュラーコート', en:'Fairy Frost Regular',
+    price:7810, size:'',
+    url: ITEM_BASE + '000000000052',
+    image: IMG_BASE + '000000000052_hjBqUNb.jpg',
+    matches:['show_prep'], coats:['cotton','cotton_toy','silky'],
+    desc:'キラめく仕上げパウダー。ショーリングで愛犬を最も美しく見せる魔法の一品。' },
+  { id:'pp_protein_balm', cat:'finishing', name:'プロテイン コート バーム', en:'Protein Coat Balm',
+    price:5060, size:'200ml',
+    url: ITEM_BASE + '000000000072',
+    image: IMG_BASE + '000000000072_FQa6TLl.jpg',
+    matches:['breakage','show_prep','low_moisture'], coats:['silky','wavy'],
+    desc:'毛先専用バーム。ロングコートの先端を保護し、ショーリングでの広がりを抑えます。' },
+  { id:'pp_swishy', cat:'finishing', name:'スウィッシー コート', en:'Swishy Coat',
+    price:5940, size:'225g',
+    url: ITEM_BASE + '000000000073',
+    image: IMG_BASE + '000000000073_kvYaWuN.jpg',
+    matches:['static','matting'], coats:['silky','wavy','dachshund_long','chihuahua_long'],
+    desc:'静電気を抑え、毛流れを整える。ブラッシング前後の必需品。' },
+  { id:'pp_fast', cat:'finishing', name:'FAST ブロードライ スプレー', en:'FAST Blow Dry Spray',
+    price:5280, size:'500ml',
+    url: ITEM_BASE + '000000000071',
+    image: IMG_BASE + '000000000071_ShQXADC.jpg',
+    matches:['daily'], coats:['all'],
+    desc:'ドライ時間を短縮するスプレー。被毛のキューティクルを整えながら早く乾かせます。' },
+  { id:'pp_antistatic', cat:'finishing', name:'アンティスタティック コートコントロール', en:'Anti-Static Coat Control',
+    price:3630, size:'250ml',
+    url: ITEM_BASE + '000000000154',
+    image: IMG_BASE + '000000000154_z0NRDbM.jpg',
+    matches:['static'], coats:['silky','cotton','wavy'],
+    desc:'静電気帯電防止スプレー。冬場の乾燥や fly-away を抑えます。' },
+  { id:'pp_cover_up', cat:'finishing', name:'カバー アップ クリーム', en:'Cover Up Cream',
+    price:3850, size:'100g',
+    url: ITEM_BASE + '000000000053',
+    image: IMG_BASE + '000000000053_Xk1ArOC.jpg',
+    matches:['yellowing','show_prep'], coats:['silky','cotton'],
+    desc:'白毛のステイン・黄ばみをカバー。ショー直前のスポット修正に。' },
+
+  // ========== BRUSHWARE ==========
+  { id:'pp_ultimate_soft', cat:'brush', name:'アルティメット ソフトスリッカーブラシ', en:'Ultimate Soft Slicker Brush',
+    price:10230, size:'',
+    url: ITEM_BASE + '000000000079',
+    image: IMG_BASE + '000000000079_gk1YGmj.png',
+    matches:['matting','shedding','daily'], coats:['silky','cotton','cotton_std','cotton_med','wavy','double'],
+    desc:'プロ仕様のソフトスリッカー。デマット力と被毛を傷めない優しさを両立。' },
+  { id:'pp_slicker_soft', cat:'brush', name:'スリッカーブラシ ソフト', en:'Slicker Brush Soft',
+    price:3960, size:'',
+    url: ITEM_BASE + '000000000098',
+    image: IMG_BASE + '000000000098_XzbxNFn.jpg',
+    matches:['matting','daily'], coats:['silky','cotton','cotton_toy','cotton_mini','wavy'],
+    desc:'デイリーケア向け標準スリッカー。家庭ユーザーに最もおすすめできる1本。' },
+  { id:'pp_slicker_mini', cat:'brush', name:'ブルースリッカー ソフト ミニ', en:'Blue Slicker Mini',
+    price:3520, size:'',
+    url: ITEM_BASE + '000000000100',
+    image: IMG_BASE + '000000000100_LxEUiil.jpg',
+    matches:['daily','matting'], coats:['cotton_toy','silky','smooth','dachshund_smooth','chihuahua_smooth'],
+    desc:'小型犬専用ミニサイズ。トイプードル・チワワなど小さな子に。' },
+  { id:'pp_pin_brush', cat:'brush', name:'ブルー ピンブラシ', en:'Blue Pin Brush',
+    price:2970, size:'',
+    url: ITEM_BASE + '000000000061',
+    image: IMG_BASE + '000000000061_TsF0ibs.jpg',
+    matches:['daily','low_shine'], coats:['silky','wavy','dachshund_long','chihuahua_long'],
+    desc:'ロングコート専用ピンブラシ。毛先を傷めず流れに沿ってブラッシング。' },
+  { id:'pp_bristle', cat:'brush', name:'ブルー ピュアブリストル (獣毛) ブラシ', en:'Blue Pure Bristle Brush',
+    price:3300, size:'',
+    url: ITEM_BASE + '000000000064',
+    image: IMG_BASE + '000000000064_ieffnsP.jpg',
+    matches:['low_shine','daily'], coats:['smooth','silky','dachshund_smooth','chihuahua_smooth','black_coat'],
+    desc:'天然獣毛ブラシ。スムースコートに艶を与える伝統的な仕上げブラシ。' },
+  { id:'pp_porcupine', cat:'brush', name:'ブルー アンティスタティック ポーキューパインブラシ', en:'Blue Anti-Static Porcupine Brush',
+    price:2860, size:'',
+    url: ITEM_BASE + '000000000067',
+    image: IMG_BASE + '000000000067_vHvd89I.jpg',
+    matches:['static','low_shine'], coats:['silky','wavy','smooth'],
+    desc:'静電気防止仕様の獣毛＋ピンのコンビブラシ。' },
+];
+
+const BREED_TO_COAT = {
+  // シルキー
+  maltese:'silky', yorkie:'silky', shih_tzu:'silky', afghan:'silky',
+  lhasa_apso:'silky', silky_terrier:'silky',
+
+  // プードル(サイズ別) - 同じコットンでも sub-tag で区別
+  poodle_toy:'cotton_toy', poodle_mini:'cotton_mini',
+  poodle_med:'cotton_med', poodle_std:'cotton_std',
+
+  // その他コットン
+  bichon:'cotton', bedlington:'cotton', havanese:'cotton',
+
+  // ダブル
+  pomeranian:'double', shiba:'double', corgi:'double',
+  husky:'double', samoyed:'double', chow_chow:'double',
+  german_shepherd:'double', collie_rough:'double', aussie_shepherd:'double',
+
+  // シュナウザー(サイズ別)
+  schnauzer_mini:'harsh_mini', schnauzer_std:'harsh_std',
+  schnauzer_giant:'harsh_giant',
+
+  // その他ハーシュ
+  west_highland:'harsh', scottish_terrier:'harsh', airedale:'harsh',
+  cairn:'harsh', jack_russell_rough:'harsh', border_terrier:'harsh',
+
+  // ダックスフンド(タイプ別)
+  dachshund_smooth:'dachshund_smooth', dachshund_long:'dachshund_long',
+  dachshund_wire:'dachshund_wire',
+
+  // チワワ(タイプ別)
+  chihuahua_smooth:'chihuahua_smooth', chihuahua_long:'chihuahua_long',
+
+  // ウェービー
+  cocker:'wavy', cavalier:'wavy', setter:'wavy',
+  gordon_setter:'wavy', papillon:'wavy',
+
+  // スムース
+  french_bulldog:'smooth', boxer:'smooth', doberman:'smooth',
+  pug:'smooth', beagle:'smooth', staffy:'smooth', whippet:'smooth',
+
+  other:'all'
+};
+
+// 細分化コートタイプの親コート(製品マッチング時のフォールバック用)
+const COAT_PARENT = {
+  cotton_toy:'cotton', cotton_mini:'cotton',
+  cotton_med:'cotton', cotton_std:'cotton',
+  harsh_mini:'harsh', harsh_std:'harsh', harsh_giant:'harsh',
+  dachshund_smooth:'smooth', dachshund_long:'silky', dachshund_wire:'harsh',
+  chihuahua_smooth:'smooth', chihuahua_long:'silky',
+};
+const COAT_LABEL = {
+  silky:'シルキーコート', cotton:'コットンコート',
+  cotton_toy:'コットン (トイ)', cotton_mini:'コットン (ミニ)',
+  cotton_med:'コットン (ミディアム)', cotton_std:'コットン (スタンダード)',
+  double:'ダブルコート',
+  harsh:'ハーシュコート', harsh_mini:'ハーシュ (ミニ)',
+  harsh_std:'ハーシュ (スタンダード)', harsh_giant:'ハーシュ (ジャイアント)',
+  wavy:'ウェービーコート', smooth:'スムースコート',
+  dachshund_smooth:'ダックス (スムース)', dachshund_long:'ダックス (ロング)',
+  dachshund_wire:'ダックス (ワイヤー)',
+  chihuahua_smooth:'チワワ (スムース)', chihuahua_long:'チワワ (ロング)',
+  all:'ミックスコート'
+};
+const COAT_LABEL_EN = {
+  silky:'SILKY COAT', cotton:'COTTON COAT',
+  cotton_toy:'COTTON · TOY', cotton_mini:'COTTON · MINI',
+  cotton_med:'COTTON · MEDIUM', cotton_std:'COTTON · STANDARD',
+  double:'DOUBLE COAT',
+  harsh:'HARSH COAT', harsh_mini:'HARSH · MINI',
+  harsh_std:'HARSH · STANDARD', harsh_giant:'HARSH · GIANT',
+  wavy:'WAVY COAT', smooth:'SMOOTH COAT',
+  dachshund_smooth:'DACHSHUND · SMOOTH', dachshund_long:'DACHSHUND · LONG',
+  dachshund_wire:'DACHSHUND · WIRE',
+  chihuahua_smooth:'CHIHUAHUA · SMOOTH', chihuahua_long:'CHIHUAHUA · LONG',
+  all:'MIXED COAT'
+};
+const GOAL_LABEL = {
+  daily:'日常ケア', show_prep:'ショー準備', skin_care:'敏感肌ケア', shedding:'換毛期対策'
+};
+const ISSUE_LABEL = {
+  low_shine:'艶不足', low_moisture:'乾燥', oily:'油分過多', breakage:'毛切れ',
+  matting:'毛玉', low_volume:'ボリューム不足', static:'静電気',
+  yellowing:'白毛のくすみ', sensitive_skin:'敏感肌', shedding:'換毛期',
+  soft_coat:'コートの柔らかさ', all_good:'良好'
+};
+const CAT_LABEL = {
+  shampoo:'Shampoo', conditioner:'Conditioner',
+  finishing:'Finishing', brush:'Brush'
+};
+
+let state = { answers: {} };
+
+/* Show date field toggle (ショー準備選択時のみ表示) */
+document.querySelectorAll('input[name="goal"]').forEach(r => {
+  r.addEventListener('change', e => {
+    document.getElementById('showDateField').style.display =
+      e.target.value === 'show_prep' ? 'block' : 'none';
+    notifyHeight();
+  });
+});
+
+/* Diagnosis - 全項目任意入力対応 */
+function collectAnswers() {
+  const issues = Array.from(document.querySelectorAll('#conditionGroup input:checked'))
+    .map(i => i.dataset.issue);
+  const scores = {};
+  document.querySelectorAll('[data-score]').forEach(el => {
+    scores[el.dataset.score] = parseInt(el.value, 10);
+  });
+  // ゴールはラジオなのでデフォルト 'daily' が入る (HTMLで checked 済み)
+  const goalEl = document.querySelector('input[name="goal"]:checked');
+  const goal = goalEl ? goalEl.value : 'daily';
+
+  const breedEl = document.getElementById('breed');
+  const breedVal = breedEl.value;
+  // 犬種未選択時のラベル
+  const breedLabel = breedVal
+    ? breedEl.selectedOptions[0].textContent
+    : '指定なし';
+
+  return {
+    name: document.getElementById('dogName').value || '愛犬',
+    breed: breedVal,           // 空文字許容
+    breedLabel: breedLabel,
+    age: document.getElementById('age').value,    // 空文字許容
+    color: document.getElementById('color').value, // 空文字許容
+    issues, scores, goal,
+    showDate: document.getElementById('showDate').value
+  };
+}
+
+function scoreProducts(a) {
+  const coat = BREED_TO_COAT[a.breed] || 'all';
+  const parentCoat = COAT_PARENT[coat]; // 細分化コートの親 (e.g. cotton_toy → cotton)
+  // 黒系の毛色判定 (Black Opal等のため)
+  const isBlackCoat = a.color === 'black';
+  // 白系の毛色判定
+  const isWhiteCoat = a.color === 'white' || a.color === 'silver';
+
+  return PRODUCTS.map(p => {
+    let s = 0;
+    // 症状マッチ
+    a.issues.forEach(i => { if (p.matches.includes(i)) s += 3; });
+    // 目的マッチ
+    if (p.matches.includes(a.goal)) s += 2;
+    // コートマッチ (細分化 → 親 → all の3段階)
+    if (p.coats.includes(coat)) s += 3;           // 完全一致
+    else if (parentCoat && p.coats.includes(parentCoat)) s += 2;  // 親コート一致
+    else if (p.coats.includes('all')) s += 1;     // 汎用品
+    // 毛色マッチ
+    if (isWhiteCoat && (p.matches.includes('white') || p.matches.includes('yellowing'))) s += 2;
+    if (isBlackCoat && p.coats.includes('black_coat')) s += 3;
+    // スコア低めの項目補強
+    if (a.scores.density <= 3 && p.matches.includes('low_volume')) s += 1;
+    if (a.scores.shine <= 3 && p.matches.includes('low_shine')) s += 1;
+    if (a.scores.moisture <= 3 && p.matches.includes('low_moisture')) s += 1;
+    return { ...p, _s: s };
+  }).sort((a, b) => b._s - a._s);
+}
+
+function pickByCat(scored, cat, n) {
+  return scored.filter(p => p.cat === cat).slice(0, n);
+}
+
+function runDiagnosis() {
+  state.answers = collectAnswers();
+  const a = state.answers;
+
+  // 結果を表示
+  const resultEl = document.getElementById('result');
+  resultEl.classList.add('is-shown');
+
+  const coat = BREED_TO_COAT[a.breed] || 'all';
+  document.getElementById('resultCoatType').textContent = COAT_LABEL_EN[coat];
+  document.getElementById('resultDogName').textContent = a.name;
+  document.getElementById('resultBreed').textContent = a.breedLabel;
+  document.getElementById('resultType').textContent = COAT_LABEL[coat];
+  document.getElementById('resultGoal').textContent = GOAL_LABEL[a.goal];
+  document.getElementById('resultDate').textContent =
+    new Date().toLocaleDateString('ja-JP', { year:'numeric', month:'long', day:'numeric' });
+
+  // Tags - 問題なし時は「一般的な推奨」と表示
+  const tagsEl = document.getElementById('resultTags');
+  tagsEl.innerHTML = '';
+  if (a.issues.length === 0) {
+    tagsEl.innerHTML = '<span class="pp-tag">一般的な推奨</span>';
+  } else if (a.issues.length === 1 && a.issues[0] === 'all_good') {
+    tagsEl.innerHTML = '<span class="pp-tag">良好なコンディション</span>';
+  } else {
+    a.issues.forEach(iss => {
+      if (iss === 'all_good') return;
+      const t = document.createElement('span');
+      t.className = 'pp-tag';
+      t.textContent = ISSUE_LABEL[iss];
+      tagsEl.appendChild(t);
+    });
+  }
+
+  drawRadar(a.scores);
+
+  const scored = scoreProducts(a);
+  const picks = [
+    ...pickByCat(scored, 'shampoo', 1),     // シャンプー1点
+    ...pickByCat(scored, 'conditioner', 1), // コンディショナー1点
+    ...pickByCat(scored, 'finishing', 1),   // フィニッシング1点
+    ...pickByCat(scored, 'brush', 1),       // ブラシ1点
+  ];
+  renderProducts(picks);
+
+  if (a.goal === 'show_prep') {
+    document.getElementById('showScheduleSection').style.display = 'block';
+    renderSchedule(a.showDate);
+  } else {
+    document.getElementById('showScheduleSection').style.display = 'none';
+  }
+
+  renderSupplements(a);
+
+  // 結果セクションへスクロール (Safari古い版対応)
+  setTimeout(() => { smoothScrollTo(resultEl); }, 100);
+  setTimeout(notifyHeight, 800);
+}
+
+/* クロスブラウザ対応のスムーズスクロール
+   iOS Safari 15.3 以下で behavior:'smooth' が動かない問題への対応 */
+function smoothScrollTo(target) {
+  if (!target) return;
+  try {
+    // モダンブラウザ
+    if ('scrollBehavior' in document.documentElement.style) {
+      if (target === 'top' || target === window) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      return;
+    }
+  } catch (e) { /* fall through */ }
+  // フォールバック: 手動アニメーション
+  const targetY = (target === 'top' || target === window)
+    ? 0
+    : (target.getBoundingClientRect().top + window.pageYOffset);
+  const startY = window.pageYOffset;
+  const distance = targetY - startY;
+  const duration = 400;
+  const startTime = Date.now();
+  function step() {
+    const t = Math.min(1, (Date.now() - startTime) / duration);
+    const ease = t < 0.5 ? 2*t*t : -1 + (4 - 2*t)*t; // easeInOutQuad
+    window.scrollTo(0, startY + distance * ease);
+    if (t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+let radarChart = null;
+function drawRadar(scores) {
+  // Chart.js が読み込めなかった場合のフォールバック
+  if (typeof Chart === 'undefined') {
+    const wrap = document.querySelector('.pp-chart-wrap');
+    if (wrap) {
+      wrap.innerHTML =
+        '<div style="display:flex;align-items:center;justify-content:center;' +
+        'height:100%;min-height:300px;padding:30px;color:#666;text-align:center;' +
+        'border:1px dashed #e5e7eb;border-radius:8px;font-size:13px;">' +
+        'チャートを表示できません。<br>' +
+        'インターネット接続をご確認のうえ、ページを再読み込みしてください。' +
+        '</div>';
+    }
+    return;
+  }
+  try {
+    const canvas = document.getElementById('radar');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (radarChart) radarChart.destroy();
+    radarChart = new Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels: ['艶 Shine', '密度 Density', '水分 Moisture', 'ハリ Elasticity', '毛量 Volume', 'ダメージ少 Durability'],
+        datasets: [{
+          label: '現在のコンディション',
+          data: [
+            scores.shine, scores.density, scores.moisture, scores.elasticity, scores.density,
+            6 - (state.answers.issues.includes('breakage') ? 4 : 2)
+          ],
+          backgroundColor: 'rgba(67, 86, 159, 0.15)',
+          borderColor: '#43569f',
+          borderWidth: 2.5,
+          pointBackgroundColor: '#ef9a11',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+          pointRadius: 5,
+          pointHoverRadius: 7
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          r: {
+            min: 0, max: 5,
+            ticks: { display: false, stepSize: 1 },
+            grid: { color: '#e5e7eb' },
+            angleLines: { color: '#e5e7eb' },
+            pointLabels: {
+              font: { family: "'Noto Sans JP', sans-serif", size: 12, weight: '500' },
+              color: '#333333'
+            }
+          }
+        }
+      }
+    });
+  } catch (err) {
+    // チャート描画エラー時もアプリは続行
+    console.warn('Chart rendering failed:', err);
+  }
+}
+
+
+function renderProducts(picks) {
+  const list = document.getElementById('productList');
+  list.innerHTML = '';
+  picks.forEach((p, i) => {
+    const card = document.createElement('article');
+    card.className = 'pp-product';
+    // 画像エリア: 実画像があれば <img>、なければプレースホルダー
+    const imageHtml = p.image
+      ? `<div class="pp-product__image-wrap">
+           <img class="pp-product__image"
+                src="${p.image}"
+                alt="${p.name}"
+                loading="lazy"
+                onerror="this.onerror=null;this.parentNode.classList.add('is-fallback');this.replaceWith(Object.assign(document.createElement('span'),{textContent:'${CAT_LABEL[p.cat] || ''}'}));">
+         </div>`
+      : `<div class="pp-product__placeholder"><span>${CAT_LABEL[p.cat] || ''}</span></div>`;
+    card.innerHTML = `
+      <div class="pp-product__rank">${i + 1}</div>
+      ${imageHtml}
+      <div class="pp-product__cat">${CAT_LABEL[p.cat] || ''}</div>
+      <h4 class="pp-product__name">${p.name}</h4>
+      <p class="pp-product__why">${p.desc}</p>
+      <div class="pp-product__price">¥${p.price.toLocaleString()}<small>${p.size}</small></div>
+      <a href="${p.url}" target="_blank" rel="noopener" class="pp-product__cta">商品ページを見る</a>
+    `;
+    list.appendChild(card);
+  });
+}
+
+function renderSchedule(showDateStr) {
+  const wrap = document.getElementById('showSchedule');
+  let daysLeft = null;
+  if (showDateStr) {
+    const showDate = new Date(showDateStr);
+    const today = new Date(); today.setHours(0,0,0,0);
+    daysLeft = Math.ceil((showDate - today) / 86400000);
+  }
+  const phases = [
+    { when:'30 DAYS',  jp:'30日前', what:'ディープクレンジング シャンプーで毛穴と皮脂をリセット。保湿ケアを開始してください。', th:30 },
+    { when:'14 DAYS',  jp:'14日前', what:'コートレスキューで集中保湿。ブラッシング頻度を上げ、毛切れを予防します。', th:14 },
+    { when:'7 DAYS',   jp:'7日前',  what:'シルクプロテイン コンディショナーで仕上がり調整。最終トリミング推奨。', th:7 },
+    { when:'1 DAY',    jp:'前日',   what:'入念な洗浄と完全ドライ。T.L.C で全体を整え、就寝前のブラッシングを丁寧に。', th:1 },
+    { when:'SHOW DAY', jp:'当日朝', what:'OMG・ボリューマイジング クリーム・チョーケストラルで決定的な仕上げを。', th:0 },
+  ];
+  let html = '';
+  if (daysLeft !== null && daysLeft >= 0) {
+    html += `<p class="pp-schedule__note">ショーまであと <strong>${daysLeft}</strong> 日</p>`;
+  }
+  phases.forEach(p => {
+    const isNow = daysLeft !== null && daysLeft <= p.th + 3 && daysLeft >= p.th - 3;
+    html += `
+      <div class="pp-schedule__row ${isNow ? 'is-now' : ''}">
+        <div class="pp-schedule__when">${p.when}<br><span style="font-family:var(--font-jp);font-size:12px;color:var(--pp-text-light);font-weight:400;">${p.jp}</span></div>
+        <div class="pp-schedule__what">${p.what}</div>
+      </div>
+    `;
+  });
+  wrap.innerHTML = html;
+}
+
+function renderSupplements(a) {
+  const wrap = document.getElementById('supplementIngredients');
+  const sug = [];
+  if (a.issues.includes('sensitive_skin') || a.issues.includes('low_moisture'))
+    sug.push({ tag:'Skin Barrier', name:'セラミド・オリゴノール', desc:'皮膚のうるおいとバリア機能をサポート' });
+  if (a.issues.includes('shedding') || a.issues.includes('sensitive_skin') || a.issues.includes('breakage'))
+    sug.push({ tag:'Anti-inflammatory', name:'オメガ3 (DHA / EPA)', desc:'被毛と皮膚の健康維持に欠かせない必須脂肪酸' });
+  if (a.issues.includes('oily') || a.issues.includes('sensitive_skin') || a.issues.includes('shedding'))
+    sug.push({ tag:'Gut Health', name:'乳酸菌・プレ/プロバイオティクス', desc:'皮膚は腸の鏡。内側から整える基本サポート' });
+  if (a.goal === 'show_prep' || a.issues.includes('low_volume') || a.issues.includes('breakage'))
+    sug.push({ tag:'Conditioning', name:'プロテイン・ペプチド', desc:'被毛と体組成の維持・回復をサポート (ショー前期に)' });
+  if (a.issues.includes('low_shine'))
+    sug.push({ tag:'Shine', name:'ビタミンB群・亜鉛', desc:'皮膚代謝と被毛の色冴えをサポート' });
+  if (sug.length === 0) {
+    sug.push(
+      { tag:'Anti-inflammatory', name:'オメガ3 (DHA / EPA)', desc:'被毛と皮膚の健康維持に' },
+      { tag:'Gut Health', name:'乳酸菌・プロバイオティクス', desc:'皮膚は腸の鏡。基本サポート' }
+    );
+  }
+  wrap.innerHTML = sug.slice(0, 4).map(s => `
+    <div class="pp-supp-add-item">
+      <div class="pp-supp-add-item__tag">${s.tag}</div>
+      <div class="pp-supp-add-item__name">${s.name}</div>
+      <div class="pp-supp-add-item__desc">${s.desc}</div>
+    </div>
+  `).join('');
+}
+
+function resetDiagnosis() {
+  document.getElementById('result').classList.remove('is-shown');
+  document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
+  document.querySelectorAll('input[type="radio"]').forEach((r, i) => r.checked = i === 0);
+  document.querySelectorAll('select').forEach(s => {
+    if (!s.dataset.score) s.selectedIndex = 0;
+    else s.selectedIndex = 1;
+  });
+  document.getElementById('dogName').value = '';
+  document.getElementById('showDate').value = '';
+  document.getElementById('showDateField').style.display = 'none';
+  // フォームの先頭へスクロール (Safari古い版対応)
+  smoothScrollTo('top');
+  notifyHeight();
+}
+
+/* iframe height notify */
+function notifyHeight() {
+  if (window.parent !== window) {
+    window.parent.postMessage({
+      type: 'plushpuppy-coat-clinic-height',
+      height: document.body.scrollHeight
+    }, '*');
+  }
+}
+window.addEventListener('load', () => setTimeout(notifyHeight, 200));
+window.addEventListener('resize', notifyHeight);
+new MutationObserver(notifyHeight).observe(document.body, { childList:true, subtree:true });
+</script>
+</body>
+</html>

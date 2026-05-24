@@ -1,0 +1,37 @@
+# ============================================
+# Render.com デプロイ設定 (Infrastructure as Code)
+# ============================================
+# このファイルがリポジトリ直下にあると、Render が
+# サービスを自動構成します。
+# 
+# Renderダッシュボード → "New +" → "Blueprint" →
+# このリポジトリを選択するだけで全てが自動構築されます。
+# ============================================
+
+services:
+  - type: web
+    name: plush-puppy-coat-clinic
+    runtime: static
+    buildCommand: ""           # 静的ファイルのみ、ビルド不要
+    staticPublishPath: .       # リポジトリのルートをそのまま公開
+    pullRequestPreviewsEnabled: true
+    headers:
+      # セキュリティヘッダ
+      - path: /*
+        name: X-Frame-Options
+        value: ALLOWALL        # makeshop からの iframe 埋め込みを許可
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      # CDN キャッシュ (画像・JS等)
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=86400
+    routes:
+      # SPA ではないので不要だが、404 を index.html に倒さない
+      - type: rewrite
+        source: /healthz
+        destination: /index.html

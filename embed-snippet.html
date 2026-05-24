@@ -1,0 +1,61 @@
+<!--
+================================================================
+  プラッシュパピー 被毛診断 - makeshop 埋め込みコード
+================================================================
+
+【設置方法】
+  1. 下の YOUR-RENDER-URL の部分を、実際のRender URLに書き換える
+     (例: https://plush-puppy-coat-clinic.onrender.com)
+
+  2. makeshop 管理画面で:
+     ショップデザイン → フリーページ管理 → ページ追加
+     ページURL: coat-diagnosis (任意)
+     ページ名: 被毛診断
+
+  3. このコード全体を本文入力欄に貼り付け → 保存
+
+  4. 公開URL: https://www.plushpuppyjapan.com/view/page/coat-diagnosis
+
+【動作】
+  - 診断ツール本体は Render から配信されます
+  - 高さは自動調整 (postMessage)
+  - 親サイトのCSS/JSと衝突しません
+
+【URL書き換え箇所】
+  ⚠️ 必ず 2箇所 を書き換えてください:
+     1) iframe の src="..."
+     2) JavaScript の e.origin !== "..."
+
+================================================================
+-->
+
+<div style="max-width:1100px; margin:0 auto; padding:0 16px;">
+  <iframe
+    id="ppCoatClinicFrame"
+    src="https://YOUR-RENDER-URL.onrender.com/index.html"
+    style="width:100%; min-height:1200px; border:0; display:block;"
+    title="プラッシュパピー 被毛診断"
+    loading="lazy"
+    scrolling="no"
+    allowfullscreen></iframe>
+</div>
+
+<script>
+(function () {
+  var frame = document.getElementById('ppCoatClinicFrame');
+  if (!frame) return;
+
+  window.addEventListener('message', function (e) {
+    // セキュリティ: 信頼できるオリジンからのメッセージのみ受信
+    // ⚠️ ここも実際のRender URLに書き換えてください
+    if (e.origin !== 'https://YOUR-RENDER-URL.onrender.com') return;
+
+    if (e.data && e.data.type === 'plushpuppy-coat-clinic-height') {
+      var h = parseInt(e.data.height, 10);
+      if (h && h > 0) {
+        frame.style.height = (h + 20) + 'px';  // 少し余白を持たせる
+      }
+    }
+  }, false);
+})();
+</script>
