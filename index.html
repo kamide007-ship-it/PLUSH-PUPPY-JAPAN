@@ -781,6 +781,86 @@
     background: var(--pp-navy);
     color: #ffffff;
   }
+
+  /* Care Program summary (販売促進) */
+  .pp-program {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    background: var(--pp-navy-soft);
+    border: 1px solid var(--pp-border-light);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+  }
+  .pp-program__label {
+    font-size: 12px;
+    color: var(--pp-text-light);
+    margin-bottom: 2px;
+  }
+  .pp-program__total {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--pp-navy);
+    font-family: var(--font-en);
+  }
+  .pp-program__note {
+    font-size: 11px;
+    color: var(--pp-text-muted);
+    margin-top: 2px;
+  }
+  .pp-program__cta {
+    background: var(--pp-navy);
+    color: #ffffff;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: var(--radius-pill);
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background 0.2s;
+  }
+  .pp-program__cta:hover { background: var(--pp-navy-dark); }
+
+  /* Uploaded coat photo */
+  .pp-file {
+    display: block;
+    width: 100%;
+    font-size: 13px;
+    color: var(--pp-text-light);
+  }
+  .pp-photo-preview { margin-top: 12px; }
+  .pp-photo-preview img {
+    max-width: 100%;
+    max-height: 240px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--pp-border-light);
+  }
+  .pp-result-photo {
+    text-align: center;
+    margin: 0 0 20px;
+  }
+  .pp-result-photo img {
+    max-width: 100%;
+    max-height: 320px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--pp-border-light);
+  }
+  .pp-result-photo__cap {
+    display: block;
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--pp-text-muted);
+    letter-spacing: 0.1em;
+  }
+  .pp-chart-compare {
+    text-align: center;
+    font-size: 12px;
+    color: var(--pp-text-light);
+    margin-top: 6px;
+  }
   .pp-assessment__lead {
     font-size: 14px;
     line-height: 1.9;
@@ -1956,6 +2036,13 @@
           </select>
         </div>
       </div>
+
+      <div class="pp-field" style="margin-top:22px;">
+        <label class="pp-field__label">コートの写真 <span class="pp-field__label-en">Coat Photo（任意）</span></label>
+        <input type="file" id="coatPhoto" accept="image/*" class="pp-file" onchange="handlePhoto(event)">
+        <div id="coatPhotoPreview" class="pp-photo-preview" style="display:none;"></div>
+        <p class="pp-panel__hint" style="margin-top:6px;">アップすると診断レポートに添付されます。画像は端末内で処理され、サーバーへ送信されません。</p>
+      </div>
     </div>
 
     <!-- セクション 03 目的 -->
@@ -2029,10 +2116,13 @@
         <p class="pp-result__date" id="resultDate"></p>
       </div>
 
+      <div id="resultPhoto" class="pp-result-photo" style="display:none;"></div>
+
       <div class="pp-chart-wrap">
         <canvas id="radar"></canvas>
       </div>
       <p class="pp-chart-legend">Current Condition Assessment</p>
+      <p class="pp-chart-compare" id="radarCompare" style="display:none;"></p>
 
       <div class="pp-summary">
         <div class="pp-summary__item">
@@ -2064,6 +2154,7 @@
         <div class="pp-section-title__en">Recommended Products</div>
         <div class="pp-section-title__jp">あなたの愛犬専用ケアプログラム</div>
       </div>
+      <div id="programSummary"></div>
       <div class="pp-products" id="productList"></div>
     </div>
 
@@ -2226,6 +2317,7 @@
     <!-- Actions -->
     <div class="pp-result__actions">
       <button class="pp-btn pp-btn--ghost" onclick="resetDiagnosis()">もう一度診断する</button>
+      <button class="pp-btn pp-btn--ghost" onclick="shareReport()">結果を共有</button>
       <button class="pp-btn pp-btn--primary" onclick="window.print()">レポートを印刷 / PDF保存</button>
     </div>
 
@@ -2699,7 +2791,11 @@ function runDiagnosis() {
   }
 
   state.coat = coat;
-  drawRadar(computeRadarScores(a));
+  const radar = computeRadarScores(a);
+  const prev = findPrevious(a.name);
+  drawRadar(radar, prev);
+  renderCompareNote(prev);
+  renderResultPhoto();
 
   renderAssessment(a, coat);
 
@@ -2711,6 +2807,15 @@ function runDiagnosis() {
     ...pickByCat(scored, 'brush', 1),       // ブラシ1点
   ];
   renderProducts(picks);
+  renderProgramSummary(picks);
+
+  // 今回の結果を履歴へ保存 (次回の比較用)
+  saveHistory({
+    date: new Date().toISOString().slice(0, 10),
+    name: a.name,
+    coatLabel: COAT_LABEL[coat] || '',
+    radar: radar
+  });
 
   if (a.goal === 'show_prep') {
     document.getElementById('showScheduleSection').style.display = 'block';
@@ -2817,7 +2922,7 @@ function computeRadarScores(a) {
   };
 }
 
-function drawRadar(r) {
+function drawRadar(r, prev) {
   // Chart.js が読み込めなかった場合のフォールバック
   if (typeof Chart === 'undefined') {
     const wrap = document.querySelector('.pp-chart-wrap');
@@ -2837,31 +2942,48 @@ function drawRadar(r) {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (radarChart) radarChart.destroy();
+    const datasets = [{
+      label: '今回',
+      data: [r.shine, r.density, r.moisture, r.elasticity, r.volume, r.durability],
+      backgroundColor: 'rgba(67, 86, 159, 0.15)',
+      borderColor: '#43569f',
+      borderWidth: 2.5,
+      pointBackgroundColor: '#ef9a11',
+      pointBorderColor: '#fff',
+      pointBorderWidth: 2,
+      pointRadius: 5,
+      pointHoverRadius: 7
+    }];
+    if (prev && prev.radar) {
+      const pr = prev.radar;
+      datasets.push({
+        label: '前回',
+        data: [pr.shine, pr.density, pr.moisture, pr.elasticity, pr.volume, pr.durability],
+        backgroundColor: 'transparent',
+        borderColor: '#b8bcc9',
+        borderWidth: 1.5,
+        borderDash: [5, 4],
+        pointBackgroundColor: '#b8bcc9',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 1,
+        pointRadius: 3,
+        pointHoverRadius: 5
+      });
+    }
     radarChart = new Chart(ctx, {
       type: 'radar',
       data: {
         labels: ['艶 Shine', '密度 Density', '水分 Moisture', 'ハリ Elasticity', '毛量 Volume', 'ダメージ少 Durability'],
-        datasets: [{
-          label: '現在のコンディション',
-          data: [r.shine, r.density, r.moisture, r.elasticity, r.volume, r.durability],
-          backgroundColor: 'rgba(67, 86, 159, 0.15)',
-          borderColor: '#43569f',
-          borderWidth: 2.5,
-          pointBackgroundColor: '#ef9a11',
-          pointBorderColor: '#fff',
-          pointBorderWidth: 2,
-          pointRadius: 5,
-          pointHoverRadius: 7
-        }]
+        datasets: datasets
       },
       options: {
         responsive: true,
         maintainAspectRatio: true,
         plugins: {
-          legend: { display: false },
+          legend: { display: !!(prev && prev.radar), position: 'bottom', labels: { font: { size: 11 }, boxWidth: 18 } },
           tooltip: {
             callbacks: {
-              label: c => c.formattedValue + ' / 5'
+              label: c => c.dataset.label + ': ' + c.formattedValue + ' / 5'
             }
           }
         },
@@ -2913,6 +3035,126 @@ function renderProducts(picks) {
     `;
     list.appendChild(card);
   });
+}
+
+/* ケアプログラム合計 (販売促進) */
+function renderProgramSummary(picks) {
+  const el = document.getElementById('programSummary');
+  if (!el) return;
+  const items = picks.filter(p => p && typeof p.price === 'number');
+  if (items.length === 0) { el.style.display = 'none'; el.innerHTML = ''; return; }
+  const total = items.reduce((s, p) => s + p.price, 0);
+  el.style.display = 'block';
+  el.innerHTML =
+    '<div class="pp-program">' +
+      '<div class="pp-program__info">' +
+        '<div class="pp-program__label">このケアプログラム一式（おすすめ ' + items.length + ' 点）</div>' +
+        '<div class="pp-program__total">¥' + total.toLocaleString() + '</div>' +
+        '<div class="pp-program__note">下の各製品から個別にご購入いただけます</div>' +
+      '</div>' +
+      '<a class="pp-program__cta" href="https://www.plushpuppyjapan.com" target="_blank" rel="noopener">Plush Puppy で揃える</a>' +
+    '</div>';
+}
+
+/* コート写真 (任意): 端末内でリサイズしプレビュー。サーバー送信なし */
+function handlePhoto(e) {
+  const file = e.target.files && e.target.files[0];
+  const prev = document.getElementById('coatPhotoPreview');
+  if (!file) { state.photoDataUrl = null; if (prev) { prev.style.display = 'none'; prev.innerHTML = ''; } return; }
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      let { width, height } = img;
+      const max = 900;
+      if (width > max || height > max) {
+        const sc = max / Math.max(width, height);
+        width = Math.round(width * sc); height = Math.round(height * sc);
+      }
+      let dataUrl;
+      try {
+        const c = document.createElement('canvas');
+        c.width = width; c.height = height;
+        c.getContext('2d').drawImage(img, 0, 0, width, height);
+        dataUrl = c.toDataURL('image/jpeg', 0.82);
+      } catch (err) { dataUrl = ev.target.result; }
+      state.photoDataUrl = dataUrl;
+      if (prev) { prev.style.display = 'block'; prev.innerHTML = '<img src="' + dataUrl + '" alt="コート写真プレビュー">'; }
+      notifyHeight();
+    };
+    img.onerror = () => {
+      state.photoDataUrl = ev.target.result;
+      if (prev) { prev.style.display = 'block'; prev.innerHTML = '<img src="' + ev.target.result + '" alt="コート写真プレビュー">'; }
+      notifyHeight();
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function renderResultPhoto() {
+  const el = document.getElementById('resultPhoto');
+  if (!el) return;
+  if (state.photoDataUrl) {
+    el.style.display = 'block';
+    el.innerHTML = '<img src="' + state.photoDataUrl + '" alt="アップロードされたコート写真">' +
+      '<span class="pp-result-photo__cap">ご提供のコート写真</span>';
+  } else {
+    el.style.display = 'none';
+    el.innerHTML = '';
+  }
+}
+
+/* 経過トラッキング: localStorage に診断履歴を保存し、前回レーダーを重ねる */
+const HISTORY_KEY = 'ppCoatClinicHistoryV1';
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; }
+  catch (e) { return []; }
+}
+function saveHistory(rec) {
+  try {
+    const h = loadHistory();
+    h.push(rec);
+    while (h.length > 20) h.shift();
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(h));
+  } catch (e) { /* localStorage 不可時はスキップ */ }
+}
+function findPrevious(name) {
+  const h = loadHistory();
+  for (let i = h.length - 1; i >= 0; i--) {
+    if (!name || name === '愛犬' || h[i].name === name) return h[i];
+  }
+  return null;
+}
+function renderCompareNote(prev) {
+  const el = document.getElementById('radarCompare');
+  if (!el) return;
+  if (prev && prev.date) {
+    el.style.display = 'block';
+    el.textContent = '前回（' + prev.date + '）の結果を点線で重ねて表示しています';
+  } else {
+    el.style.display = 'none';
+    el.textContent = '';
+  }
+}
+
+/* 結果の共有 */
+function shareReport() {
+  const name = (state.answers && state.answers.name) || '愛犬';
+  const shareData = {
+    title: 'Coat Diagnosis Result',
+    text: name + 'のコート診断結果 — Plush Puppy コートクリニック',
+    url: location.href
+  };
+  if (navigator.share) {
+    navigator.share(shareData).catch(() => {});
+  } else if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(location.href)
+      .then(() => alert('診断ページのリンクをコピーしました。'))
+      .catch(() => alert(location.href));
+  } else {
+    alert(location.href);
+  }
 }
 
 function renderSchedule(showDateStr) {
@@ -3272,6 +3514,12 @@ function resetDiagnosis() {
   document.getElementById('dogName').value = '';
   document.getElementById('showDate').value = '';
   document.getElementById('showDateField').style.display = 'none';
+  // コート写真をクリア
+  const photoInput = document.getElementById('coatPhoto');
+  if (photoInput) photoInput.value = '';
+  const photoPrev = document.getElementById('coatPhotoPreview');
+  if (photoPrev) { photoPrev.style.display = 'none'; photoPrev.innerHTML = ''; }
+  state.photoDataUrl = null;
   // フォームの先頭へスクロール (Safari古い版対応)
   smoothScrollTo('top');
   notifyHeight();
