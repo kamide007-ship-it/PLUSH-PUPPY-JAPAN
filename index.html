@@ -1102,15 +1102,60 @@
   }
   .pp-supp-additional {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
     margin-bottom: 32px;
   }
   .pp-supp-add-item {
+    display: flex;
+    flex-direction: column;
     background: var(--pp-bg-soft);
-    padding: 14px 16px;
+    padding: 14px 16px 16px;
     border-radius: var(--radius-sm);
     border: 1px solid var(--pp-border-light);
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+  }
+  .pp-supp-add-item:hover {
+    border-color: var(--pp-orange);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+  .pp-supp-add-item__image-wrap {
+    width: 100%;
+    position: relative;
+    padding-top: 100%;
+    background: #ffffff;
+    border-radius: var(--radius-sm);
+    margin-bottom: 12px;
+    overflow: hidden;
+    border: 1px solid var(--pp-border-light);
+  }
+  .pp-supp-add-item__image-wrap.is-fallback {
+    background: var(--pp-bg-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--pp-text-muted);
+    font-family: var(--font-en);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .pp-supp-add-item__image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 8px;
+    background: white;
+    transition: transform 0.3s;
+  }
+  .pp-supp-add-item:hover .pp-supp-add-item__image {
+    transform: scale(1.05);
   }
   .pp-supp-add-item__tag {
     font-family: var(--font-en);
@@ -1131,6 +1176,23 @@
     font-size: 12px;
     color: var(--pp-text-light);
     line-height: 1.6;
+    margin-bottom: 12px;
+  }
+  .pp-supp-add-item__cta {
+    margin-top: auto;
+    display: block;
+    text-align: center;
+    background: var(--pp-navy);
+    color: #ffffff;
+    padding: 10px;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-jp);
+    font-size: 13px;
+    font-weight: 500;
+    transition: background 0.2s;
+  }
+  .pp-supp-add-item:hover .pp-supp-add-item__cta {
+    background: var(--pp-navy-dark);
   }
 
   /* ============================================
@@ -1968,7 +2030,7 @@
       </div>
 
       <!-- 補足成分 -->
-      <h5 class="pp-supp-sub-title">愛犬の状態に応じた追加サポート成分</h5>
+      <h5 class="pp-supp-sub-title">愛犬の状態に応じた追加サポート（CanineVet）</h5>
       <div class="pp-supp-additional" id="supplementIngredients"></div>
 
       <!-- 大型バナー -->
@@ -2703,31 +2765,58 @@ function renderSchedule(showDateStr) {
   wrap.innerHTML = html;
 }
 
+/* 愛犬の状態に応じた追加サポート (CanineVet 実商品)
+   診断結果 (issues / goal) に合致する商品を購入カードで提示 */
+const CV_ADDONS = [
+  {
+    tag: 'Conditioning',
+    name: 'プロテイン (Canine Vet Protain)',
+    desc: '良質なタンパク質・アミノ酸を補給。被毛のコンディションと体組成の維持・回復に。',
+    url: 'https://www.caninevet.jp/canineサプリメント/canine-vet-protain/',
+    image: 'https://image.jimcdn.com/app/cms/image/transf/dimension=480x10000:format=jpg/path/s23b9aba54a40d6b8/image/ic552ef77dded87a9/version/1745062116/image.jpg',
+    triggers: ['show_prep', 'low_volume', 'breakage']
+  },
+  {
+    tag: 'Gut Health',
+    name: '乳酸菌 (Prebiotics & Probiotics & サイリウム)',
+    desc: '皮膚は腸の鏡。乳酸菌とサイリウムで腸内環境を整え、内側から皮膚・被毛をサポート。',
+    url: 'https://www.caninevet.jp/canineサプリメント/prebiotics-probiotocs-サイリウム/',
+    image: 'https://image.jimcdn.com/app/cms/image/transf/dimension=480x10000:format=jpg/path/s23b9aba54a40d6b8/image/i28dd4fd4f4999e6b/version/1745062234/image.jpg',
+    triggers: ['oily', 'sensitive_skin', 'shedding']
+  },
+  {
+    tag: 'Lipid & Nutrition',
+    name: '脂質・栄養補給 (カミデミルク)',
+    desc: '被毛の材料となる脂質や栄養を補給。乾燥・パサつき・艶不足が気になる被毛の栄養サポートに。',
+    url: 'https://www.caninevet.jp/canineサプリメント/カミデミルク-1kg/',
+    image: 'https://image.jimcdn.com/app/cms/image/transf/dimension=480x10000:format=jpg/path/s23b9aba54a40d6b8/image/ic462b96b63474ce0/version/1745062413/image.jpg',
+    triggers: ['low_moisture', 'breakage', 'low_shine']
+  }
+];
+
 function renderSupplements(a) {
   const wrap = document.getElementById('supplementIngredients');
-  const sug = [];
-  if (a.issues.includes('sensitive_skin') || a.issues.includes('low_moisture'))
-    sug.push({ tag:'Skin Barrier', name:'セラミド・オリゴノール', desc:'皮膚のうるおいとバリア機能をサポート' });
-  if (a.issues.includes('shedding') || a.issues.includes('sensitive_skin') || a.issues.includes('breakage'))
-    sug.push({ tag:'Anti-inflammatory', name:'オメガ3 (DHA / EPA)', desc:'被毛と皮膚の健康維持に欠かせない必須脂肪酸' });
-  if (a.issues.includes('oily') || a.issues.includes('sensitive_skin') || a.issues.includes('shedding'))
-    sug.push({ tag:'Gut Health', name:'乳酸菌・プレ/プロバイオティクス', desc:'皮膚は腸の鏡。内側から整える基本サポート' });
-  if (a.goal === 'show_prep' || a.issues.includes('low_volume') || a.issues.includes('breakage'))
-    sug.push({ tag:'Conditioning', name:'プロテイン・ペプチド', desc:'被毛と体組成の維持・回復をサポート (ショー前期に)' });
-  if (a.issues.includes('low_shine'))
-    sug.push({ tag:'Shine', name:'ビタミンB群・亜鉛', desc:'皮膚代謝と被毛の色冴えをサポート' });
-  if (sug.length === 0) {
-    sug.push(
-      { tag:'Anti-inflammatory', name:'オメガ3 (DHA / EPA)', desc:'被毛と皮膚の健康維持に' },
-      { tag:'Gut Health', name:'乳酸菌・プロバイオティクス', desc:'皮膚は腸の鏡。基本サポート' }
-    );
+  let picks = CV_ADDONS.filter(p =>
+    p.triggers.some(t => a.issues.includes(t) || a.goal === t)
+  );
+  // 該当なし時は基本サポート2点を提示
+  if (picks.length === 0) {
+    picks = [CV_ADDONS[0], CV_ADDONS[1]];
   }
-  wrap.innerHTML = sug.slice(0, 4).map(s => `
-    <div class="pp-supp-add-item">
-      <div class="pp-supp-add-item__tag">${s.tag}</div>
-      <div class="pp-supp-add-item__name">${s.name}</div>
-      <div class="pp-supp-add-item__desc">${s.desc}</div>
-    </div>
+  wrap.innerHTML = picks.map(p => `
+    <a class="pp-supp-add-item" href="${p.url}" target="_blank" rel="noopener">
+      <div class="pp-supp-add-item__image-wrap">
+        <img class="pp-supp-add-item__image"
+             src="${p.image}"
+             alt="${p.name}"
+             loading="lazy"
+             onerror="this.onerror=null;this.parentNode.classList.add('is-fallback');this.replaceWith(Object.assign(document.createElement('span'),{textContent:'${p.tag}'}));">
+      </div>
+      <div class="pp-supp-add-item__tag">${p.tag}</div>
+      <div class="pp-supp-add-item__name">${p.name}</div>
+      <div class="pp-supp-add-item__desc">${p.desc}</div>
+      <span class="pp-supp-add-item__cta">CanineVet で購入する</span>
+    </a>
   `).join('');
 }
 
