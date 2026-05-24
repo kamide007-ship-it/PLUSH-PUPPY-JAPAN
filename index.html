@@ -885,6 +885,54 @@
     background: rgba(239, 154, 17, 0.15);
     color: var(--pp-orange);
   }
+  .pp-assessment__fix-head {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--pp-text-light);
+    margin: 6px 0 8px;
+  }
+  .pp-assessment__fix-head > b {
+    display: inline-block;
+    min-width: 2.8em;
+    margin-right: 0.6em;
+    font-size: 10px;
+    font-weight: 700;
+    text-align: center;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(239, 154, 17, 0.15);
+    color: var(--pp-orange);
+    vertical-align: 1px;
+  }
+  .pp-assessment__layers {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .pp-layer {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .pp-layer__tag {
+    flex-shrink: 0;
+    width: 3em;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    padding: 3px 0;
+    border-radius: 4px;
+    margin-top: 1px;
+  }
+  .pp-layer__tag--topical { background: #43569f; }
+  .pp-layer__tag--internal { background: #2f9e7e; }
+  .pp-layer__tag--environment { background: #b07a2e; }
+  .pp-layer__txt {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--pp-text-light);
+  }
   .pp-assessment__note {
     margin-top: 18px;
     font-size: 12px;
@@ -2793,6 +2841,8 @@ function scoreProducts(a) {
     s += cScore;
     // 黒・濃色専用ボーナス
     if (isBlackCoat && p.coats.includes('black_coat')) s += 4;
+    // 非ショー目的では、ショー専用色の強い仕上げ材(日常用途なし)を抑制
+    if (a.goal !== 'show_prep' && p.matches.includes('show_prep') && !p.matches.includes('daily')) s -= 3;
     return { ...p, _s: s, _coat: cScore };
   }).sort((x, y) => (y._s - x._s) || (y._coat - x._coat));
 }
@@ -3271,8 +3321,12 @@ const ISSUE_INSIGHT = {
       gentle: 'つやは毛の表面が整って光を返すことで生まれます。表面が乱れたり、うるおいが足りないとくすんで見えます。'
     },
     fix: {
-      detailed: 'シルクプロテイン等でキューティクルを補修・整え、内側からはタンパク質・脂質の栄養補給で毛質そのものを底上げします。',
-      gentle: 'シルクプロテイン入りのケアで表面を整え、栄養もプラスして毛そのものを元気にしてあげましょう。'
+      gentle: 'シルクプロテイン入りのケアで表面を整え、栄養もプラスして毛そのものを元気にしてあげましょう。',
+      layers: {
+        topical: 'シルクプロテイン配合コンディショナーでキューティクルを補修・整え、光の反射を回復。仕上げに艶出し。',
+        internal: 'タンパク質(アミノ酸)・亜鉛・抗酸化で毛質と色冴えを底上げ。',
+        environment: 'ドライヤーの高温・紫外線・摩擦を避け、キューティクル損傷を防ぐ。'
+      }
     }
   },
   low_moisture: {
@@ -3281,8 +3335,12 @@ const ISSUE_INSIGHT = {
       gentle: '犬の肌は人より薄くデリケート。うるおいが逃げると毛がパサついてしまいます。'
     },
     fix: {
-      detailed: '保湿系コンディショナーと脂質・栄養の内側補給で、水分と脂質の両面から保湿バリアを立て直します。',
-      gentle: '保湿コンディショナーと栄養補給で、水分と油分の両方をおぎなってあげましょう。'
+      gentle: '保湿コンディショナーと栄養補給で、水分と油分の両方をおぎなってあげましょう。',
+      layers: {
+        topical: '保湿系コンディショナー・リーブインで水分と角層脂質(セラミド等)を補い、経表皮水分蒸散(TEWL)を抑制。',
+        internal: '必須脂肪酸(オメガ3)・脂質・栄養でバリア脂質を内側から供給。',
+        environment: '低湿度・暖房・洗いすぎ(高頻度/熱湯)など乾燥要因を減らす。'
+      }
     }
   },
   oily: {
@@ -3291,8 +3349,12 @@ const ISSUE_INSIGHT = {
       gentle: 'ベタつきは皮脂が多いだけでなく、皮膚のバリアがゆらいでいるサインのことがあります。バリアが弱ると、それを補おうとして余計に皮脂が出てしまいます。'
     },
     fix: {
-      detailed: '余分な皮脂・酸化物はディープクレンジングでやさしくリセットしますが、洗いすぎは角層脂質まで奪いバリアを壊して皮脂の過剰分泌を招くため逆効果です。病態生理上、洗浄後は必ず保湿でバリアを補い、腸内環境・必須脂肪酸など内側のケアで皮膚環境を立て直すことが要点です。',
-      gentle: 'すっきり洗いつつ、洗いすぎは禁物。最後は必ず保湿でバリアを守り、腸活や栄養で内側から整えるのが大切です。'
+      gentle: 'すっきり洗いつつ、洗いすぎは禁物。最後は必ず保湿でバリアを守り、腸活や栄養で内側から整えるのが大切です。',
+      layers: {
+        topical: 'ディープクレンジングで余分な皮脂・酸化物をやさしく除去 → その後は必ず保湿でバリアを補う(脱脂のしすぎは代償性の皮脂過剰を招くため厳禁)。',
+        internal: '腸内環境(乳酸菌)・必須脂肪酸でバリアと皮脂バランスを内側から是正。',
+        environment: '高頻度・強洗浄を避け、湿潤・高温やアレルゲンなど悪化要因を管理。'
+      }
     }
   },
   breakage: {
@@ -3301,8 +3363,12 @@ const ISSUE_INSIGHT = {
       gentle: '毛が乾燥や摩擦で弱って、途中で切れています。細い毛ほど切れやすいです。'
     },
     fix: {
-      detailed: 'ダメージ補修トリートメントで毛の強度を回復し、ブラッシングは必ず保湿してから。内側からタンパク質・抗酸化を補給します。',
-      gentle: '補修トリートメントで毛を強くし、ブラッシングは必ず保湿してからやさしく行いましょう。'
+      gentle: '補修トリートメントで毛を強くし、ブラッシングは必ず保湿してからやさしく行いましょう。',
+      layers: {
+        topical: 'プロテイン補修トリートメントで毛の強度を回復し、保湿してからブラッシング。毛先はオイル/バームで保護。',
+        internal: 'タンパク質・抗酸化を補給し、毛そのものを内側から強化。',
+        environment: '摩擦・乾燥ブラッシング・紫外線・高温ドライを避ける。'
+      }
     }
   },
   matting: {
@@ -3311,8 +3377,11 @@ const ISSUE_INSIGHT = {
       gentle: '細い毛や下毛が絡んで毛玉になっています。巻き毛タイプは特に絡みやすいです。'
     },
     fix: {
-      detailed: 'ブラッシング前にデタングルスプレーで滑りを与え、毛先から少しずつ。短毛種以外は日々のコーミングが必須です。',
-      gentle: 'ブラッシング前にスプレーで毛をすべりやすくして、毛先から少しずつほどきましょう。'
+      gentle: 'ブラッシング前にスプレーで毛をすべりやすくして、毛先から少しずつほどきましょう。',
+      layers: {
+        topical: 'デタングルスプレーで滑りと保湿を与え、毛先から少しずつ解く(乾燥は摩擦を高め毛玉化を促進)。',
+        environment: '短毛種以外は日々のコーミングを習慣化し、濡れたまま放置しない。'
+      }
     }
   },
   low_volume: {
@@ -3321,8 +3390,12 @@ const ISSUE_INSIGHT = {
       gentle: '毛の太さや立ち上がりが足りず、ボリュームが出にくくなっています。'
     },
     fix: {
-      detailed: 'ボリューム系シャンプー・仕上げ材で立ち上がりを作り、タンパク質補給で毛そのものを充実させます。',
-      gentle: 'ボリューム系のケアで立ち上がりを作り、栄養補給で毛にハリを出しましょう。'
+      gentle: 'ボリューム系のケアで立ち上がりを作り、栄養補給で毛にハリを出しましょう。',
+      layers: {
+        topical: 'ボリューム系シャンプー/仕上げ材で立ち上がりとハリを演出。',
+        internal: 'タンパク質・ペプチド補給で毛の充実(毛量・コシ)を内側から支援。',
+        environment: '重い仕上げ材の付けすぎを避け、根元を寝かせない。'
+      }
     }
   },
   static: {
@@ -3331,8 +3404,11 @@ const ISSUE_INSIGHT = {
       gentle: '乾燥で静電気が起き、毛が広がったり絡んだりしています。'
     },
     fix: {
-      detailed: '保湿と帯電防止仕上げ材で表面の水分・コーティングを補い、帯電を抑えます。',
-      gentle: '保湿と静電気防止のスプレーで、表面をうるおして広がりを抑えましょう。'
+      gentle: '保湿と静電気防止のスプレーで、表面をうるおして広がりを抑えましょう。',
+      layers: {
+        topical: '保湿と帯電防止仕上げ材で表面の水分・コーティングを補い帯電を抑制。',
+        environment: '低湿度を避け加湿し、化繊との摩擦を減らす。'
+      }
     }
   },
   yellowing: {
@@ -3341,8 +3417,12 @@ const ISSUE_INSIGHT = {
       gentle: '白い毛のくすみは、酸化や涙やけ、汚れの蓄積が原因です。'
     },
     fix: {
-      detailed: 'ホワイトニング系で色冴えを引き出し、抗酸化の内側ケアでくすみの再発を抑えます。',
-      gentle: 'ホワイトニングケアで白さを引き出し、抗酸化の栄養でくすみ予防をしましょう。'
+      gentle: 'ホワイトニングケアで白さを引き出し、抗酸化の栄養でくすみ予防をしましょう。',
+      layers: {
+        topical: 'ホワイトニング系で色素・汚れの沈着を除き、色冴えを回復。',
+        internal: '抗酸化(アスタキサンチン・ビタミンE)で酸化によるくすみを抑制。',
+        environment: '涙やけ・よだれ・環境汚れの付着源を管理(目元・口周りの清拭)。'
+      }
     }
   },
   sensitive_skin: {
@@ -3351,8 +3431,12 @@ const ISSUE_INSIGHT = {
       gentle: '犬の肌は人より薄くデリケートで、刺激に弱くかゆみや赤みが出やすい状態です。'
     },
     fix: {
-      detailed: '低刺激処方の犬用シャンプー(人用は不可)でやさしく洗い、腸内環境・必須脂肪酸で皮膚バリアを内側から支えます。',
-      gentle: '低刺激の犬用シャンプーでやさしく洗い、腸内環境や栄養で肌を内側から支えましょう。'
+      gentle: '低刺激の犬用シャンプーでやさしく洗い、腸内環境や栄養で肌を内側から支えましょう。',
+      layers: {
+        topical: '低刺激・犬用pHのシャンプーでやさしく洗い、保湿でバリアを補強(人用は不可)。',
+        internal: '必須脂肪酸(オメガ3)・腸内環境でバリアと抗炎症を内側から支援。',
+        environment: 'アレルゲン・洗いすぎ・高温など刺激要因を減らす。'
+      }
     }
   },
   shedding: {
@@ -3361,8 +3445,12 @@ const ISSUE_INSIGHT = {
       gentle: '季節の変わり目で下毛がたくさん抜けています。抜け毛をためると肌トラブルのもとに。'
     },
     fix: {
-      detailed: 'ディープクレンジングと適切なブラッシングで死毛を除去し、皮膚の通気と清潔を保ちます。',
-      gentle: 'すっきり洗うケアとブラッシングで抜け毛を取り除き、肌を清潔に保ちましょう。'
+      gentle: 'すっきり洗うケアとブラッシングで抜け毛を取り除き、肌を清潔に保ちましょう。',
+      layers: {
+        topical: 'ディープクレンジングと適切なブラッシングで死毛(アンダーコート)を除去。',
+        internal: '必須脂肪酸・栄養で皮膚と新生毛の健康を支える。',
+        environment: '換毛期は通気・清潔を保ち、抜け毛をためない。'
+      }
     }
   },
   soft_coat: {
@@ -3371,8 +3459,11 @@ const ISSUE_INSIGHT = {
       gentle: '本来硬いはずの毛がやわらかくなり、質感が落ちています。'
     },
     fix: {
-      detailed: 'テクスチャ系シャンプーで本来の硬さを取り戻し、柔軟剤の使用は控えめにします。',
-      gentle: 'テクスチャ系シャンプーで本来の硬さを取り戻し、柔軟剤は控えめにしましょう。'
+      gentle: 'テクスチャ系シャンプーで本来の硬さを取り戻し、柔軟剤は控えめにしましょう。',
+      layers: {
+        topical: 'テクスチャ系シャンプーで本来の硬さを取り戻し、柔軟剤の使用は控える。',
+        environment: '過度なコンディショニング/ソフナーを避け、必要に応じプラッキングで質感を維持。'
+      }
     }
   }
 };
@@ -3441,6 +3532,23 @@ const AGE_NOTE = {
     gentle: '歳を重ねると肌が乾燥しやすく、ツヤも出にくくなります。抗酸化と栄養のサプリに加え、やさしく保湿できるシャンプー選びが大切です。'
   }
 };
+
+/* 改善策をエビデンス階層 (外用→内用→環境) で表示 */
+function renderCareLayers(layers) {
+  const order = [['topical', '外用'], ['internal', '内用'], ['environment', '環境']];
+  let h = '<div class="pp-assessment__layers">';
+  order.forEach(pair => {
+    const key = pair[0], label = pair[1];
+    if (layers[key]) {
+      h += '<div class="pp-layer">' +
+        '<span class="pp-layer__tag pp-layer__tag--' + key + '">' + label + '</span>' +
+        '<span class="pp-layer__txt">' + layers[key] + '</span>' +
+        '</div>';
+    }
+  });
+  h += '</div>';
+  return h;
+}
 
 function setAssessmentTone(tone) {
   state.tone = (tone === 'detailed') ? 'detailed' : 'gentle';
@@ -3519,10 +3627,14 @@ function renderAssessment(a, coat) {
     html += '<div class="pp-assessment__concerns">';
     concerns.forEach(c => {
       const ins = ISSUE_INSIGHT[c.key];
+      // くわしく: 改善をエビデンス階層(外用→内用→環境)で提示 / やさしく: 一文
+      const fixHtml = (tone === 'detailed' && ins.fix.layers)
+        ? '<div class="pp-assessment__fix-head"><b>改善</b>エビデンス階層で対応</div>' + renderCareLayers(ins.fix.layers)
+        : '<p class="pp-assessment__fix"><b>改善</b>' + ins.fix.gentle + '</p>';
       html += '<div class="pp-assessment__concern">' +
         '<div class="pp-assessment__concern-label">' + escapeHtml(c.label) + '</div>' +
         '<p class="pp-assessment__obs"><b>考察</b>' + ins.obs[tone] + '</p>' +
-        '<p class="pp-assessment__fix"><b>改善</b>' + ins.fix[tone] + '</p>' +
+        fixHtml +
         '</div>';
     });
     html += '</div>';
