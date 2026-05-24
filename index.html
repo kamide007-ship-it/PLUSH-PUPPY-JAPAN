@@ -928,10 +928,26 @@
   .pp-layer__tag--topical { background: #43569f; }
   .pp-layer__tag--internal { background: #2f9e7e; }
   .pp-layer__tag--environment { background: #b07a2e; }
+  .pp-layer__body {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
   .pp-layer__txt {
     font-size: 13px;
     line-height: 1.7;
     color: var(--pp-text-light);
+  }
+  .pp-layer__ev {
+    align-self: flex-start;
+    font-size: 11px;
+    color: var(--pp-text-muted);
+    background: var(--pp-bg-soft);
+    border: 1px solid var(--pp-border-light);
+    border-radius: 4px;
+    padding: 1px 8px;
+    letter-spacing: 0.02em;
+    cursor: help;
   }
   .pp-assessment__note {
     margin-top: 18px;
@@ -3533,18 +3549,78 @@ const AGE_NOTE = {
   }
 };
 
-/* 改善策をエビデンス階層 (外用→内用→環境) で表示 */
-function renderCareLayers(layers) {
+/* 各層の簡潔な根拠 (機序・用語)。ツールチップ＋注記でエビデンス性を可視化 */
+const CARE_EVIDENCE = {
+  low_shine: {
+    topical: 'キューティクル整列＝光の反射',
+    internal: 'ケラチン合成（含硫アミノ酸・亜鉛）',
+    environment: '熱・紫外線・摩擦によるキューティクル損傷'
+  },
+  low_moisture: {
+    topical: '角層細胞間脂質＝セラミド／TEWL抑制',
+    internal: '必須脂肪酸→バリア脂質の供給',
+    environment: '低湿度・過洗浄でTEWL亢進'
+  },
+  oily: {
+    topical: '過脱脂→代償性の皮脂過剰',
+    internal: '腸-皮膚軸／必須脂肪酸',
+    environment: 'マラセチア等の常在菌・高温多湿'
+  },
+  breakage: {
+    topical: '毛幹ケラチン／ジスルフィド結合の補修',
+    internal: 'タンパク質・抗酸化（酸化的損傷の抑制）',
+    environment: '機械的・紫外線・熱ストレス'
+  },
+  matting: {
+    topical: '保湿で摩擦低減（乾燥は毛玉化を促進）',
+    environment: '定期コーミング／濡れ放置の回避'
+  },
+  low_volume: {
+    topical: '毛の立ち上がり・コシの付与',
+    internal: '毛周期・毛幹の充実（タンパク質）',
+    environment: '重い被膜で根元が寝るのを回避'
+  },
+  static: {
+    topical: '帯電防止（摩擦電気の抑制）',
+    environment: '低湿度で帯電が亢進'
+  },
+  yellowing: {
+    topical: 'ポルフィリン・環境色素の除去',
+    internal: '抗酸化（酸化的な黄変の抑制）',
+    environment: '涙・唾液（ポルフィリン）由来の付着'
+  },
+  sensitive_skin: {
+    topical: '犬の皮膚pH（中性〜弱アルカリ）・バリア保護',
+    internal: 'オメガ3（抗炎症）／腸-皮膚軸',
+    environment: 'アレルゲン・過洗浄・高温の回避'
+  },
+  shedding: {
+    topical: '毛周期（テロジェン）同期の死毛除去',
+    internal: '皮膚・新生毛への栄養',
+    environment: '通気・清潔の維持'
+  },
+  soft_coat: {
+    topical: 'ハーシュコート本来の質感維持',
+    environment: '過コンディショニング回避／プラッキング'
+  }
+};
+
+/* 改善策をエビデンス階層 (外用→内用→環境) ＋ 各層の根拠注記で表示 */
+function renderCareLayers(layers, issueKey) {
+  const ev = CARE_EVIDENCE[issueKey] || {};
   const order = [['topical', '外用'], ['internal', '内用'], ['environment', '環境']];
   let h = '<div class="pp-assessment__layers">';
   order.forEach(pair => {
     const key = pair[0], label = pair[1];
-    if (layers[key]) {
-      h += '<div class="pp-layer">' +
-        '<span class="pp-layer__tag pp-layer__tag--' + key + '">' + label + '</span>' +
+    if (!layers[key]) return;
+    const basis = ev[key] || '';
+    h += '<div class="pp-layer">' +
+      '<span class="pp-layer__tag pp-layer__tag--' + key + '">' + label + '</span>' +
+      '<span class="pp-layer__body">' +
         '<span class="pp-layer__txt">' + layers[key] + '</span>' +
-        '</div>';
-    }
+        (basis ? '<span class="pp-layer__ev" title="根拠・機序">根拠: ' + basis + '</span>' : '') +
+      '</span>' +
+      '</div>';
   });
   h += '</div>';
   return h;
@@ -3629,7 +3705,7 @@ function renderAssessment(a, coat) {
       const ins = ISSUE_INSIGHT[c.key];
       // くわしく: 改善をエビデンス階層(外用→内用→環境)で提示 / やさしく: 一文
       const fixHtml = (tone === 'detailed' && ins.fix.layers)
-        ? '<div class="pp-assessment__fix-head"><b>改善</b>エビデンス階層で対応</div>' + renderCareLayers(ins.fix.layers)
+        ? '<div class="pp-assessment__fix-head"><b>改善</b>エビデンス階層で対応</div>' + renderCareLayers(ins.fix.layers, c.key)
         : '<p class="pp-assessment__fix"><b>改善</b>' + ins.fix.gentle + '</p>';
       html += '<div class="pp-assessment__concern">' +
         '<div class="pp-assessment__concern-label">' + escapeHtml(c.label) + '</div>' +
