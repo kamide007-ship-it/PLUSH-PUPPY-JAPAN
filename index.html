@@ -733,6 +733,88 @@
   }
 
   /* ============================================
+     Condition Assessment (考察 / 改善)
+     ============================================ */
+  .pp-assessment {
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid var(--pp-border-light);
+  }
+  .pp-assessment__head {
+    font-family: var(--font-en);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--pp-orange);
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .pp-assessment__lead {
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--pp-text);
+    margin-bottom: 20px;
+  }
+  .pp-assessment__concerns {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .pp-assessment__concern {
+    background: var(--pp-bg-soft);
+    border: 1px solid var(--pp-border-light);
+    border-left: 3px solid var(--pp-orange);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+  }
+  .pp-assessment__concern-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--pp-navy);
+    margin-bottom: 8px;
+  }
+  .pp-assessment__obs,
+  .pp-assessment__fix {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--pp-text-light);
+    margin: 0;
+    padding-left: 3.4em;
+    text-indent: -3.4em;
+  }
+  .pp-assessment__fix { margin-top: 6px; }
+  .pp-assessment__obs > b,
+  .pp-assessment__fix > b {
+    display: inline-block;
+    width: 2.8em;
+    margin-right: 0.6em;
+    text-indent: 0;
+    font-size: 10px;
+    font-weight: 700;
+    text-align: center;
+    padding: 2px 0;
+    border-radius: 4px;
+    vertical-align: 1px;
+  }
+  .pp-assessment__obs > b {
+    background: var(--pp-navy-soft);
+    color: var(--pp-navy);
+  }
+  .pp-assessment__fix > b {
+    background: rgba(239, 154, 17, 0.15);
+    color: var(--pp-orange);
+  }
+  .pp-assessment__note {
+    margin-top: 18px;
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--pp-text-muted);
+    background: var(--pp-bg-soft);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+  }
+
+  /* ============================================
      Product Cards
      ============================================ */
   .pp-products {
@@ -1940,6 +2022,8 @@
       </div>
 
       <div class="pp-tags" id="resultTags"></div>
+
+      <div class="pp-assessment" id="resultAssessment"></div>
     </div>
 
     <!-- Recommended Products -->
@@ -2584,6 +2668,8 @@ function runDiagnosis() {
 
   drawRadar(a.scores);
 
+  renderAssessment(a, coat);
+
   const scored = scoreProducts(a);
   const picks = [
     ...pickByCat(scored, 'shampoo', 1),     // シャンプー1点
@@ -2763,6 +2849,155 @@ function renderSchedule(showDateStr) {
     `;
   });
   wrap.innerHTML = html;
+}
+
+/* ============================================
+   現状の考察 / 改善の方向性
+   犬のコート解剖特性 (複合毛包・皮膚pH・角層・毛周期) を踏まえた所見
+   ============================================ */
+// コート種別ごとの解剖学的特性メモ (細分化コートは親種に正規化して参照)
+function coatBaseKey(coat) {
+  if (!coat) return 'all';
+  if (coat.indexOf('cotton') === 0) return 'cotton';
+  if (coat.indexOf('harsh') === 0 || coat === 'dachshund_wire') return 'harsh';
+  if (coat === 'silky' || coat === 'dachshund_long' || coat === 'chihuahua_long') return 'silky';
+  if (coat === 'smooth' || coat === 'dachshund_smooth' || coat === 'chihuahua_smooth') return 'smooth';
+  if (coat === 'double') return 'double';
+  if (coat === 'wavy') return 'wavy';
+  return 'all';
+}
+const COAT_ANATOMY = {
+  silky: '上毛(ガードヘア)主体で伸び続ける、人の髪に比較的近いタイプ。キューティクルが整うほど絹のような光沢が出る一方、毛が細くアンダーコートが少ないため、乾燥・静電気・毛切れの影響を受けやすい繊細な被毛です。',
+  cotton: 'カールした単層被毛でアンダーコートが少なく、抜け毛が少ない代わりに伸び続けるタイプ。毛が密に絡みやすく、保湿が不足すると毛玉(マット)になりやすいのが特性で、ふんわりとしたボリュームが見栄えを左右します。',
+  double: '上毛(ガードヘア)と密なアンダーコートからなる二層構造。1つの毛包から複数の毛が生える犬特有の複合毛包が発達し、季節ごとに換毛(シェディング)します。アンダーコートの蓄積や皮脂・汚れの停滞に注意が必要です。',
+  harsh: '硬く張りのある剛毛(ワイヤー)コート。本来のテクスチャと色は定期的なプラッキングで保たれ、柔軟剤で軟らかくしすぎると本来の硬さや防汚性が損なわれます。',
+  wavy: '緩やかな波状の被毛で、ガードヘアに適度なアンダーコートを伴います。耳や脚の飾り毛(フェザリング)が絡みやすく、保湿と毛流れの管理が仕上がりを左右します。',
+  smooth: '短く密着した被毛で、皮脂が全体に行き渡りやすく自然な光沢が出やすいタイプ。被毛が短いぶん、皮膚のコンディションが表面に現れやすいのが特徴です。',
+  all: '犬種・毛色に応じた個体差の大きい被毛です。皮膚と被毛の状態を見ながら、保湿と洗浄のバランスを整えることが基本になります。'
+};
+// 症状ごとの「考察(原因の解剖学的メカニズム)」と「改善の方向性」
+const ISSUE_INSIGHT = {
+  low_shine: {
+    obs: '被毛の光沢は最外層のキューティクルが整い光を均一に反射することで生まれます。キューティクルの乱れや皮脂・水分バランスの低下で反射が散り、艶が失われています。',
+    fix: 'シルクプロテイン等でキューティクルを補修・整え、内側からはタンパク質・脂質の栄養補給で毛質そのものを底上げします。'
+  },
+  low_moisture: {
+    obs: '犬の皮膚は人より角層が薄くバリアが繊細です。細胞間脂質・皮脂の不足やすすぎ残り、乾燥環境で水分が逃げ、被毛がパサつきます。',
+    fix: '保湿系コンディショナーと脂質・栄養の内側補給で、水分と脂質の両面から保湿バリアを立て直します。'
+  },
+  oily: {
+    obs: '皮脂腺からの分泌過多や皮膚常在菌バランスの乱れでベタつき・においが出ています。犬は全身性の発汗がなく皮脂が酸化しやすい点も一因です。',
+    fix: 'ディープクレンジングで余分な皮脂をリセットしつつ、腸内環境(乳酸菌)から皮脂バランスを整えます。洗いすぎは逆効果のため頻度は適切に。'
+  },
+  breakage: {
+    obs: '毛の主成分ケラチンとその結合が、摩擦・乾燥・紫外線で弱り途中で切れています。細い被毛ほど切れやすい傾向です。',
+    fix: 'ダメージ補修トリートメントで毛の強度を回復し、ブラッシングは必ず保湿してから。内側からタンパク質・抗酸化を補給します。'
+  },
+  matting: {
+    obs: 'アンダーコートや細い被毛が絡み合い毛玉(マット)化しています。コットン系など伸び続ける被毛は特に絡みやすい特性です。',
+    fix: 'ブラッシング前にデタングルスプレーで滑りを与え、毛先から少しずつ。短毛種以外は日々のコーミングが必須です。'
+  },
+  low_volume: {
+    obs: '毛量感は毛の太さ・密度・立ち上がりで決まります。栄養不足や毛周期の停滞、コシの低下でボリュームが出にくくなっています。',
+    fix: 'ボリューム系シャンプー・仕上げ材で立ち上がりを作り、タンパク質補給で毛そのものを充実させます。'
+  },
+  static: {
+    obs: '乾燥でキューティクルが帯電し、毛が広がる・絡む状態です。細く長い被毛ほど起きやすくなります。',
+    fix: '保湿と帯電防止仕上げ材で表面の水分・コーティングを補い、帯電を抑えます。'
+  },
+  yellowing: {
+    obs: '白〜淡色被毛のくすみは、酸化・涙やけ・環境汚れの蓄積が主因で、被毛表面への色素や汚れの沈着で起こります。',
+    fix: 'ホワイトニング系で色冴えを引き出し、抗酸化の内側ケアでくすみの再発を抑えます。'
+  },
+  sensitive_skin: {
+    obs: '犬の皮膚はpHが人(弱酸性)より中性〜弱アルカリ寄りで角層が薄く、刺激に弱い構造です。バリア低下でかゆみ・赤みが出やすくなります。',
+    fix: '低刺激処方の犬用シャンプー(人用は不可)でやさしく洗い、腸内環境・必須脂肪酸で皮膚バリアを内側から支えます。'
+  },
+  shedding: {
+    obs: 'ダブルコートは毛周期に沿って季節性に大量換毛します。抜け落ちたアンダーコートが残ると皮膚トラブルの原因になります。',
+    fix: 'ディープクレンジングと適切なブラッシングで死毛を除去し、皮膚の通気と清潔を保ちます。'
+  },
+  soft_coat: {
+    obs: '本来硬いはずのワイヤー/ハーシュコートが軟化し、テクスチャと防汚性が低下しています。過度なコンディショニングが一因のこともあります。',
+    fix: 'テクスチャ系シャンプーで本来の硬さを取り戻し、柔軟剤の使用は控えめにします。'
+  }
+};
+// スコア低下(該当症状が未選択の場合の補完所見)
+const SCORE_INSIGHT = {
+  shine: 'low_shine', moisture: 'low_moisture', density: 'low_volume', elasticity: 'breakage'
+};
+const SCORE_LABEL_JP = { shine: '艶', moisture: '水分', density: '密度・毛量', elasticity: 'ハリ・弾力' };
+
+function renderAssessment(a, coat) {
+  const wrap = document.getElementById('resultAssessment');
+  if (!wrap) return;
+  const base = coatBaseKey(coat);
+  const realIssues = a.issues.filter(i => i !== 'all_good');
+  const scores = a.scores || {};
+  const scoreVals = Object.values(scores).filter(v => !isNaN(v));
+  const avg = scoreVals.length ? scoreVals.reduce((s, v) => s + v, 0) / scoreVals.length : null;
+
+  // 総評リード
+  let overall;
+  if (realIssues.length === 0 && (avg === null || avg >= 4)) {
+    overall = '総じて良好で、美しいコンディションを保てています。';
+  } else if (realIssues.length >= 3 || (avg !== null && avg < 2.5)) {
+    overall = 'いくつかの課題が重なっており、重点的なケアが効果的です。';
+  } else if (realIssues.length <= 1 && (avg === null || avg >= 3.5)) {
+    overall = 'おおむね健やかですが、いくつか伸びしろがあります。';
+  } else {
+    overall = '良い部分と改善したい部分が混在する状態です。';
+  }
+
+  // 考察対象を構築 (症状 + 低スコア補完、重複排除)
+  const seen = {};
+  const concerns = [];
+  realIssues.forEach(i => {
+    if (ISSUE_INSIGHT[i] && !seen[i]) { seen[i] = 1; concerns.push({ key: i, label: ISSUE_LABEL[i] }); }
+  });
+  Object.keys(SCORE_INSIGHT).forEach(sk => {
+    const iss = SCORE_INSIGHT[sk];
+    if (scores[sk] !== undefined && scores[sk] <= 2 && !seen[iss] && ISSUE_INSIGHT[iss]) {
+      seen[iss] = 1;
+      concerns.push({ key: iss, label: ISSUE_LABEL[iss] + '（' + SCORE_LABEL_JP[sk] + 'スコア低め）' });
+    }
+  });
+
+  const leadCoat = COAT_ANATOMY[base] || COAT_ANATOMY.all;
+  let html = '<div class="pp-assessment__head">Condition Assessment / 現状の考察</div>';
+  html += '<p class="pp-assessment__lead"><strong>' + escapeHtml(a.name) + '</strong>の' +
+    escapeHtml(COAT_LABEL[coat] || COAT_LABEL.all) + 'は、' + overall + '<br>' + leadCoat + '</p>';
+
+  if (concerns.length === 0) {
+    html += '<div class="pp-assessment__concerns"><div class="pp-assessment__concern">' +
+      '<div class="pp-assessment__concern-label">良好なコンディション</div>' +
+      '<p class="pp-assessment__obs"><b>考察</b>目立った問題はなく、皮膚・被毛のバランスが保たれています。</p>' +
+      '<p class="pp-assessment__fix"><b>改善</b>基本のシャンプー&コンディショナーと定期的なブラッシングで現状を維持しましょう。</p>' +
+      '</div></div>';
+  } else {
+    html += '<div class="pp-assessment__concerns">';
+    concerns.forEach(c => {
+      const ins = ISSUE_INSIGHT[c.key];
+      html += '<div class="pp-assessment__concern">' +
+        '<div class="pp-assessment__concern-label">' + escapeHtml(c.label) + '</div>' +
+        '<p class="pp-assessment__obs"><b>考察</b>' + ins.obs + '</p>' +
+        '<p class="pp-assessment__fix"><b>改善</b>' + ins.fix + '</p>' +
+        '</div>';
+    });
+    html += '</div>';
+  }
+
+  html += '<p class="pp-assessment__note">※犬の被毛と人の髪は構造が異なります。' +
+    '犬は1つの毛包から複数の毛が生える複合毛包をもち、皮膚のpHは人(弱酸性)より中性〜弱アルカリ寄りで角層も薄め。' +
+    '人用ヘアケア製品はpHや刺激が合わないため、必ず犬用に設計された製品をお使いください。</p>';
+
+  wrap.innerHTML = html;
+}
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 /* 愛犬の状態に応じた追加サポート (CanineVet 実商品)
