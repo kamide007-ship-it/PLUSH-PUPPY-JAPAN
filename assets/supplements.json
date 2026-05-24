@@ -48,36 +48,33 @@
       "recommended_for": ["all_coats", "show_prep", "outdoor_active", "senior", "low_shine", "breakage", "yellowing"]
     }
   ],
-  "additional_ingredients": [
-    {
-      "tag": "Skin Barrier",
-      "name": "セラミド・オリゴノール",
-      "description": "皮膚のうるおいとバリア機能をサポート",
-      "trigger_issues": ["sensitive_skin", "low_moisture"]
-    },
-    {
-      "tag": "Anti-inflammatory",
-      "name": "オメガ3 (DHA / EPA)",
-      "description": "被毛と皮膚の健康維持に欠かせない必須脂肪酸",
-      "trigger_issues": ["shedding", "sensitive_skin", "breakage"]
-    },
-    {
-      "tag": "Gut Health",
-      "name": "乳酸菌・プレ/プロバイオティクス",
-      "description": "皮膚は腸の鏡。内側から整える基本サポート",
-      "trigger_issues": ["oily", "sensitive_skin", "shedding"]
-    },
+  "additional_support_products": [
     {
       "tag": "Conditioning",
-      "name": "プロテイン・ペプチド",
-      "description": "被毛と体組成の維持・回復をサポート (ショー前期に)",
+      "name_jp": "プロテイン",
+      "name_en": "Canine Vet Protain",
+      "description": "良質なタンパク質・アミノ酸を補給。被毛のコンディションと体組成の維持・回復に。",
+      "url": "https://www.caninevet.jp/canineサプリメント/canine-vet-protain/",
+      "image": "https://image.jimcdn.com/app/cms/image/transf/dimension=480x10000:format=jpg/path/s23b9aba54a40d6b8/image/ic552ef77dded87a9/version/1745062116/image.jpg",
       "trigger_issues": ["show_prep", "low_volume", "breakage"]
     },
     {
-      "tag": "Shine",
-      "name": "ビタミンB群・亜鉛",
-      "description": "皮膚代謝と被毛の色冴えをサポート",
-      "trigger_issues": ["low_shine"]
+      "tag": "Gut Health",
+      "name_jp": "乳酸菌",
+      "name_en": "Prebiotics & Probiotics & サイリウム",
+      "description": "皮膚は腸の鏡。乳酸菌とサイリウムで腸内環境を整え、内側から皮膚・被毛をサポート。",
+      "url": "https://www.caninevet.jp/canineサプリメント/prebiotics-probiotocs-サイリウム/",
+      "image": "https://image.jimcdn.com/app/cms/image/transf/dimension=480x10000:format=jpg/path/s23b9aba54a40d6b8/image/i28dd4fd4f4999e6b/version/1745062234/image.jpg",
+      "trigger_issues": ["oily", "sensitive_skin", "shedding"]
+    },
+    {
+      "tag": "Lipid & Nutrition",
+      "name_jp": "脂質・栄養補給",
+      "name_en": "カミデミルク (Kamide Milk)",
+      "description": "被毛の材料となる脂質や栄養を補給。乾燥・パサつき・艶不足が気になる被毛の栄養サポートに。",
+      "url": "https://www.caninevet.jp/canineサプリメント/カミデミルク-1kg/",
+      "image": "https://image.jimcdn.com/app/cms/image/transf/dimension=480x10000:format=jpg/path/s23b9aba54a40d6b8/image/ic462b96b63474ce0/version/1745062413/image.jpg",
+      "trigger_issues": ["low_moisture", "breakage", "low_shine"]
     }
   ]
 }
