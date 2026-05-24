@@ -2414,7 +2414,7 @@ const PRODUCTS = [
     price:4950, size:'200g',
     url: ITEM_BASE + '000000000039',
     image: IMG_BASE + '000000000039_vwBuinF.jpg',
-    matches:['oily','show_prep','daily'], coats:['silky','cotton','wavy','double'],
+    matches:['show_prep'], coats:['silky','cotton','wavy','double'],
     desc:'水を使わないパウダー型クレンザー。ショーリング前の足元清掃にプロが使う必需品。' },
 
   // ========== CONDITIONERS ==========
@@ -2700,7 +2700,23 @@ function collectAnswers() {
   };
 }
 
-/* ニーズ重み付け: 明示症状 + スライダースコア + 目的 + 毛色 + 年齢 から
+/* 犬種の素因: 脂漏症 (皮脂過多→ベタつき) など、犬種に多いコンディション。
+   実入力と矛盾しない範囲で軽く加点する (チェック=3 より弱い nudge)。 */
+const BREED_PREDISPOSITION = {
+  maltese:          [{ issue: 'oily', w: 1.2 }],
+  shih_tzu:         [{ issue: 'oily', w: 1.2 }],
+  cocker:           [{ issue: 'oily', w: 1.5 }],
+  setter:           [{ issue: 'oily', w: 1.0 }],
+  gordon_setter:    [{ issue: 'oily', w: 1.0 }],
+  west_highland:    [{ issue: 'oily', w: 1.2 }, { issue: 'sensitive_skin', w: 1.0 }],
+  dachshund_smooth: [{ issue: 'oily', w: 1.0 }],
+  dachshund_long:   [{ issue: 'oily', w: 1.0 }],
+  dachshund_wire:   [{ issue: 'oily', w: 1.0 }],
+  pug:              [{ issue: 'oily', w: 1.0 }, { issue: 'sensitive_skin', w: 1.0 }],
+  french_bulldog:   [{ issue: 'oily', w: 1.0 }, { issue: 'sensitive_skin', w: 1.0 }]
+};
+
+/* ニーズ重み付け: 明示症状 + スライダースコア + 目的 + 毛色 + 年齢 + 犬種素因 から
    「製品が解決すべき課題」ごとの重み(ポイント)を合成する。
    製品の matches トークン(症状/daily/show_prep/white 等)に対して付与される。 */
 function buildNeeds(a) {
@@ -2728,9 +2744,19 @@ function buildNeeds(a) {
   // 毛色由来
   if (a.color === 'white' || a.color === 'silver') { add('yellowing', 2); add('white', 2); }
 
-  // 年齢由来 (パピー=低刺激 / シニア=乾燥・艶低下しやすい)
+  // 年齢由来 (パピー=低刺激 / シニア=加齢で乾燥・艶低下・バリア低下しやすい→保湿・低刺激の外用)
   if (a.age === 'puppy') add('sensitive_skin', 1);
-  if (a.age === 'senior') { add('low_moisture', 1); add('low_shine', 0.5); }
+  if (a.age === 'senior') { add('low_moisture', 1.5); add('low_shine', 0.8); add('sensitive_skin', 0.5); }
+
+  // 犬種素因 (脂漏症など)。乾燥傾向が明確な場合は油分ナッジを抑制し矛盾を回避
+  const pre = BREED_PREDISPOSITION[a.breed];
+  if (pre) {
+    const isDry = (a.issues || []).includes('low_moisture') || (s.moisture !== undefined && s.moisture <= 2);
+    pre.forEach(d => {
+      if (d.issue === 'oily' && isDry) return;
+      add(d.issue, d.w);
+    });
+  }
 
   return need;
 }
@@ -3346,6 +3372,66 @@ const SCORE_INSIGHT = {
 };
 const SCORE_LABEL_JP = { shine: '艶', moisture: '水分', density: '密度・毛量', elasticity: 'ハリ・弾力' };
 
+// 犬種の傾向 (脂漏症など) — 考察リードに添える教育的注記
+const BREED_NOTE = {
+  maltese: {
+    detailed: 'また、マルチーズは皮脂分泌が過剰になりやすい脂漏症の傾向があり、ベタつき・特有のにおい・涙やけが出やすい犬種です。',
+    gentle: 'また、マルチーズは皮脂が多くなりがちで、ベタつきやにおいが出やすい犬種です。'
+  },
+  shih_tzu: {
+    detailed: 'また、シー・ズーは脂漏症の傾向があり、皮膚のベタつきやにおいが出やすい犬種です。',
+    gentle: 'また、シー・ズーはベタつきやにおいが出やすい犬種です。'
+  },
+  cocker: {
+    detailed: 'また、コッカー・スパニエルは脂漏症の代表的な犬種で、ベタつき・におい・外耳のトラブルが出やすい傾向があります。',
+    gentle: 'また、コッカーはベタつきやにおい、耳のトラブルが出やすい犬種です。'
+  },
+  setter: {
+    detailed: 'また、セッターは脂漏(皮脂過多)の傾向が出やすい犬種です。',
+    gentle: 'また、セッターはベタつきが出やすい犬種です。'
+  },
+  gordon_setter: {
+    detailed: 'また、ゴードン・セッターは脂漏(皮脂過多)の傾向が出やすい犬種です。',
+    gentle: 'また、ゴードン・セッターはベタつきが出やすい犬種です。'
+  },
+  west_highland: {
+    detailed: 'また、ウエスト・ハイランド・ホワイト・テリアはアトピー性皮膚炎や脂漏症が非常に多い犬種で、かゆみ・ベタつきに注意が必要です。',
+    gentle: 'また、ウェスティはかゆみやベタつきが出やすい犬種です。'
+  },
+  dachshund_smooth: {
+    detailed: 'また、ダックスフンドは脂漏症や耳のトラブルが出やすい犬種です。',
+    gentle: 'また、ダックスはベタつきや耳の汚れが出やすい犬種です。'
+  },
+  dachshund_long: {
+    detailed: 'また、ダックスフンドは脂漏症や耳のトラブルが出やすい犬種です。',
+    gentle: 'また、ダックスはベタつきや耳の汚れが出やすい犬種です。'
+  },
+  dachshund_wire: {
+    detailed: 'また、ダックスフンドは脂漏症や耳のトラブルが出やすい犬種です。',
+    gentle: 'また、ダックスはベタつきや耳の汚れが出やすい犬種です。'
+  },
+  pug: {
+    detailed: 'また、パグは皮膚のしわにベタつき・においがこもりやすい犬種です。',
+    gentle: 'また、パグはしわのあたりがベタつきやすい犬種です。'
+  },
+  french_bulldog: {
+    detailed: 'また、フレンチ・ブルドッグは皮膚のしわや脂漏でベタつき・においが出やすい犬種です。',
+    gentle: 'また、フレブルはしわのあたりがベタつきやすい犬種です。'
+  }
+};
+
+// 年齢の傾向 — 加齢による皮膚変化と、抗酸化・栄養・外用の方針
+const AGE_NOTE = {
+  puppy: {
+    detailed: 'パピー期は皮膚のバリアが未成熟でデリケートです。低刺激の犬用シャンプーでやさしく洗うことを基本にしてください。',
+    gentle: 'パピーは肌がデリケートなので、低刺激のシャンプーでやさしく洗ってあげましょう。'
+  },
+  senior: {
+    detailed: '加齢に伴い皮膚のバリア機能・皮脂分泌・ターンオーバーが低下し、乾燥・艶の低下・酸化ストレスが進みやすい時期です。抗酸化(アスタキサンチン等)と栄養の内側ケアに加え、外用は低刺激・保湿重視のシャンプー選びが有効です。トイプードルなど巻き毛種でも加齢で乾燥が出ることがあります。',
+    gentle: '歳を重ねると肌が乾燥しやすく、ツヤも出にくくなります。抗酸化と栄養のサプリに加え、やさしく保湿できるシャンプー選びが大切です。'
+  }
+};
+
 function setAssessmentTone(tone) {
   state.tone = (tone === 'detailed') ? 'detailed' : 'gentle';
   if (state.answers && state.coat) {
@@ -3399,8 +3485,13 @@ function renderAssessment(a, coat) {
     '<button type="button" class="pp-tone-btn' + (tone === 'detailed' ? ' is-active' : '') +
     '" onclick="setAssessmentTone(\'detailed\')">くわしく</button>' +
     '</span></div>';
-  html += '<p class="pp-assessment__lead"><strong>' + escapeHtml(a.name) + '</strong>の' +
-    escapeHtml(COAT_LABEL[coat] || COAT_LABEL.all) + 'は、' + overall + '<br>' + leadCoat + '</p>';
+  const bNote = (BREED_NOTE[a.breed] && BREED_NOTE[a.breed][tone]) || '';
+  const aNote = (AGE_NOTE[a.age] && AGE_NOTE[a.age][tone]) || '';
+  let lead = '<strong>' + escapeHtml(a.name) + '</strong>の' +
+    escapeHtml(COAT_LABEL[coat] || COAT_LABEL.all) + 'は、' + overall + '<br>' + leadCoat;
+  if (bNote) lead += '<br>' + bNote;
+  if (aNote) lead += '<br>' + aNote;
+  html += '<p class="pp-assessment__lead">' + lead + '</p>';
 
   if (concerns.length === 0) {
     const okObs = tone === 'detailed'
@@ -3472,8 +3563,17 @@ const CV_ADDONS = [
 
 function renderSupplements(a) {
   const wrap = document.getElementById('supplementIngredients');
+  // 診断全体(症状 + スライダー低スコア + 年齢)に整合させたシグナルで提案
+  const sig = (a.issues || []).slice();
+  const s = a.scores || {};
+  if (s.moisture <= 2) sig.push('low_moisture');
+  if (s.shine <= 2) sig.push('low_shine');
+  if (s.elasticity <= 2) sig.push('breakage');
+  if (s.density <= 2) sig.push('low_volume');
+  // 加齢: 乾燥・艶低下・栄養必要性が高まる → 脂質/栄養(カミデミルク)・タンパク質を提案
+  if (a.age === 'senior') sig.push('low_moisture', 'low_shine', 'breakage');
   let picks = CV_ADDONS.filter(p =>
-    p.triggers.some(t => a.issues.includes(t) || a.goal === t)
+    p.triggers.some(t => sig.includes(t) || a.goal === t)
   );
   // 該当なし時は基本サポート2点を提示
   if (picks.length === 0) {
