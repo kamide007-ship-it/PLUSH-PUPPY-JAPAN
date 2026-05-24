@@ -781,6 +781,55 @@
     background: var(--pp-navy);
     color: #ffffff;
   }
+
+  /* Care Program summary (販売促進) */
+  .pp-program {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    background: var(--pp-navy-soft);
+    border: 1px solid var(--pp-border-light);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+  }
+  .pp-program__label {
+    font-size: 12px;
+    color: var(--pp-text-light);
+    margin-bottom: 2px;
+  }
+  .pp-program__total {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--pp-navy);
+    font-family: var(--font-en);
+  }
+  .pp-program__note {
+    font-size: 11px;
+    color: var(--pp-text-muted);
+    margin-top: 2px;
+  }
+  .pp-program__cta {
+    background: var(--pp-navy);
+    color: #ffffff;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: var(--radius-pill);
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background 0.2s;
+  }
+  .pp-program__cta:hover { background: var(--pp-navy-dark); }
+
+  .pp-chart-compare {
+    text-align: center;
+    font-size: 12px;
+    color: var(--pp-text-light);
+    margin-top: 6px;
+  }
   .pp-assessment__lead {
     font-size: 14px;
     line-height: 1.9;
@@ -984,6 +1033,23 @@
     line-height: 1.5;
     font-weight: 500;
     min-height: 42px;
+  }
+  .pp-product__match {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    margin: 0 0 10px;
+  }
+  .pp-product__match span {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--pp-orange-dark);
+    background: rgba(239, 154, 17, 0.12);
+    border: 1px solid rgba(239, 154, 17, 0.32);
+    padding: 2px 9px;
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
   }
   .pp-product__why {
     font-size: 12px;
@@ -2033,6 +2099,7 @@
         <canvas id="radar"></canvas>
       </div>
       <p class="pp-chart-legend">Current Condition Assessment</p>
+      <p class="pp-chart-compare" id="radarCompare" style="display:none;"></p>
 
       <div class="pp-summary">
         <div class="pp-summary__item">
@@ -2064,6 +2131,7 @@
         <div class="pp-section-title__en">Recommended Products</div>
         <div class="pp-section-title__jp">あなたの愛犬専用ケアプログラム</div>
       </div>
+      <div id="programSummary"></div>
       <div class="pp-products" id="productList"></div>
     </div>
 
@@ -2226,6 +2294,7 @@
     <!-- Actions -->
     <div class="pp-result__actions">
       <button class="pp-btn pp-btn--ghost" onclick="resetDiagnosis()">もう一度診断する</button>
+      <button class="pp-btn pp-btn--ghost" onclick="shareReport()">結果を共有</button>
       <button class="pp-btn pp-btn--primary" onclick="window.print()">レポートを印刷 / PDF保存</button>
     </div>
 
@@ -2631,37 +2700,98 @@ function collectAnswers() {
   };
 }
 
+/* ニーズ重み付け: 明示症状 + スライダースコア + 目的 + 毛色 + 年齢 から
+   「製品が解決すべき課題」ごとの重み(ポイント)を合成する。
+   製品の matches トークン(症状/daily/show_prep/white 等)に対して付与される。 */
+function buildNeeds(a) {
+  const need = {};
+  const add = (k, w) => { if (w > 0) need[k] = (need[k] || 0) + w; };
+  const s = a.scores || {};
+  // スコアが低いほど強いニーズ (2→1, 3→0, 4→-1 …正の部分のみ採用、既定3は中立)
+  const lack = v => (v === undefined || isNaN(v)) ? 0 : Math.max(0, 3 - v);
+
+  // 明示症状 (最も強い)
+  (a.issues || []).forEach(i => { if (i !== 'all_good') add(i, 3); });
+
+  // スライダースコア由来 (4軸を確実にマッチングへ反映)
+  add('low_shine', lack(s.shine) * 1.8);
+  add('low_moisture', lack(s.moisture) * 1.8);
+  add('low_volume', lack(s.density) * 1.8);
+  add('breakage', lack(s.elasticity) * 1.8);
+
+  // 目的由来
+  if (a.goal === 'daily') add('daily', 1.5);
+  else if (a.goal === 'show_prep') add('show_prep', 2.5);
+  else if (a.goal === 'skin_care') add('sensitive_skin', 2.5);
+  else if (a.goal === 'shedding') { add('shedding', 2.5); add('oily', 0.5); }
+
+  // 毛色由来
+  if (a.color === 'white' || a.color === 'silver') { add('yellowing', 2); add('white', 2); }
+
+  // 年齢由来 (パピー=低刺激 / シニア=乾燥・艶低下しやすい)
+  if (a.age === 'puppy') add('sensitive_skin', 1);
+  if (a.age === 'senior') { add('low_moisture', 1); add('low_shine', 0.5); }
+
+  return need;
+}
+
+function coatScoreFor(p, coat, parentCoat) {
+  if (p.coats.includes(coat)) return 3;                     // 完全一致
+  if (parentCoat && p.coats.includes(parentCoat)) return 2; // 親コート一致
+  if (p.coats.includes('all')) return 1;                    // 汎用品
+  return 0;
+}
+
 function scoreProducts(a) {
   const coat = BREED_TO_COAT[a.breed] || 'all';
   const parentCoat = COAT_PARENT[coat]; // 細分化コートの親 (e.g. cotton_toy → cotton)
-  // 黒系の毛色判定 (Black Opal等のため)
   const isBlackCoat = a.color === 'black';
-  // 白系の毛色判定
-  const isWhiteCoat = a.color === 'white' || a.color === 'silver';
+  const need = buildNeeds(a);
 
   return PRODUCTS.map(p => {
     let s = 0;
-    // 症状マッチ
-    a.issues.forEach(i => { if (p.matches.includes(i)) s += 3; });
-    // 目的マッチ
-    if (p.matches.includes(a.goal)) s += 2;
-    // コートマッチ (細分化 → 親 → all の3段階)
-    if (p.coats.includes(coat)) s += 3;           // 完全一致
-    else if (parentCoat && p.coats.includes(parentCoat)) s += 2;  // 親コート一致
-    else if (p.coats.includes('all')) s += 1;     // 汎用品
-    // 毛色マッチ
-    if (isWhiteCoat && (p.matches.includes('white') || p.matches.includes('yellowing'))) s += 2;
-    if (isBlackCoat && p.coats.includes('black_coat')) s += 3;
-    // スコア低めの項目補強
-    if (a.scores.density <= 3 && p.matches.includes('low_volume')) s += 1;
-    if (a.scores.shine <= 3 && p.matches.includes('low_shine')) s += 1;
-    if (a.scores.moisture <= 3 && p.matches.includes('low_moisture')) s += 1;
-    return { ...p, _s: s };
-  }).sort((a, b) => b._s - a._s);
+    // ニーズ × matches
+    p.matches.forEach(m => { if (need[m]) s += need[m]; });
+    // コートマッチ
+    const cScore = coatScoreFor(p, coat, parentCoat);
+    s += cScore;
+    // 黒・濃色専用ボーナス
+    if (isBlackCoat && p.coats.includes('black_coat')) s += 4;
+    return { ...p, _s: s, _coat: cScore };
+  }).sort((x, y) => (y._s - x._s) || (y._coat - x._coat));
 }
 
 function pickByCat(scored, cat, n) {
   return scored.filter(p => p.cat === cat).slice(0, n);
+}
+
+/* 製品が「ユーザーの実際の入力」のどれに対応するかを可視化する選定理由タグ */
+function matchReasons(p, a, coat) {
+  const out = [];
+  const push = t => { if (t && out.indexOf(t) === -1) out.push(t); };
+  const s = a.scores || {};
+  // 明示症状
+  (a.issues || []).forEach(i => {
+    if (i !== 'all_good' && p.matches.includes(i) && ISSUE_LABEL[i]) push(ISSUE_LABEL[i]);
+  });
+  // スライダー低スコア由来
+  if (s.shine <= 2 && p.matches.includes('low_shine')) push(ISSUE_LABEL.low_shine);
+  if (s.moisture <= 2 && p.matches.includes('low_moisture')) push(ISSUE_LABEL.low_moisture);
+  if (s.density <= 2 && p.matches.includes('low_volume')) push(ISSUE_LABEL.low_volume);
+  if (s.elasticity <= 2 && p.matches.includes('breakage')) push(ISSUE_LABEL.breakage);
+  // 毛色
+  if ((a.color === 'white' || a.color === 'silver') && (p.matches.includes('white') || p.matches.includes('yellowing'))) push('白・淡色ケア');
+  if (a.color === 'black' && p.coats.includes('black_coat')) push('黒・濃色専用');
+  // コート (ミックス時は省略)
+  if (coat && coat !== 'all') {
+    if (p.coats.includes(coat)) push((COAT_LABEL[coat] || '') + '向け');
+    else if (COAT_PARENT[coat] && p.coats.includes(COAT_PARENT[coat])) push((COAT_LABEL[COAT_PARENT[coat]] || '') + '向け');
+  }
+  // 目的 (daily / shedding は症状ラベルと重複するため除外)
+  if (a.goal && a.goal !== 'daily' && a.goal !== 'shedding' && p.matches.includes(a.goal) && GOAL_LABEL[a.goal]) push(GOAL_LABEL[a.goal]);
+  // フォールバック
+  if (out.length === 0) push(p.coats.includes('all') ? '全コート対応' : 'デイリーケア');
+  return out.slice(0, 4);
 }
 
 function runDiagnosis() {
@@ -2699,7 +2829,10 @@ function runDiagnosis() {
   }
 
   state.coat = coat;
-  drawRadar(computeRadarScores(a));
+  const radar = computeRadarScores(a);
+  const prev = findPrevious(a.name);
+  drawRadar(radar, prev);
+  renderCompareNote(prev);
 
   renderAssessment(a, coat);
 
@@ -2711,6 +2844,15 @@ function runDiagnosis() {
     ...pickByCat(scored, 'brush', 1),       // ブラシ1点
   ];
   renderProducts(picks);
+  renderProgramSummary(picks);
+
+  // 今回の結果を履歴へ保存 (次回の比較用)
+  saveHistory({
+    date: new Date().toISOString().slice(0, 10),
+    name: a.name,
+    coatLabel: COAT_LABEL[coat] || '',
+    radar: radar
+  });
 
   if (a.goal === 'show_prep') {
     document.getElementById('showScheduleSection').style.display = 'block';
@@ -2817,7 +2959,7 @@ function computeRadarScores(a) {
   };
 }
 
-function drawRadar(r) {
+function drawRadar(r, prev) {
   // Chart.js が読み込めなかった場合のフォールバック
   if (typeof Chart === 'undefined') {
     const wrap = document.querySelector('.pp-chart-wrap');
@@ -2837,31 +2979,48 @@ function drawRadar(r) {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (radarChart) radarChart.destroy();
+    const datasets = [{
+      label: '今回',
+      data: [r.shine, r.density, r.moisture, r.elasticity, r.volume, r.durability],
+      backgroundColor: 'rgba(67, 86, 159, 0.15)',
+      borderColor: '#43569f',
+      borderWidth: 2.5,
+      pointBackgroundColor: '#ef9a11',
+      pointBorderColor: '#fff',
+      pointBorderWidth: 2,
+      pointRadius: 5,
+      pointHoverRadius: 7
+    }];
+    if (prev && prev.radar) {
+      const pr = prev.radar;
+      datasets.push({
+        label: '前回',
+        data: [pr.shine, pr.density, pr.moisture, pr.elasticity, pr.volume, pr.durability],
+        backgroundColor: 'transparent',
+        borderColor: '#b8bcc9',
+        borderWidth: 1.5,
+        borderDash: [5, 4],
+        pointBackgroundColor: '#b8bcc9',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 1,
+        pointRadius: 3,
+        pointHoverRadius: 5
+      });
+    }
     radarChart = new Chart(ctx, {
       type: 'radar',
       data: {
         labels: ['艶 Shine', '密度 Density', '水分 Moisture', 'ハリ Elasticity', '毛量 Volume', 'ダメージ少 Durability'],
-        datasets: [{
-          label: '現在のコンディション',
-          data: [r.shine, r.density, r.moisture, r.elasticity, r.volume, r.durability],
-          backgroundColor: 'rgba(67, 86, 159, 0.15)',
-          borderColor: '#43569f',
-          borderWidth: 2.5,
-          pointBackgroundColor: '#ef9a11',
-          pointBorderColor: '#fff',
-          pointBorderWidth: 2,
-          pointRadius: 5,
-          pointHoverRadius: 7
-        }]
+        datasets: datasets
       },
       options: {
         responsive: true,
         maintainAspectRatio: true,
         plugins: {
-          legend: { display: false },
+          legend: { display: !!(prev && prev.radar), position: 'bottom', labels: { font: { size: 11 }, boxWidth: 18 } },
           tooltip: {
             callbacks: {
-              label: c => c.formattedValue + ' / 5'
+              label: c => c.dataset.label + ': ' + c.formattedValue + ' / 5'
             }
           }
         },
@@ -2902,17 +3061,93 @@ function renderProducts(picks) {
                 onerror="this.onerror=null;this.parentNode.classList.add('is-fallback');this.replaceWith(Object.assign(document.createElement('span'),{textContent:'${CAT_LABEL[p.cat] || ''}'}));">
          </div>`
       : `<div class="pp-product__placeholder"><span>${CAT_LABEL[p.cat] || ''}</span></div>`;
+    const reasons = matchReasons(p, state.answers || {}, state.coat || 'all');
+    const matchHtml = reasons.length
+      ? `<div class="pp-product__match">${reasons.map(r => `<span>${escapeHtml(r)}</span>`).join('')}</div>`
+      : '';
     card.innerHTML = `
       <div class="pp-product__rank">${i + 1}</div>
       ${imageHtml}
       <div class="pp-product__cat">${CAT_LABEL[p.cat] || ''}</div>
       <h4 class="pp-product__name">${p.name}</h4>
+      ${matchHtml}
       <p class="pp-product__why">${p.desc}</p>
       <div class="pp-product__price">¥${p.price.toLocaleString()}<small>${p.size}</small></div>
       <a href="${p.url}" target="_blank" rel="noopener" class="pp-product__cta">商品ページを見る</a>
     `;
     list.appendChild(card);
   });
+}
+
+/* ケアプログラム合計 (販売促進) */
+function renderProgramSummary(picks) {
+  const el = document.getElementById('programSummary');
+  if (!el) return;
+  const items = picks.filter(p => p && typeof p.price === 'number');
+  if (items.length === 0) { el.style.display = 'none'; el.innerHTML = ''; return; }
+  const total = items.reduce((s, p) => s + p.price, 0);
+  el.style.display = 'block';
+  el.innerHTML =
+    '<div class="pp-program">' +
+      '<div class="pp-program__info">' +
+        '<div class="pp-program__label">このケアプログラム一式（おすすめ ' + items.length + ' 点）</div>' +
+        '<div class="pp-program__total">¥' + total.toLocaleString() + '</div>' +
+        '<div class="pp-program__note">下の各製品から個別にご購入いただけます</div>' +
+      '</div>' +
+      '<a class="pp-program__cta" href="https://www.plushpuppyjapan.com" target="_blank" rel="noopener">Plush Puppy で揃える</a>' +
+    '</div>';
+}
+
+/* 経過トラッキング: localStorage に診断履歴を保存し、前回レーダーを重ねる */
+const HISTORY_KEY = 'ppCoatClinicHistoryV1';
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; }
+  catch (e) { return []; }
+}
+function saveHistory(rec) {
+  try {
+    const h = loadHistory();
+    h.push(rec);
+    while (h.length > 20) h.shift();
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(h));
+  } catch (e) { /* localStorage 不可時はスキップ */ }
+}
+function findPrevious(name) {
+  const h = loadHistory();
+  for (let i = h.length - 1; i >= 0; i--) {
+    if (!name || name === '愛犬' || h[i].name === name) return h[i];
+  }
+  return null;
+}
+function renderCompareNote(prev) {
+  const el = document.getElementById('radarCompare');
+  if (!el) return;
+  if (prev && prev.date) {
+    el.style.display = 'block';
+    el.textContent = '前回（' + prev.date + '）の結果を点線で重ねて表示しています';
+  } else {
+    el.style.display = 'none';
+    el.textContent = '';
+  }
+}
+
+/* 結果の共有 */
+function shareReport() {
+  const name = (state.answers && state.answers.name) || '愛犬';
+  const shareData = {
+    title: 'Coat Diagnosis Result',
+    text: name + 'のコート診断結果 — Plush Puppy コートクリニック',
+    url: location.href
+  };
+  if (navigator.share) {
+    navigator.share(shareData).catch(() => {});
+  } else if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(location.href)
+      .then(() => alert('診断ページのリンクをコピーしました。'))
+      .catch(() => alert(location.href));
+  } else {
+    alert(location.href);
+  }
 }
 
 function renderSchedule(showDateStr) {
