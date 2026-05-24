@@ -1,72 +1,80 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "updated_at": "2026-05-24",
   "source": "https://www.caninevet.jp",
   "vendor": "Equine & Canine Vet Nutrition (上手 健太郎 獣医師)",
-  "note": "コートケアに対する CanineVet 必須サプリメント。Plush Puppy 製品(外側ケア)と併用することで内外からの総合的なサポートを実現する。",
+  "note": "ライブ版コートクリニック (index.html の Inner Care Supplements セクション) と同期済み。必須2製品は静的カード表示、additional_ingredients は診断結果に応じて renderSupplements が動的表示する内容に一致。",
+  "credit": {
+    "supervisor_jp": "獣医師 上手 健太郎 監修",
+    "supervisor_en": "Supervised by Dr. Kentaro Kamide, DVM",
+    "intro_jp": "外側からの Plush Puppy ケアと、内側からの CanineVet サプリメントを組み合わせることで、被毛と皮膚の健康を総合的にサポートします。",
+    "banner_jp": "馬と犬の栄養学を専門とする獣医師 上手 健太郎 先生が、競技動物のために開発したサプリメントライン。",
+    "shop_url": "https://www.caninevet.jp",
+    "shipping_note": "国内発送・5,500円以上送料無料"
+  },
   "essentials_for_coat_care": [
     {
       "id": "cv_msm_amino_complete",
+      "label": "Essential 01",
       "name_jp": "MSM アミノコンプリート",
       "name_en": "MSM & Amino Complete",
       "url": "https://www.caninevet.jp/canineサプリメント/msm-アミノコンプリート/",
       "category": "essential_coat",
       "key_ingredients": [
-        "MSM(メチルスルフォニルメタン / 有機イオウ)",
-        "メチオニン",
-        "システイン",
-        "BCAA(分岐鎖アミノ酸)",
-        "必須アミノ酸コンプレックス"
+        "有機イオウ (MSM / メチルスルフォニルメタン)",
+        "必須アミノ酸 (メチオニン・システイン)",
+        "BCAA (分岐鎖アミノ酸)"
       ],
       "role": "ケラチン・コラーゲン生成サポート",
-      "description_jp": "MSM(メチルスルフォニルメタン)は被毛・爪・皮膚に多く含まれる有機イオウ成分。アミノ酸(メチオニン・システイン)と組み合わせることで、被毛の主成分であるケラチンとコラーゲンの健やかな生成をサポートします。",
-      "synergy_with_plush_puppy": "シルクプロテイン コンディショナーと併用することで、外側(タンパク質補修)と内側(タンパク質合成サポート)を両立。",
+      "description_jp": "MSM (メチルスルフォニルメタン) は被毛・爪・皮膚に多く含まれる有機イオウ成分。アミノ酸 (メチオニン・システイン) と組み合わせることで、被毛の主成分であるケラチンとコラーゲンの健やかな生成をサポートします。",
+      "synergy_with_plush_puppy": "シルクプロテイン コンディショナーと併用することで、外側 (タンパク質補修) と内側 (タンパク質合成サポート) を両立。",
       "recommended_for": ["all_coats", "show_prep", "daily", "breakage", "low_shine", "low_volume"]
     },
     {
       "id": "cv_for_antioxidant",
+      "label": "Essential 02",
       "name_jp": "FOR ANTIOXIDANT",
-      "name_en": "For Antioxidant Asta-Melon・Vitamin E・Cysteine",
+      "name_en": "Asta-Melon · Vitamin E · Cysteine",
       "url": "https://www.caninevet.jp/canineサプリメント/for-antioxidant-asta-melon-vitamine-cysteine/",
       "category": "essential_coat",
       "key_ingredients": [
-        "アスタキサンチン(メロン由来 / Asta-Melon)",
+        "アスタキサンチン (メロン由来 / Asta-Melon)",
         "ビタミンE",
-        "システイン"
+        "システイン (含硫アミノ酸)"
       ],
       "role": "抗酸化サポート・紫外線ダメージ対策",
-      "description_jp": "メロン由来のアスタキサンチン(Asta-Melon)とビタミンEによる強力な抗酸化サポート。システイン(含硫アミノ酸)は被毛のケラチンを構成する重要成分。紫外線や酸化ストレスから被毛・皮膚を守ります。",
+      "description_jp": "メロン由来のアスタキサンチン (Asta-Melon) とビタミンE による強力な抗酸化サポート。システイン (含硫アミノ酸) は被毛のケラチンを構成する重要成分。紫外線や酸化ストレスから被毛・皮膚を守ります。",
       "synergy_with_plush_puppy": "屋外活動が多い犬・ショー前の被毛コンディション維持に。Plush Puppy のディープクレンジングと組み合わせることで、被毛環境を清浄に保ちつつ抗酸化サポート。",
       "recommended_for": ["all_coats", "show_prep", "outdoor_active", "senior", "low_shine", "breakage", "yellowing"]
     }
   ],
   "additional_ingredients": [
     {
-      "tag": "皮膚バリア",
+      "tag": "Skin Barrier",
       "name": "セラミド・オリゴノール",
-      "description": "皮膚のうるおいとバリア機能のサポート",
+      "description": "皮膚のうるおいとバリア機能をサポート",
       "trigger_issues": ["sensitive_skin", "low_moisture"]
     },
     {
-      "tag": "被毛・抗炎症",
-      "name": "オメガ3(DHA/EPA)",
+      "tag": "Anti-inflammatory",
+      "name": "オメガ3 (DHA / EPA)",
       "description": "被毛と皮膚の健康維持に欠かせない必須脂肪酸",
       "trigger_issues": ["shedding", "sensitive_skin", "breakage"]
     },
     {
-      "tag": "腸内環境",
+      "tag": "Gut Health",
       "name": "乳酸菌・プレ/プロバイオティクス",
       "description": "皮膚は腸の鏡。内側から整える基本サポート",
       "trigger_issues": ["oily", "sensitive_skin", "shedding"]
     },
     {
-      "tag": "コンディション",
+      "tag": "Conditioning",
       "name": "プロテイン・ペプチド",
-      "description": "被毛と体組成の維持・回復(ショー前期向け)",
+      "description": "被毛と体組成の維持・回復をサポート (ショー前期に)",
       "trigger_issues": ["show_prep", "low_volume", "breakage"]
     },
     {
-      "tag": "艶・色冴え",
+      "tag": "Shine",
       "name": "ビタミンB群・亜鉛",
       "description": "皮膚代謝と被毛の色冴えをサポート",
       "trigger_issues": ["low_shine"]
