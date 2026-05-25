@@ -988,6 +988,32 @@
     font-weight: 600;
     color: var(--pp-text-muted);
   }
+  .pp-edu__index {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .pp-edu__indexchip {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 1px solid var(--pp-border-light);
+    background: #ffffff;
+    color: var(--pp-navy);
+    font-family: var(--font-jp);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 7px 13px;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .pp-edu__indexchip:hover,
+  .pp-edu__indexchip:focus-visible {
+    background: var(--pp-navy);
+    color: #ffffff;
+    border-color: var(--pp-navy);
+  }
   .pp-edu__fig {
     margin: 4px 0 14px;
     padding: 12px;
@@ -2458,6 +2484,8 @@
           <button type="button" class="pp-tone-btn" data-mode="detailed" onclick="setEduMode('detailed')">詳しく</button>
         </span>
       </div>
+
+      <div class="pp-edu__index" id="eduIndex" aria-label="目次（タップで各項目へ）"></div>
 
       <div class="pp-edu is-simple" id="eduList">
         <details class="pp-edu__item">
@@ -4344,6 +4372,34 @@ function notifyHeight() {
 window.addEventListener('load', () => setTimeout(notifyHeight, 200));
 window.addEventListener('resize', notifyHeight);
 new MutationObserver(notifyHeight).observe(document.body, { childList:true, subtree:true });
+
+/* 学びの場: 目次(クイックアクセス)を生成し、タップで該当項目を開いてスクロール。
+   排他アコーディオン(name属性、対応ブラウザ)＋非対応ブラウザ向けに手動で他項目を閉じる */
+(function buildEduIndex() {
+  const list = document.getElementById('eduList');
+  const idx = document.getElementById('eduIndex');
+  if (!list || !idx) return;
+  const items = Array.from(list.querySelectorAll('.pp-edu__item'));
+  items.forEach((it, i) => {
+    it.setAttribute('name', 'edu-accordion');
+    if (!it.id) it.id = 'edu-' + (i + 1);
+    const sum = it.querySelector('summary');
+    const label = sum ? sum.textContent.trim() : ('項目' + (i + 1));
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'pp-edu__indexchip';
+    chip.textContent = label;
+    chip.addEventListener('click', () => {
+      items.forEach(o => { if (o !== it) o.open = false; });
+      it.open = true;
+      setTimeout(() => {
+        try { it.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { it.scrollIntoView(); }
+        notifyHeight();
+      }, 60);
+    });
+    idx.appendChild(chip);
+  });
+})();
 </script>
 </body>
 </html>
