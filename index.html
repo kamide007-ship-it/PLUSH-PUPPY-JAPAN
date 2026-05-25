@@ -1008,8 +1008,25 @@
     margin: 0 0 10px;
     padding-left: 1.2em;
   }
+  .pp-edu__body ol {
+    margin: 0 0 10px;
+    padding-left: 1.4em;
+  }
   .pp-edu__body li { margin-bottom: 6px; }
   .pp-edu__body strong { color: var(--pp-text); font-weight: 600; }
+  .pp-edu__body em { font-style: italic; }
+  .pp-edu__refs li {
+    font-size: 12px;
+    color: var(--pp-text-light);
+    line-height: 1.7;
+  }
+  .pp-edu__caveat {
+    font-size: 12px;
+    color: var(--pp-text-muted);
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--pp-border-light);
+  }
   .pp-edu__note {
     margin-top: 16px;
     font-size: 11px;
@@ -2395,7 +2412,7 @@
           <summary>犬の皮膚と被毛の基礎</summary>
           <div class="pp-edu__body">
             <ul>
-              <li>犬の表皮（角層）は人より<strong>薄く</strong>、皮膚pHは<strong>中性〜弱アルカリ寄り（おおむねpH7前後）</strong>。人（弱酸性・約5.5）とは異なるため、人用製品はpH・刺激が合いません。</li>
+              <li>犬の表皮（角層）は人より<strong>薄く</strong>、皮膚pHは<strong>人の弱酸性（約5.5）より高い傾向</strong>（中性付近〜弱アルカリ）。ただし測定部位・犬種・方法で幅があります。いずれにせよ人用製品はpH・刺激が合いません。</li>
               <li>1つの毛包から太い上毛（ガードヘア）と複数の細い下毛（アンダーコート）が生える<strong>「複合毛包」</strong>が特徴で、これが密度・二層構造の由来です。</li>
               <li>被毛は<strong>毛周期</strong>（成長期アナゲン→退行期カタゲン→休止期テロジェン）に従って生え替わり、多くの犬は季節性に換毛します。</li>
               <li>皮脂腺が被毛をコーティングして保護・保湿します。一方で犬は全身性の汗腺（エクリン腺）を持たず、皮脂は酸化しやすい性質があります。</li>
@@ -2449,6 +2466,21 @@
               <li><strong>環境（Environmental）</strong>：湿度・紫外線・摩擦・洗浄頻度・アレルゲンなど、悪化要因を管理。</li>
             </ul>
             <p>本診断の「改善」は、この3層に沿って提案しています。</p>
+          </div>
+        </details>
+
+        <details class="pp-edu__item">
+          <summary>参考文献・エビデンスについて</summary>
+          <div class="pp-edu__body">
+            <p>本コンテンツは、獣医皮膚科学・獣医栄養学で標準的に用いられる以下の文献・指針に基づく教育目的の要約です（一文ごとの引用ではなく、分野のコンセンサスに基づきます）。</p>
+            <ol class="pp-edu__refs">
+              <li>Miller WH Jr, Griffin CE, Campbell KL. <em>Muller &amp; Kirk's Small Animal Dermatology.</em> 7th ed. Elsevier; 2013.（皮膚・被毛の構造、角化、皮脂・脂漏、シャンプー療法）</li>
+              <li>Hnilica KA, Patterson AP. <em>Small Animal Dermatology: A Color Atlas and Therapeutic Guide.</em> 4th ed. Elsevier; 2017.</li>
+              <li>Hand MS, Thatcher CD, Remillard RL, et al. (eds). <em>Small Animal Clinical Nutrition.</em> 5th ed. Mark Morris Institute; 2010.（皮膚・被毛と栄養：タンパク質・必須脂肪酸・亜鉛・ビタミン）</li>
+              <li>WSAVA Global Nutrition Committee. <em>Global Nutrition Guidelines.</em> World Small Animal Veterinary Association.</li>
+              <li>Watson TDG. Diet and skin disease in dogs and cats. <em>J Nutr.</em> 1998;128(12 Suppl):2783S–2789S.（栄養と皮膚疾患の総説）</li>
+            </ol>
+            <p class="pp-edu__caveat">補足：犬の皮膚pHは「人の弱酸性より高い」とする報告が一般的ですが、測定部位・犬種・方法により値に幅があります。腸-皮膚相関（gut-skin axis）は研究が進展中の領域です。最新の知見と個体差を踏まえ、診断・治療は獣医師にご相談ください。</p>
           </div>
         </details>
       </div>
