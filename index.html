@@ -964,6 +964,19 @@
     flex-direction: column;
     gap: 10px;
   }
+  .pp-edu.is-simple .pp-edu__detailed { display: none; }
+  .pp-edu.is-detailed .pp-edu__simple { display: none; }
+  .pp-edu__modebar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .pp-edu__modelabel {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--pp-text-muted);
+  }
   .pp-edu__item {
     border: 1px solid var(--pp-border-light);
     border-radius: var(--radius-sm);
@@ -2403,69 +2416,124 @@
       </div>
       <p class="pp-edu__lead">
         愛犬の被毛ケアを「なぜ」から理解するための、エビデンスに基づく基礎知識です。
-        各項目をタップ／クリックすると詳しく読めます。<br>
+        各項目をタップ／クリックすると読めます。<br>
         <span style="font-size:12px;color:var(--pp-text-muted);">supervised by <strong>Dr. Kentaro Kamide, DVM</strong> / 獣医師 上手 健太郎 監修</span>
       </p>
 
-      <div class="pp-edu">
+      <div class="pp-edu__modebar">
+        <span class="pp-edu__modelabel">知識の深さ</span>
+        <span class="pp-tone-toggle" id="eduToggle" role="group" aria-label="知識の深さ">
+          <button type="button" class="pp-tone-btn is-active" data-mode="simple" onclick="setEduMode('simple')">簡単</button>
+          <button type="button" class="pp-tone-btn" data-mode="detailed" onclick="setEduMode('detailed')">詳しく</button>
+        </span>
+      </div>
+
+      <div class="pp-edu is-simple" id="eduList">
         <details class="pp-edu__item">
           <summary>犬の皮膚と被毛の基礎</summary>
           <div class="pp-edu__body">
-            <ul>
-              <li>犬の表皮（角層）は人より<strong>薄く</strong>、皮膚pHは<strong>人の弱酸性（約5.5）より高い傾向</strong>（中性付近〜弱アルカリ）。ただし測定部位・犬種・方法で幅があります。いずれにせよ人用製品はpH・刺激が合いません。</li>
-              <li>1つの毛包から太い上毛（ガードヘア）と複数の細い下毛（アンダーコート）が生える<strong>「複合毛包」</strong>が特徴で、これが密度・二層構造の由来です。</li>
-              <li>被毛は<strong>毛周期</strong>（成長期アナゲン→退行期カタゲン→休止期テロジェン）に従って生え替わり、多くの犬は季節性に換毛します。</li>
-              <li>皮脂腺が被毛をコーティングして保護・保湿します。一方で犬は全身性の汗腺（エクリン腺）を持たず、皮脂は酸化しやすい性質があります。</li>
-            </ul>
+            <div class="pp-edu__simple">
+              <ul>
+                <li>犬の肌は人より<strong>薄くデリケート</strong>。肌の性質（pH）も人と違うので、<strong>人用シャンプーは合いません</strong>。</li>
+                <li>1つの毛穴から、太い毛と細い毛が一緒に生えます（だから毛が多い）。</li>
+                <li>毛は生えかわり、季節ごとにたくさん抜ける子もいます。</li>
+                <li>皮脂が毛を守りますが、犬は体で汗をかけず、皮脂が酸化しやすいです。</li>
+              </ul>
+            </div>
+            <div class="pp-edu__detailed">
+              <ul>
+                <li>犬の表皮（角層）は人より<strong>薄く</strong>、皮膚pHは<strong>人の弱酸性（約5.5）より高い傾向</strong>（中性付近〜弱アルカリ）。ただし測定部位・犬種・方法で幅があります。いずれにせよ人用製品はpH・刺激が合いません。</li>
+                <li>1つの毛包から太い上毛（ガードヘア）と複数の細い下毛（アンダーコート）が生える<strong>「複合毛包」</strong>が特徴で、これが密度・二層構造の由来です。</li>
+                <li>被毛は<strong>毛周期</strong>（成長期アナゲン→退行期カタゲン→休止期テロジェン）に従って生え替わり、多くの犬は季節性に換毛します。</li>
+                <li>皮脂腺が被毛をコーティングして保護・保湿します。一方で犬は全身性の汗腺（エクリン腺）を持たず、皮脂は酸化しやすい性質があります。</li>
+              </ul>
+            </div>
           </div>
         </details>
 
         <details class="pp-edu__item">
           <summary>なぜシャンプーが必要なのか（外用ケア）</summary>
           <div class="pp-edu__body">
-            <p>被毛・皮膚には、酸化した皮脂・古い角質・環境汚れ・アレルゲン・微生物（細菌やマラセチア）が蓄積します。これらは、におい・かゆみ・皮膚炎・毛艶の低下につながります。</p>
-            <p>シャンプーの役割は、</p>
-            <ul>
-              <li>余分な皮脂・汚れ・アレルゲン・微生物を適切に除去し、皮膚環境（常在菌バランス）を整える</li>
-              <li>保湿・補修・抗菌などの成分を届ける「外用」の手段</li>
-            </ul>
-            <p>ただし<strong>「洗いすぎ」は逆効果</strong>です。角層の細胞間脂質（セラミド等）まで奪うとバリアが壊れ、水分が逃げ（TEWL亢進）、かえって皮脂が代償性に過剰分泌されます。だからこそ、犬の皮膚pHに合った<strong>低刺激の製品</strong>を選び、<strong>洗浄後は必ず保湿でバリアを補う</strong>ことが重要です。</p>
+            <div class="pp-edu__simple">
+              <p>毛や肌には、古い皮脂・汚れ・アレルギーのもと・菌がたまります。放っておくと、におい・かゆみ・皮膚トラブルの原因に。</p>
+              <p>シャンプーは、これらを落として肌を清潔に保つためのケアです。</p>
+              <p>ただし<strong>洗いすぎはNG</strong>。肌のうるおいまで奪うと、かえって乾燥やベタつきの原因になります。<strong>犬用のやさしいシャンプー</strong>で洗い、<strong>最後は必ず保湿</strong>してあげましょう。</p>
+            </div>
+            <div class="pp-edu__detailed">
+              <p>被毛・皮膚には、酸化した皮脂・古い角質・環境汚れ・アレルゲン・微生物（細菌やマラセチア）が蓄積します。これらは、におい・かゆみ・皮膚炎・毛艶の低下につながります。</p>
+              <p>シャンプーの役割は、</p>
+              <ul>
+                <li>余分な皮脂・汚れ・アレルゲン・微生物を適切に除去し、皮膚環境（常在菌バランス）を整える</li>
+                <li>保湿・補修・抗菌などの成分を届ける「外用」の手段</li>
+              </ul>
+              <p>ただし<strong>「洗いすぎ」は逆効果</strong>です。角層の細胞間脂質（セラミド等）まで奪うとバリアが壊れ、水分が逃げ（TEWL亢進）、かえって皮脂が代償性に過剰分泌されます。だからこそ、犬の皮膚pHに合った<strong>低刺激の製品</strong>を選び、<strong>洗浄後は必ず保湿でバリアを補う</strong>ことが重要です。</p>
+            </div>
           </div>
         </details>
 
         <details class="pp-edu__item">
           <summary>なぜ栄養が必要なのか（内側ケア）</summary>
           <div class="pp-edu__body">
-            <p>被毛は主に<strong>ケラチン（タンパク質）</strong>でできています。美しい被毛は「体の中から」作られ、外用だけでは届かない領域を栄養が支えます。</p>
-            <ul>
-              <li><strong>タンパク質／アミノ酸</strong>（特に含硫アミノ酸＝メチオニン・システイン）：ケラチン・コラーゲンの材料。</li>
-              <li><strong>必須脂肪酸（オメガ3／6）</strong>：皮膚バリアの脂質を構成し、抗炎症にも働く。不足は乾燥・フケ・かゆみに。</li>
-              <li><strong>抗酸化物質（アスタキサンチン・ビタミンE／C）</strong>：紫外線や酸化ストレスから皮膚・被毛を守る。加齢で重要性が増す。</li>
-              <li><strong>ビタミンB群（ビオチン等）・亜鉛・銅</strong>：ケラチン化・色素形成に関与。</li>
-              <li><strong>腸内環境（乳酸菌／プレ・プロバイオティクス）</strong>：「皮膚は腸の鏡」と言われる<strong>腸-皮膚軸</strong>を介して皮膚の状態に影響。</li>
-            </ul>
-            <p>これらを満たすことで、毛質・色冴え・密度・バリア機能を内側から底上げします。</p>
+            <div class="pp-edu__simple">
+              <p>毛は<strong>「タンパク質」</strong>からできています。きれいな毛は<strong>体の中から</strong>作られます。</p>
+              <ul>
+                <li><strong>タンパク質</strong>：毛の材料</li>
+                <li><strong>良質な油（オメガ3など）</strong>：肌のうるおいとバリア</li>
+                <li><strong>抗酸化（アスタキサンチンなど）</strong>：紫外線・老化から守る</li>
+                <li><strong>ビタミン・亜鉛</strong>：毛をつくる・色を保つ</li>
+                <li><strong>腸の健康</strong>：「肌は腸の鏡」。お腹の調子も毛と肌に影響します。</li>
+              </ul>
+              <p>内側の栄養が、毛のツヤ・量・強さを支えます。</p>
+            </div>
+            <div class="pp-edu__detailed">
+              <p>被毛は主に<strong>ケラチン（タンパク質）</strong>でできています。美しい被毛は「体の中から」作られ、外用だけでは届かない領域を栄養が支えます。</p>
+              <ul>
+                <li><strong>タンパク質／アミノ酸</strong>（特に含硫アミノ酸＝メチオニン・システイン）：ケラチン・コラーゲンの材料。</li>
+                <li><strong>必須脂肪酸（オメガ3／6）</strong>：皮膚バリアの脂質を構成し、抗炎症にも働く。不足は乾燥・フケ・かゆみに。</li>
+                <li><strong>抗酸化物質（アスタキサンチン・ビタミンE／C）</strong>：紫外線や酸化ストレスから皮膚・被毛を守る。加齢で重要性が増す。</li>
+                <li><strong>ビタミンB群（ビオチン等）・亜鉛・銅</strong>：ケラチン化・色素形成に関与。</li>
+                <li><strong>腸内環境（乳酸菌／プレ・プロバイオティクス）</strong>：「皮膚は腸の鏡」と言われる<strong>腸-皮膚軸</strong>を介して皮膚の状態に影響。</li>
+              </ul>
+              <p>これらを満たすことで、毛質・色冴え・密度・バリア機能を内側から底上げします。</p>
+            </div>
           </div>
         </details>
 
         <details class="pp-edu__item">
           <summary>皮膚バリアと「最後は保湿」</summary>
           <div class="pp-edu__body">
-            <p>乾燥はもちろん、ベタつき・毛切れ・くすみ・敏感肌の多くは、<strong>皮膚バリア機能の低下</strong>が背景にあります。バリアが弱るとTEWL（経表皮水分蒸散）が亢進し、刺激物・アレルゲンが侵入しやすくなります。</p>
-            <p>したがって、どの状態でも洗浄・ケアの最後は<strong>「保湿でバリアを整える」</strong>ことが基本です。外用の保湿に、内側からの脂質・抗酸化・栄養を組み合わせることで、バリアを多面的に支えます。</p>
+            <div class="pp-edu__simple">
+              <p>乾燥もベタつきも、毛切れも、多くは<strong>「肌のバリアが弱っている」</strong>のが根っこです。</p>
+              <p>だからどんな状態でも、<strong>ケアの最後は保湿でバリアを守る</strong>のが基本。外からの保湿＋内側の栄養で、肌を元気に保ちましょう。</p>
+            </div>
+            <div class="pp-edu__detailed">
+              <p>乾燥はもちろん、ベタつき・毛切れ・くすみ・敏感肌の多くは、<strong>皮膚バリア機能の低下</strong>が背景にあります。バリアが弱るとTEWL（経表皮水分蒸散）が亢進し、刺激物・アレルゲンが侵入しやすくなります。</p>
+              <p>したがって、どの状態でも洗浄・ケアの最後は<strong>「保湿でバリアを整える」</strong>ことが基本です。外用の保湿に、内側からの脂質・抗酸化・栄養を組み合わせることで、バリアを多面的に支えます。</p>
+            </div>
           </div>
         </details>
 
         <details class="pp-edu__item">
           <summary>外用 × 内用 × 環境の統合ケア</summary>
           <div class="pp-edu__body">
-            <p>エビデンスに基づくケアは、3つの層で考えます。</p>
-            <ul>
-              <li><strong>外用（Topical）</strong>：シャンプー・コンディショナー・仕上げ材で、洗浄・補修・保湿・保護。</li>
-              <li><strong>内用（Internal）</strong>：タンパク質・必須脂肪酸・抗酸化・腸内環境で、毛とバリアを内側から構築。</li>
-              <li><strong>環境（Environmental）</strong>：湿度・紫外線・摩擦・洗浄頻度・アレルゲンなど、悪化要因を管理。</li>
-            </ul>
-            <p>本診断の「改善」は、この3層に沿って提案しています。</p>
+            <div class="pp-edu__simple">
+              <p>よいケアは<strong>3つの合わせ技</strong>です。</p>
+              <ul>
+                <li><strong>外から</strong>：シャンプー・コンディショナーなど</li>
+                <li><strong>中から</strong>：栄養・サプリ</li>
+                <li><strong>環境</strong>：湿度・紫外線・洗いすぎなどに気をつける</li>
+              </ul>
+              <p>この診断の「改善」も、この3つで考えています。</p>
+            </div>
+            <div class="pp-edu__detailed">
+              <p>エビデンスに基づくケアは、3つの層で考えます。</p>
+              <ul>
+                <li><strong>外用（Topical）</strong>：シャンプー・コンディショナー・仕上げ材で、洗浄・補修・保湿・保護。</li>
+                <li><strong>内用（Internal）</strong>：タンパク質・必須脂肪酸・抗酸化・腸内環境で、毛とバリアを内側から構築。</li>
+                <li><strong>環境（Environmental）</strong>：湿度・紫外線・摩擦・洗浄頻度・アレルゲンなど、悪化要因を管理。</li>
+              </ul>
+              <p>本診断の「改善」は、この3層に沿って提案しています。</p>
+            </div>
           </div>
         </details>
 
@@ -3808,6 +3876,22 @@ function renderCareLayers(layers, issueKey) {
   });
   h += '</div>';
   return h;
+}
+
+/* 学びの場: 簡単 / 詳しく 切替 */
+function setEduMode(mode) {
+  const list = document.getElementById('eduList');
+  if (!list) return;
+  const simple = mode !== 'detailed';
+  list.classList.toggle('is-simple', simple);
+  list.classList.toggle('is-detailed', !simple);
+  const toggle = document.getElementById('eduToggle');
+  if (toggle) {
+    toggle.querySelectorAll('.pp-tone-btn').forEach(b => {
+      b.classList.toggle('is-active', b.dataset.mode === (simple ? 'simple' : 'detailed'));
+    });
+  }
+  notifyHeight();
 }
 
 function setAssessmentTone(tone) {
