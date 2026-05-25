@@ -220,10 +220,92 @@
     text-transform: none;
     margin-top: 2px;
   }
+  .pp-header__right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  /* Top-right menu */
+  .pp-menu { position: relative; }
+  .pp-menu__btn {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 1px solid var(--pp-border-light);
+    background: #ffffff;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+    padding: 0;
+  }
+  .pp-menu__btn span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: var(--pp-navy);
+    border-radius: 2px;
+    transition: transform 0.2s, opacity 0.2s;
+  }
+  .pp-menu__btn[aria-expanded="true"] span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .pp-menu__btn[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+  .pp-menu__btn[aria-expanded="true"] span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+  .pp-menu__panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    min-width: 220px;
+    background: #ffffff;
+    border: 1px solid var(--pp-border-light);
+    border-radius: var(--radius-md);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+    padding: 6px;
+    z-index: 120;
+  }
+  .pp-menu__panel[hidden] { display: none; }
+  .pp-menu__item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--pp-text);
+    font-family: var(--font-jp);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .pp-menu__item:hover { background: var(--pp-navy-soft); color: var(--pp-navy); }
+  .pp-menu__overlay {
+    position: fixed;
+    inset: 0;
+    background: transparent;
+    z-index: 110;
+  }
+  .pp-menu__overlay[hidden] { display: none; }
+
+  /* 解析前でも resource パネル(学び/製品/サプリ)を表示できるプレビュー */
+  .pp-result.is-resources { display: block; }
+  .pp-result.is-resources:not(.is-shown) > .pp-panel:not(.pp-panel--resource),
+  .pp-result.is-resources:not(.is-shown) > .pp-result__actions,
+  .pp-result.is-resources:not(.is-shown) > .pp-disclaimer {
+    display: none;
+  }
   @media (max-width: 600px) {
     .pp-header { padding: 12px 16px; }
     .pp-header__logo img { height: 36px; }
-    .pp-header__title { font-size: 12px; }
+    .pp-header__title { display: none; }
+    .pp-header__right { gap: 10px; }
+    .pp-menu__panel { min-width: 200px; }
   }
 
   /* ============================================
@@ -1954,11 +2036,25 @@
          alt="PLUSH PUPPY JAPAN GROOMING PRODUCTS"
          onerror="this.style.display='none'">
   </a>
-  <div class="pp-header__title">
-    COAT DIAGNOSIS
-    <small>被毛診断</small>
+  <div class="pp-header__right">
+    <div class="pp-header__title">
+      COAT DIAGNOSIS
+      <small>被毛診断</small>
+    </div>
+    <div class="pp-menu">
+      <button type="button" class="pp-menu__btn" id="menuBtn" aria-label="メニュー" aria-haspopup="true" aria-expanded="false" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="pp-menu__panel" id="menuPanel" role="menu" hidden>
+        <button type="button" class="pp-menu__item" role="menuitem" onclick="menuGo('top')">診断する</button>
+        <button type="button" class="pp-menu__item" role="menuitem" onclick="menuGo('learn')">コートの科学（学びの場）</button>
+        <button type="button" class="pp-menu__item" role="menuitem" onclick="menuGo('products')">製品ラインナップ</button>
+        <button type="button" class="pp-menu__item" role="menuitem" onclick="menuGo('supplements')">サプリメント</button>
+      </div>
+    </div>
   </div>
 </header>
+<div class="pp-menu__overlay" id="menuOverlay" onclick="closeMenu()" hidden></div>
 
 <div class="pp-container">
 
@@ -2373,7 +2469,7 @@
     </div>
 
     <!-- Supplement -->
-    <div class="pp-panel">
+    <div class="pp-panel pp-panel--resource" id="supplementPanel">
       <div class="pp-section-title" style="margin-top:0;">
         <div class="pp-section-title__en">Inner Care Supplements</div>
         <div class="pp-section-title__jp">内側からのケア・サプリメント</div>
@@ -2466,7 +2562,7 @@
     </div>
 
     <!-- Reference & Learning / コートの科学(獣医師監修の学びの場) -->
-    <div class="pp-panel">
+    <div class="pp-panel pp-panel--resource" id="learnPanel">
       <div class="pp-section-title" style="margin-top:0;">
         <div class="pp-section-title__en">Reference &amp; Learning</div>
         <div class="pp-section-title__jp">コートの科学 — 学びの場</div>
@@ -2837,7 +2933,7 @@
     </div>
 
     <!-- All Categories / 全製品ラインナップへの導線 -->
-    <div class="pp-panel">
+    <div class="pp-panel pp-panel--resource" id="allProductsPanel">
       <div class="pp-section-title" style="margin-top:0;">
         <div class="pp-section-title__en">Explore All Products</div>
         <div class="pp-section-title__jp">全製品ラインナップ</div>
@@ -4345,7 +4441,7 @@ function renderSupplements(a) {
 }
 
 function resetDiagnosis() {
-  document.getElementById('result').classList.remove('is-shown');
+  document.getElementById('result').classList.remove('is-shown', 'is-resources');
   document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
   document.querySelectorAll('input[type="radio"]').forEach((r, i) => r.checked = i === 0);
   document.querySelectorAll('select').forEach(s => {
@@ -4369,9 +4465,49 @@ function notifyHeight() {
     }, '*');
   }
 }
+/* 右上メニュー: 解析前でも 学びの場 / 製品 / サプリ へアクセス */
+function toggleMenu() {
+  const panel = document.getElementById('menuPanel');
+  if (!panel) return;
+  panel.hidden ? openMenu() : closeMenu();
+}
+function openMenu() {
+  const panel = document.getElementById('menuPanel');
+  const btn = document.getElementById('menuBtn');
+  const ov = document.getElementById('menuOverlay');
+  if (panel) panel.hidden = false;
+  if (ov) ov.hidden = false;
+  if (btn) btn.setAttribute('aria-expanded', 'true');
+}
+function closeMenu() {
+  const panel = document.getElementById('menuPanel');
+  const btn = document.getElementById('menuBtn');
+  const ov = document.getElementById('menuOverlay');
+  if (panel) panel.hidden = true;
+  if (ov) ov.hidden = true;
+  if (btn) btn.setAttribute('aria-expanded', 'false');
+}
+function menuGo(target) {
+  closeMenu();
+  if (target === 'top') { smoothScrollTo('top'); return; }
+  const result = document.getElementById('result');
+  // 診断前は resource パネル(学び/製品/サプリ)だけを表示
+  if (result && !result.classList.contains('is-shown')) result.classList.add('is-resources');
+  const idMap = { learn: 'learnPanel', products: 'allProductsPanel', supplements: 'supplementPanel' };
+  const el = document.getElementById(idMap[target]);
+  setTimeout(() => {
+    if (el) { try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { el.scrollIntoView(); } }
+    notifyHeight();
+  }, 70);
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+
 window.addEventListener('load', () => setTimeout(notifyHeight, 200));
 window.addEventListener('resize', notifyHeight);
 new MutationObserver(notifyHeight).observe(document.body, { childList:true, subtree:true });
+
+/* 解析前でもサプリ追加カードを表示できるよう、初期表示を用意 */
+try { renderSupplements({ issues: [], goal: 'daily', scores: {}, age: '' }); } catch (e) {}
 
 /* 学びの場: 目次(クイックアクセス)を生成し、タップで該当項目を開いてスクロール。
    排他アコーディオン(name属性、対応ブラウザ)＋非対応ブラウザ向けに手動で他項目を閉じる */
