@@ -949,6 +949,94 @@
     letter-spacing: 0.02em;
     cursor: help;
   }
+
+  /* ============================================
+     Reference & Learning (educational accordion)
+     ============================================ */
+  .pp-edu__lead {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--pp-text-light);
+    margin: 0 0 16px;
+  }
+  .pp-edu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .pp-edu__item {
+    border: 1px solid var(--pp-border-light);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: #ffffff;
+  }
+  .pp-edu__item > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--pp-navy);
+    background: var(--pp-bg-soft);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    transition: background 0.2s;
+  }
+  .pp-edu__item > summary:hover { background: var(--pp-navy-soft); }
+  .pp-edu__item > summary::-webkit-details-marker { display: none; }
+  .pp-edu__item > summary::after {
+    content: '＋';
+    color: var(--pp-orange);
+    font-weight: 700;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .pp-edu__item[open] > summary { background: var(--pp-navy-soft); }
+  .pp-edu__item[open] > summary::after { content: '−'; }
+  .pp-edu__body {
+    padding: 16px;
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--pp-text-light);
+    border-top: 1px solid var(--pp-border-light);
+  }
+  .pp-edu__body p { margin: 0 0 10px; }
+  .pp-edu__body p:last-child { margin-bottom: 0; }
+  .pp-edu__body ul {
+    margin: 0 0 10px;
+    padding-left: 1.2em;
+  }
+  .pp-edu__body ol {
+    margin: 0 0 10px;
+    padding-left: 1.4em;
+  }
+  .pp-edu__body li { margin-bottom: 6px; }
+  .pp-edu__body strong { color: var(--pp-text); font-weight: 600; }
+  .pp-edu__body em { font-style: italic; }
+  .pp-edu__refs li {
+    font-size: 12px;
+    color: var(--pp-text-light);
+    line-height: 1.7;
+  }
+  .pp-edu__caveat {
+    font-size: 12px;
+    color: var(--pp-text-muted);
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--pp-border-light);
+  }
+  .pp-edu__note {
+    margin-top: 16px;
+    font-size: 11px;
+    line-height: 1.8;
+    color: var(--pp-text-muted);
+    background: var(--pp-bg-soft);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+  }
+
   .pp-assessment__note {
     margin-top: 18px;
     font-size: 12px;
@@ -2305,6 +2393,102 @@
           <span>5,500円以上送料無料</span>
         </div>
       </div>
+    </div>
+
+    <!-- Reference & Learning / コートの科学(獣医師監修の学びの場) -->
+    <div class="pp-panel">
+      <div class="pp-section-title" style="margin-top:0;">
+        <div class="pp-section-title__en">Reference &amp; Learning</div>
+        <div class="pp-section-title__jp">コートの科学 — 学びの場</div>
+      </div>
+      <p class="pp-edu__lead">
+        愛犬の被毛ケアを「なぜ」から理解するための、エビデンスに基づく基礎知識です。
+        各項目をタップ／クリックすると詳しく読めます。<br>
+        <span style="font-size:12px;color:var(--pp-text-muted);">supervised by <strong>Dr. Kentaro Kamide, DVM</strong> / 獣医師 上手 健太郎 監修</span>
+      </p>
+
+      <div class="pp-edu">
+        <details class="pp-edu__item">
+          <summary>犬の皮膚と被毛の基礎</summary>
+          <div class="pp-edu__body">
+            <ul>
+              <li>犬の表皮（角層）は人より<strong>薄く</strong>、皮膚pHは<strong>人の弱酸性（約5.5）より高い傾向</strong>（中性付近〜弱アルカリ）。ただし測定部位・犬種・方法で幅があります。いずれにせよ人用製品はpH・刺激が合いません。</li>
+              <li>1つの毛包から太い上毛（ガードヘア）と複数の細い下毛（アンダーコート）が生える<strong>「複合毛包」</strong>が特徴で、これが密度・二層構造の由来です。</li>
+              <li>被毛は<strong>毛周期</strong>（成長期アナゲン→退行期カタゲン→休止期テロジェン）に従って生え替わり、多くの犬は季節性に換毛します。</li>
+              <li>皮脂腺が被毛をコーティングして保護・保湿します。一方で犬は全身性の汗腺（エクリン腺）を持たず、皮脂は酸化しやすい性質があります。</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="pp-edu__item">
+          <summary>なぜシャンプーが必要なのか（外用ケア）</summary>
+          <div class="pp-edu__body">
+            <p>被毛・皮膚には、酸化した皮脂・古い角質・環境汚れ・アレルゲン・微生物（細菌やマラセチア）が蓄積します。これらは、におい・かゆみ・皮膚炎・毛艶の低下につながります。</p>
+            <p>シャンプーの役割は、</p>
+            <ul>
+              <li>余分な皮脂・汚れ・アレルゲン・微生物を適切に除去し、皮膚環境（常在菌バランス）を整える</li>
+              <li>保湿・補修・抗菌などの成分を届ける「外用」の手段</li>
+            </ul>
+            <p>ただし<strong>「洗いすぎ」は逆効果</strong>です。角層の細胞間脂質（セラミド等）まで奪うとバリアが壊れ、水分が逃げ（TEWL亢進）、かえって皮脂が代償性に過剰分泌されます。だからこそ、犬の皮膚pHに合った<strong>低刺激の製品</strong>を選び、<strong>洗浄後は必ず保湿でバリアを補う</strong>ことが重要です。</p>
+          </div>
+        </details>
+
+        <details class="pp-edu__item">
+          <summary>なぜ栄養が必要なのか（内側ケア）</summary>
+          <div class="pp-edu__body">
+            <p>被毛は主に<strong>ケラチン（タンパク質）</strong>でできています。美しい被毛は「体の中から」作られ、外用だけでは届かない領域を栄養が支えます。</p>
+            <ul>
+              <li><strong>タンパク質／アミノ酸</strong>（特に含硫アミノ酸＝メチオニン・システイン）：ケラチン・コラーゲンの材料。</li>
+              <li><strong>必須脂肪酸（オメガ3／6）</strong>：皮膚バリアの脂質を構成し、抗炎症にも働く。不足は乾燥・フケ・かゆみに。</li>
+              <li><strong>抗酸化物質（アスタキサンチン・ビタミンE／C）</strong>：紫外線や酸化ストレスから皮膚・被毛を守る。加齢で重要性が増す。</li>
+              <li><strong>ビタミンB群（ビオチン等）・亜鉛・銅</strong>：ケラチン化・色素形成に関与。</li>
+              <li><strong>腸内環境（乳酸菌／プレ・プロバイオティクス）</strong>：「皮膚は腸の鏡」と言われる<strong>腸-皮膚軸</strong>を介して皮膚の状態に影響。</li>
+            </ul>
+            <p>これらを満たすことで、毛質・色冴え・密度・バリア機能を内側から底上げします。</p>
+          </div>
+        </details>
+
+        <details class="pp-edu__item">
+          <summary>皮膚バリアと「最後は保湿」</summary>
+          <div class="pp-edu__body">
+            <p>乾燥はもちろん、ベタつき・毛切れ・くすみ・敏感肌の多くは、<strong>皮膚バリア機能の低下</strong>が背景にあります。バリアが弱るとTEWL（経表皮水分蒸散）が亢進し、刺激物・アレルゲンが侵入しやすくなります。</p>
+            <p>したがって、どの状態でも洗浄・ケアの最後は<strong>「保湿でバリアを整える」</strong>ことが基本です。外用の保湿に、内側からの脂質・抗酸化・栄養を組み合わせることで、バリアを多面的に支えます。</p>
+          </div>
+        </details>
+
+        <details class="pp-edu__item">
+          <summary>外用 × 内用 × 環境の統合ケア</summary>
+          <div class="pp-edu__body">
+            <p>エビデンスに基づくケアは、3つの層で考えます。</p>
+            <ul>
+              <li><strong>外用（Topical）</strong>：シャンプー・コンディショナー・仕上げ材で、洗浄・補修・保湿・保護。</li>
+              <li><strong>内用（Internal）</strong>：タンパク質・必須脂肪酸・抗酸化・腸内環境で、毛とバリアを内側から構築。</li>
+              <li><strong>環境（Environmental）</strong>：湿度・紫外線・摩擦・洗浄頻度・アレルゲンなど、悪化要因を管理。</li>
+            </ul>
+            <p>本診断の「改善」は、この3層に沿って提案しています。</p>
+          </div>
+        </details>
+
+        <details class="pp-edu__item">
+          <summary>参考文献・エビデンスについて</summary>
+          <div class="pp-edu__body">
+            <p>本コンテンツは、獣医皮膚科学・獣医栄養学で標準的に用いられる以下の文献・指針に基づく教育目的の要約です（一文ごとの引用ではなく、分野のコンセンサスに基づきます）。</p>
+            <ol class="pp-edu__refs">
+              <li>Miller WH Jr, Griffin CE, Campbell KL. <em>Muller &amp; Kirk's Small Animal Dermatology.</em> 7th ed. Elsevier; 2013.（皮膚・被毛の構造、角化、皮脂・脂漏、シャンプー療法）</li>
+              <li>Hnilica KA, Patterson AP. <em>Small Animal Dermatology: A Color Atlas and Therapeutic Guide.</em> 4th ed. Elsevier; 2017.</li>
+              <li>Hand MS, Thatcher CD, Remillard RL, et al. (eds). <em>Small Animal Clinical Nutrition.</em> 5th ed. Mark Morris Institute; 2010.（皮膚・被毛と栄養：タンパク質・必須脂肪酸・亜鉛・ビタミン）</li>
+              <li>WSAVA Global Nutrition Committee. <em>Global Nutrition Guidelines.</em> World Small Animal Veterinary Association.</li>
+              <li>Watson TDG. Diet and skin disease in dogs and cats. <em>J Nutr.</em> 1998;128(12 Suppl):2783S–2789S.（栄養と皮膚疾患の総説）</li>
+            </ol>
+            <p class="pp-edu__caveat">補足：犬の皮膚pHは「人の弱酸性より高い」とする報告が一般的ですが、測定部位・犬種・方法により値に幅があります。腸-皮膚相関（gut-skin axis）は研究が進展中の領域です。最新の知見と個体差を踏まえ、診断・治療は獣医師にご相談ください。</p>
+          </div>
+        </details>
+      </div>
+
+      <p class="pp-edu__note">
+        ※本コンテンツは一般的な獣医皮膚科学・栄養学の知見に基づく教育目的の情報です。
+        皮膚疾患が疑われる場合は、自己判断せず獣医師の診察を受けてください。
+      </p>
     </div>
 
     <!-- All Categories / 全製品ラインナップへの導線 -->
