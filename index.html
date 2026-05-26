@@ -1200,6 +1200,7 @@
     border-radius: var(--radius-sm);
     overflow: hidden;
     background: #ffffff;
+    scroll-margin-top: 16px;
   }
   .pp-edu__item > summary {
     list-style: none;
@@ -5809,7 +5810,8 @@ function renderProductGuide() {
 try { renderProductGuide(); } catch (e) {}
 
 /* 学びの場: 目次(クイックアクセス)を生成し、タップで該当項目を開いてスクロール。
-   排他アコーディオン(name属性、対応ブラウザ)＋非対応ブラウザ向けに手動で他項目を閉じる */
+   各項目は独立に開閉(非排他)。他項目を閉じないため、上の項目が畳まれて
+   クリック位置が上にずれる(クロスオリジンiframeで補正不可)問題を防ぐ。 */
 function buildEduIndex() {
   const list = document.getElementById('eduList');
   const idx = document.getElementById('eduIndex');
@@ -5817,7 +5819,6 @@ function buildEduIndex() {
   idx.innerHTML = '';
   const items = Array.from(list.querySelectorAll('.pp-edu__item'));
   items.forEach((it, i) => {
-    it.setAttribute('name', 'edu-accordion');
     if (!it.id) it.id = 'edu-' + (i + 1);
     const sum = it.querySelector('summary');
     let label = '項目' + (i + 1);
@@ -5830,7 +5831,6 @@ function buildEduIndex() {
     chip.className = 'pp-edu__indexchip';
     chip.textContent = label;
     chip.addEventListener('click', () => {
-      items.forEach(o => { if (o !== it) o.open = false; });
       it.open = true;
       setTimeout(() => {
         try { it.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { it.scrollIntoView(); }
