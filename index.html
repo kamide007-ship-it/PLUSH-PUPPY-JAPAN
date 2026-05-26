@@ -1565,6 +1565,40 @@
     margin-bottom: 5px;
   }
   .pp-schedule__routine strong { color: var(--pp-text); font-weight: 600; }
+  .pp-schedule__priority {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--pp-text);
+    background: rgba(239, 154, 17, 0.10);
+    border: 1px solid var(--pp-border-light);
+    border-left: 3px solid var(--pp-orange);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+  }
+  .pp-schedule__priority-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--pp-orange-dark);
+    margin-bottom: 6px;
+  }
+  .pp-schedule__priority strong { color: var(--pp-text); font-weight: 700; }
+  .pp-schedule__tip {
+    margin-top: 8px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--pp-navy);
+    background: var(--pp-navy-soft);
+    border-radius: 6px;
+    padding: 7px 10px;
+  }
+  .pp-schedule__tip strong { color: var(--pp-navy); font-weight: 700; }
+  .pp-schedule__buys {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
   .pp-schedule__row {
     display: grid;
     grid-template-columns: 110px 1fr;
@@ -3804,7 +3838,7 @@ function runDiagnosis() {
 
   if (a.goal === 'show_prep') {
     document.getElementById('showScheduleSection').style.display = 'block';
-    renderSchedule(a.showDate);
+    renderSchedule(a.showDate, coat);
   } else {
     document.getElementById('showScheduleSection').style.display = 'none';
   }
@@ -4098,7 +4132,7 @@ function shareReport() {
   }
 }
 
-function renderSchedule(showDateStr) {
+function renderSchedule(showDateStr, coat) {
   const wrap = document.getElementById('showSchedule');
   let daysLeft = null;
   if (showDateStr) {
@@ -4106,18 +4140,47 @@ function renderSchedule(showDateStr) {
     const today = new Date(); today.setHours(0,0,0,0);
     daysLeft = Math.ceil((showDate - today) / 86400000);
   }
+  const base = coatBaseKey(coat || 'all');
+  const COAT_PRIORITY = {
+    cotton: 'コットン系（プードル・ビション等）は<strong>ボリュームとシルエット</strong>が命。保湿で寝かせすぎず、当日の立ち上げとスカルプティングが鍵です。',
+    silky: 'シルキー系（マルチーズ・ヨーキー等）は<strong>飾り毛の長さ維持と毛切れ防止</strong>が最重要。シルクプロテインとオイルで保護し、毛玉を作りません。',
+    double: 'ダブルコート（ポメ・柴等）は<strong>アンダーコートの管理</strong>が要点。死毛を除いて立ち上げ、バリカンで刈り込みすぎないこと。',
+    harsh: 'ハーシュ／ワイヤー（テリア・シュナ等）は<strong>質感維持</strong>が命。数週間前までに<strong>ハンドストリッピング</strong>でテクスチャを合わせ、柔軟剤は避けます。',
+    wavy: 'ウェービー系は<strong>飾り毛の絡み</strong>に注意。保湿と毛流れを整えます。',
+    smooth: 'スムース系は短毛。<strong>艶出しと皮膚コンディション</strong>の仕上げが中心です。',
+    all: 'コートタイプに合わせて、保湿・ボリューム・質感のバランスを調整します。'
+  };
   const phases = [
-    { when:'8 WEEKS', jp:'8週間前', what:'<strong>コンディションづくりの土台。</strong>良質なタンパク質・必須脂肪酸・抗酸化を継続して被毛を最良の状態へ育てます。週1回のディープクレンジングで地肌と毛穴をリセット。傷んだ毛先は計画的にカットして新しい毛に入れ替えます。', th:56 },
-    { when:'4 WEEKS', jp:'4週間前', what:'<strong>集中ケア期。</strong>コートレスキューやシーブリーズオイルで保湿・補修し、乾燥と毛切れを予防。骨格・毛流れに合わせたベースのトリミングを開始します。', th:28 },
-    { when:'2 WEEKS', jp:'2週間前', what:'<strong>形と質感の調整。</strong>毛玉・もつれを完全に除去し、ボリューム系ケアと栄養でハリ・立ち上がりを底上げ。理想のシルエットへ中間トリミング。', th:14 },
-    { when:'1 WEEK',  jp:'1週間前', what:'<strong>仕上がりの最終確認。</strong>質感・色冴え・艶をチェックし、必要なら微調整トリミング。白・淡色はステイン（涙やけ・黄ばみ）対策を強化します。', th:7 },
-    { when:'1 DAY',   jp:'前日',   what:'<strong>本番準備。</strong>入念な洗浄→完全ドライ→「T.L.C コートコンディショナー」（リーブイン スプレー）で毛流れを整えます。白・淡色はチョーク／ホワイトニングの下地を準備。就寝前のブラッシングを丁寧に。', th:1 },
-    { when:'SHOW DAY',jp:'当日朝', what:'<strong>決定的な仕上げ。</strong>「OMG グルーミングスプレー」でもつれを取り、「ボリューマイジング クリーム」で立ち上げ、「チョーケストラル」／「フェアリーフロスト」等でショー仕上げ。リング直前に仕上げスプレーで毛流れを整えます。', th:0 },
+    { when:'8 WEEKS', jp:'8週間前', th:56,
+      what:'<strong>コンディションづくりの土台。</strong>良質なタンパク質・必須脂肪酸・抗酸化を継続して被毛を最良の状態へ育てます。週1回のディープクレンジングで地肌と毛穴をリセット。傷んだ毛先は計画的にカットして新しい毛に入れ替えます。',
+      tip:{ harsh:'この時期に<strong>ハンドストリッピング</strong>を開始し、本番までにテクスチャ（巻き）を合わせます。柔軟剤は避けます。', double:'換毛を促し、アンダーコートを計画的に除去していきます。' },
+      products:[ {n:'ディープ クレンジング シャンプー', id:'000000000024'} ] },
+    { when:'4 WEEKS', jp:'4週間前', th:28,
+      what:'<strong>集中ケア期。</strong>「コート レスキュー」や「シーブリーズ オイル」で保湿・補修し、乾燥と毛切れを予防。骨格・毛流れに合わせたベースのトリミングを開始します。',
+      tip:{ silky:'飾り毛の<strong>長さ維持</strong>が最優先。オイルやラッピングで毛先を保護し、毛切れを防ぎます。', cotton:'骨格に沿った<strong>スカルプティング（シザーリング）</strong>を本格化します。' },
+      products:[ {n:'コート レスキュー', id:'000000000090'}, {n:'シーブリーズ オイル', id:'000000000045'} ] },
+    { when:'2 WEEKS', jp:'2週間前', th:14,
+      what:'<strong>形と質感の調整。</strong>毛玉・もつれを完全に除去し、ボリューム系ケアと栄養でハリ・立ち上がりを底上げ。理想のシルエットへ中間トリミング。',
+      tip:{ cotton:'<strong>立ち上がり</strong>を作り、寝かせない仕上げを意識します。', double:'立ち上げを意識し、アンダーコートを整えます。' },
+      products:[ {n:'ボリューマイジング スプレー', id:'000000000082'} ] },
+    { when:'1 WEEK',  jp:'1週間前', th:7,
+      what:'<strong>仕上がりの最終確認。</strong>質感・色冴え・艶をチェックし、必要なら微調整トリミング。白・淡色はステイン（涙やけ・黄ばみ）対策を強化します。',
+      tip:{ silky:'「シルクプロテイン コンディショナー」で艶と指通りを最終調整（毎回の入浴で）。', cotton:'最終シザーリングでシルエットを完成させます。' },
+      products:[ {n:'ナチュラル シルクプロテイン コンディショナー', id:'000000000054'} ] },
+    { when:'1 DAY',   jp:'前日',   th:1,
+      what:'<strong>本番準備。</strong>入念な洗浄→完全ドライ→「T.L.C コートコンディショナー」（リーブイン スプレー）で毛流れを整えます。白・淡色はチョーク／ホワイトニングの下地を準備。就寝前のブラッシングを丁寧に。',
+      tip:{ cotton:'重い製品で寝かせないよう、軽い仕上げにします。', silky:'ラッピングを解く際は毛切れに注意します。' },
+      products:[ {n:'T.L.C コートコンディショナー', id:'000000000091'} ] },
+    { when:'SHOW DAY',jp:'当日朝', th:0,
+      what:'<strong>決定的な仕上げ。</strong>「OMG グルーミングスプレー」でもつれを取り、「ボリューマイジング クリーム」で立ち上げ、「チョーケストラル」／「フェアリーフロスト」等でショー仕上げ。リング直前に仕上げスプレーで毛流れを整えます。',
+      tip:{ cotton:'「ボリューマイジング クリーム」で立ち上げ、スカルプティングで決めます。', silky:'分け目・毛流れを整え、軽い艶出しで仕上げます。', harsh:'本来の質感を活かし、固めすぎないようにします。', double:'立ち上げて、抜け毛を最終除去します。' },
+      products:[ {n:'OMG グルーミングスプレー', id:'000000000101'}, {n:'ボリューマイジング クリーム', id:'000000000080'}, {n:'チョーケストラル', id:'000000000055'} ] },
   ];
   let html = '';
   if (daysLeft !== null && daysLeft >= 0) {
     html += `<p class="pp-schedule__note">ショーまであと <strong>${daysLeft}</strong> 日</p>`;
   }
+  html += `<div class="pp-schedule__priority"><div class="pp-schedule__priority-label">コートタイプ別の重点</div>${COAT_PRIORITY[base] || COAT_PRIORITY.all}</div>`;
   html += `<div class="pp-schedule__routine">
       <div class="pp-schedule__routine-label">基本ルーティン（期間中ずっと）</div>
       <ul>
@@ -4128,10 +4191,14 @@ function renderSchedule(showDateStr) {
     </div>`;
   phases.forEach(p => {
     const isNow = daysLeft !== null && daysLeft <= p.th + 3 && daysLeft >= p.th - 3;
+    const tip = p.tip && p.tip[base];
+    const tipHtml = tip ? `<div class="pp-schedule__tip"><strong>このコート向け：</strong>${tip}</div>` : '';
+    const buys = (p.products || []).map(x => `<a class="pp-rec-chip" href="${ITEM_BASE}${x.id}" target="_blank" rel="noopener">${x.n}</a>`).join('');
+    const buysHtml = buys ? `<div class="pp-schedule__buys">${buys}</div>` : '';
     html += `
       <div class="pp-schedule__row ${isNow ? 'is-now' : ''}">
         <div class="pp-schedule__when">${p.when}<br><span style="font-family:var(--font-jp);font-size:12px;color:var(--pp-text-light);font-weight:400;">${p.jp}</span></div>
-        <div class="pp-schedule__what">${p.what}</div>
+        <div class="pp-schedule__what">${p.what}${tipHtml}${buysHtml}</div>
       </div>
     `;
   });
