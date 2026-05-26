@@ -4422,15 +4422,16 @@ function renderProgramSummary(picks) {
   const items = picks.filter(p => p && typeof p.price === 'number');
   if (items.length === 0) { el.style.display = 'none'; el.innerHTML = ''; return; }
   const total = items.reduce((s, p) => s + p.price, 0);
+  const en = state.lang === 'en';
   el.style.display = 'block';
   el.innerHTML =
     '<div class="pp-program">' +
       '<div class="pp-program__info">' +
-        '<div class="pp-program__label">このケアプログラム一式（おすすめ ' + items.length + ' 点）</div>' +
-        '<div class="pp-program__total">¥' + total.toLocaleString() + '</div>' +
-        '<div class="pp-program__note">下の各製品から個別にご購入いただけます</div>' +
+        '<div class="pp-program__label">' + (en ? 'This care program (' + items.length + ' recommended)' : 'このケアプログラム一式（おすすめ ' + items.length + ' 点）') + '</div>' +
+        (en ? '' : '<div class="pp-program__total">¥' + total.toLocaleString() + '</div>') +
+        '<div class="pp-program__note">' + (en ? 'Each product can also be bought individually below.' : '下の各製品から個別にご購入いただけます') + '</div>' +
       '</div>' +
-      '<a class="pp-program__cta" href="' + shopUrl('https://www.plushpuppyjapan.com') + '" target="_blank" rel="noopener">' + (state.lang === 'en' ? 'Shop the program' : 'Plush Puppy で揃える') + '</a>' +
+      '<a class="pp-program__cta" href="' + shopUrl('https://www.plushpuppyjapan.com') + '" target="_blank" rel="noopener">' + (en ? 'Shop the program' : 'Plush Puppy で揃える') + '</a>' +
     '</div>';
 }
 
@@ -4495,6 +4496,7 @@ function renderSchedule(showDateStr, coat) {
     daysLeft = Math.ceil((showDate - today) / 86400000);
   }
   const base = coatBaseKey(coat || 'all');
+  const en = state.lang === 'en';
   const COAT_PRIORITY = {
     cotton: 'コットン系（プードル・ビション等）は<strong>ボリュームとシルエット</strong>が命。保湿で寝かせすぎず、当日の立ち上げとスカルプティングが鍵です。',
     silky: 'シルキー系（マルチーズ・ヨーキー等）は<strong>飾り毛の長さ維持と毛切れ防止</strong>が最重要。シルクプロテインとオイルで保護し、毛玉を作りません。',
@@ -4504,38 +4506,68 @@ function renderSchedule(showDateStr, coat) {
     smooth: 'スムース系は短毛。<strong>艶出しと皮膚コンディション</strong>の仕上げが中心です。',
     all: 'コートタイプに合わせて、保湿・ボリューム・質感のバランスを調整します。'
   };
+  const COAT_PRIORITY_EN = {
+    cotton: 'Cotton coats (Poodle, Bichon) are all about <strong>volume and silhouette</strong>. Avoid flattening with too much moisture; show-day lift and sculpting are key.',
+    silky: 'Silky coats (Maltese, Yorkie) prioritise <strong>length retention and breakage prevention</strong>. Protect with silk protein and oil, and avoid matting.',
+    double: 'Double coats (Pom, Shiba) hinge on <strong>undercoat management</strong>. Remove dead coat and lift; never clip too short.',
+    harsh: 'Harsh/wire coats (Terriers, Schnauzer) live by <strong>texture maintenance</strong>. Hand-strip weeks ahead to set texture, and avoid softeners.',
+    wavy: 'Wavy coats — watch <strong>feathering tangles</strong>. Keep moisture and coat flow tidy.',
+    smooth: 'Smooth coats are short — focus on <strong>shine and skin condition</strong> for the finish.',
+    all: 'Balance moisture, volume and texture to suit the coat type.'
+  };
   const phases = [
-    { when:'8 WEEKS', jp:'8週間前', th:56,
+    { when:'8 WEEKS', jp:'8週間前', jpEn:'8 weeks out', th:56,
       what:'<strong>コンディションづくりの土台。</strong>良質なタンパク質・必須脂肪酸・抗酸化を継続して被毛を最良の状態へ育てます。週1回のディープクレンジングで地肌と毛穴をリセット。傷んだ毛先は計画的にカットして新しい毛に入れ替えます。',
+      whatEn:'<strong>Build the foundation.</strong> Keep up protein, essential fatty acids and antioxidants to grow the coat to its best. Reset skin and pores with a weekly deep cleanse, and plan-trim damaged ends.',
       tip:{ harsh:'この時期に<strong>ハンドストリッピング</strong>を開始し、本番までにテクスチャ（巻き）を合わせます。柔軟剤は避けます。', double:'換毛を促し、アンダーコートを計画的に除去していきます。' },
+      tipEn:{ harsh:'Start <strong>hand-stripping</strong> now to set the texture by show day. Avoid softeners.', double:'Encourage shedding and remove undercoat methodically.' },
       products:[ {n:'ディープ クレンジング シャンプー', id:'000000000024'} ] },
-    { when:'4 WEEKS', jp:'4週間前', th:28,
+    { when:'4 WEEKS', jp:'4週間前', jpEn:'4 weeks out', th:28,
       what:'<strong>集中ケア期。</strong>「コート レスキュー」や「シーブリーズ オイル」で保湿・補修し、乾燥と毛切れを予防。骨格・毛流れに合わせたベースのトリミングを開始します。',
+      whatEn:'<strong>Intensive care.</strong> Moisturise and repair with "Coat Rescue" and "Seabreeze Oil" to prevent dryness and breakage. Begin base trimming to the build and coat flow.',
       tip:{ silky:'飾り毛の<strong>長さ維持</strong>が最優先。オイルやラッピングで毛先を保護し、毛切れを防ぎます。', cotton:'骨格に沿った<strong>スカルプティング（シザーリング）</strong>を本格化します。' },
+      tipEn:{ silky:'<strong>Length retention</strong> first. Protect ends with oil/wrapping to prevent breakage.', cotton:'Begin serious <strong>sculpting (scissoring)</strong> to the build.' },
       products:[ {n:'コート レスキュー', id:'000000000090'}, {n:'シーブリーズ オイル', id:'000000000045'} ] },
-    { when:'2 WEEKS', jp:'2週間前', th:14,
+    { when:'2 WEEKS', jp:'2週間前', jpEn:'2 weeks out', th:14,
       what:'<strong>形と質感の調整。</strong>毛玉・もつれを完全に除去し、ボリューム系ケアと栄養でハリ・立ち上がりを底上げ。理想のシルエットへ中間トリミング。',
+      whatEn:'<strong>Shape &amp; texture.</strong> Remove all mats and tangles; build body and lift with volumising care and nutrition. Mid-trim toward the ideal silhouette.',
       tip:{ cotton:'<strong>立ち上がり</strong>を作り、寝かせない仕上げを意識します。', double:'立ち上げを意識し、アンダーコートを整えます。' },
+      tipEn:{ cotton:'Build <strong>lift</strong> and a non-flat finish.', double:'Focus on lift and tidy the undercoat.' },
       products:[ {n:'ボリューマイジング スプレー', id:'000000000082'} ] },
-    { when:'1 WEEK',  jp:'1週間前', th:7,
+    { when:'1 WEEK',  jp:'1週間前', jpEn:'1 week out', th:7,
       what:'<strong>仕上がりの最終確認。</strong>質感・色冴え・艶をチェックし、必要なら微調整トリミング。白・淡色はステイン（涙やけ・黄ばみ）対策を強化します。',
+      whatEn:'<strong>Final check.</strong> Check texture, colour clarity and shine; fine-trim if needed. For white/light coats, step up stain (tear/yellowing) care.',
       tip:{ silky:'「シルクプロテイン コンディショナー」で艶と指通りを最終調整（毎回の入浴で）。', cotton:'最終シザーリングでシルエットを完成させます。' },
+      tipEn:{ silky:'Final-tune shine and slip with "Silk Protein Conditioner" (at every bath).', cotton:'Complete the silhouette with final scissoring.' },
       products:[ {n:'ナチュラル シルクプロテイン コンディショナー', id:'000000000054'} ] },
-    { when:'1 DAY',   jp:'前日',   th:1,
+    { when:'1 DAY',   jp:'前日',   jpEn:'Day before', th:1,
       what:'<strong>本番準備。</strong>入念な洗浄→完全ドライ→「T.L.C コートコンディショナー」（リーブイン スプレー）で毛流れを整えます。白・淡色はチョーク／ホワイトニングの下地を準備。就寝前のブラッシングを丁寧に。',
+      whatEn:'<strong>Show prep.</strong> Thorough wash → full dry → tidy the coat flow with "T.L.C Coat Conditioner" (leave-in spray). For white/light coats, prepare the chalk/whitening base. Brush carefully before bed.',
       tip:{ cotton:'重い製品で寝かせないよう、軽い仕上げにします。', silky:'ラッピングを解く際は毛切れに注意します。' },
+      tipEn:{ cotton:'Keep it light so heavy products don\'t flatten the coat.', silky:'Mind breakage when removing wraps.' },
       products:[ {n:'T.L.C コートコンディショナー', id:'000000000091'} ] },
-    { when:'SHOW DAY',jp:'当日朝', th:0,
+    { when:'SHOW DAY',jp:'当日朝', jpEn:'Show morning', th:0,
       what:'<strong>決定的な仕上げ。</strong>「OMG グルーミングスプレー」でもつれを取り、「ボリューマイジング クリーム」で立ち上げ、「チョーケストラル」／「フェアリーフロスト」等でショー仕上げ。リング直前に仕上げスプレーで毛流れを整えます。',
+      whatEn:'<strong>The decisive finish.</strong> Release tangles with "OMG Grooming Spray", lift with "Volumising Cream", and finish for the ring with "Chalkestral"/"Fairy Frost". Tidy the coat flow with a finishing spray just before the ring.',
       tip:{ cotton:'「ボリューマイジング クリーム」で立ち上げ、スカルプティングで決めます。', silky:'分け目・毛流れを整え、軽い艶出しで仕上げます。', harsh:'本来の質感を活かし、固めすぎないようにします。', double:'立ち上げて、抜け毛を最終除去します。' },
+      tipEn:{ cotton:'Lift with "Volumising Cream" and finish with sculpting.', silky:'Tidy the part and coat flow; finish with a light shine.', harsh:'Show the natural texture; don\'t over-set.', double:'Lift and do a final de-shed.' },
       products:[ {n:'OMG グルーミングスプレー', id:'000000000101'}, {n:'ボリューマイジング クリーム', id:'000000000080'}, {n:'チョーケストラル', id:'000000000055'} ] },
   ];
   let html = '';
   if (daysLeft !== null && daysLeft >= 0) {
-    html += `<p class="pp-schedule__note">ショーまであと <strong>${daysLeft}</strong> 日</p>`;
+    html += en ? `<p class="pp-schedule__note"><strong>${daysLeft}</strong> days to the show</p>` : `<p class="pp-schedule__note">ショーまであと <strong>${daysLeft}</strong> 日</p>`;
   }
-  html += `<div class="pp-schedule__priority"><div class="pp-schedule__priority-label">コートタイプ別の重点</div>${COAT_PRIORITY[base] || COAT_PRIORITY.all}</div>`;
-  html += `<div class="pp-schedule__routine">
+  html += `<div class="pp-schedule__priority"><div class="pp-schedule__priority-label">${en ? 'Priorities by coat type' : 'コートタイプ別の重点'}</div>${(en ? COAT_PRIORITY_EN[base] : COAT_PRIORITY[base]) || (en ? COAT_PRIORITY_EN.all : COAT_PRIORITY.all)}</div>`;
+  html += en
+    ? `<div class="pp-schedule__routine">
+      <div class="pp-schedule__routine-label">Daily routine (throughout)</div>
+      <ul>
+        <li><strong>Condition at every bath</strong> (silk protein etc.) — conditioner every time is the basis.</li>
+        <li>Always brush <strong>after moisturising</strong>. Dry, forced brushing causes breakage. Comb daily for all but short coats.</li>
+        <li>Keep up nutrition (protein, essential fatty acids, antioxidants) <strong>throughout</strong>. A beautiful coat is built from within.</li>
+      </ul>
+    </div>`
+    : `<div class="pp-schedule__routine">
       <div class="pp-schedule__routine-label">基本ルーティン（期間中ずっと）</div>
       <ul>
         <li><strong>入浴のたびに</strong>コンディショナー（シルクプロテイン等）で保湿・補修。コンディショナーは毎回が基本です。</li>
@@ -4545,14 +4577,19 @@ function renderSchedule(showDateStr, coat) {
     </div>`;
   phases.forEach(p => {
     const isNow = daysLeft !== null && daysLeft <= p.th + 3 && daysLeft >= p.th - 3;
-    const tip = p.tip && p.tip[base];
-    const tipHtml = tip ? `<div class="pp-schedule__tip"><strong>このコート向け：</strong>${tip}</div>` : '';
-    const buys = (p.products || []).map(x => `<a class="pp-rec-chip" href="${shopUrl(ITEM_BASE + x.id)}" target="_blank" rel="noopener">${x.n}</a>`).join('');
+    const tipMap = en ? (p.tipEn || {}) : (p.tip || {});
+    const tip = tipMap[base];
+    const tipHtml = tip ? `<div class="pp-schedule__tip"><strong>${en ? 'For this coat: ' : 'このコート向け：'}</strong>${tip}</div>` : '';
+    const buys = (p.products || []).map(x => {
+      const prod = PRODUCTS.find(pp => pp.url === ITEM_BASE + x.id);
+      const nm = (en && prod && prod.en) ? prod.en : x.n;
+      return `<a class="pp-rec-chip" href="${shopUrl(ITEM_BASE + x.id)}" target="_blank" rel="noopener">${nm}</a>`;
+    }).join('');
     const buysHtml = buys ? `<div class="pp-schedule__buys">${buys}</div>` : '';
     html += `
       <div class="pp-schedule__row ${isNow ? 'is-now' : ''}">
-        <div class="pp-schedule__when">${p.when}<br><span style="font-family:var(--font-jp);font-size:12px;color:var(--pp-text-light);font-weight:400;">${p.jp}</span></div>
-        <div class="pp-schedule__what">${p.what}${tipHtml}${buysHtml}</div>
+        <div class="pp-schedule__when">${p.when}<br><span style="font-family:var(--font-jp);font-size:12px;color:var(--pp-text-light);font-weight:400;">${en ? p.jpEn : p.jp}</span></div>
+        <div class="pp-schedule__what">${en ? p.whatEn : p.what}${tipHtml}${buysHtml}</div>
       </div>
     `;
   });
