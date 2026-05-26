@@ -3831,12 +3831,26 @@ const COAT_LABEL_EN = {
 const GOAL_LABEL = {
   daily:'日常ケア', show_prep:'ショー準備', skin_care:'敏感肌ケア', shedding:'換毛期対策'
 };
+const GOAL_LABEL_EN = {
+  daily:'Daily care', show_prep:'Show prep', skin_care:'Sensitive-skin care', shedding:'Shedding care'
+};
 const ISSUE_LABEL = {
   low_shine:'艶不足', low_moisture:'乾燥', oily:'油分過多', breakage:'毛切れ',
   matting:'毛玉', low_volume:'ボリューム不足', static:'静電気',
   yellowing:'白毛のくすみ', sensitive_skin:'敏感肌', shedding:'換毛期',
   soft_coat:'コートの柔らかさ', all_good:'良好'
 };
+const ISSUE_LABEL_EN = {
+  low_shine:'Dull', low_moisture:'Dryness', oily:'Excess oil', breakage:'Breakage',
+  matting:'Matting', low_volume:'Low volume', static:'Static',
+  yellowing:'Dull white coat', sensitive_skin:'Sensitive skin', shedding:'Shedding',
+  soft_coat:'Soft coat', all_good:'Good'
+};
+/* 言語に応じたラベル取得 */
+function issueLabel(k) { return (state.lang === 'en' && ISSUE_LABEL_EN[k]) ? ISSUE_LABEL_EN[k] : (ISSUE_LABEL[k] || k); }
+function goalLabel(k) { return (state.lang === 'en' && GOAL_LABEL_EN[k]) ? GOAL_LABEL_EN[k] : (GOAL_LABEL[k] || k); }
+function coatLabel(k) { return (state.lang === 'en' && COAT_LABEL_EN[k]) ? COAT_LABEL_EN[k] : (COAT_LABEL[k] || COAT_LABEL.all); }
+function pName(p) { return (state.lang === 'en' && p.en) ? p.en : p.name; }
 const CAT_LABEL = {
   shampoo:'Shampoo', conditioner:'Conditioner',
   finishing:'Finishing', brush:'Brush'
@@ -4048,29 +4062,31 @@ function pickByCat(scored, cat, n) {
 /* 製品が「ユーザーの実際の入力」のどれに対応するかを可視化する選定理由タグ */
 function matchReasons(p, a, coat) {
   const out = [];
+  const en = state.lang === 'en';
   const push = t => { if (t && out.indexOf(t) === -1) out.push(t); };
+  const forCoat = lbl => en ? ('For ' + lbl) : (lbl + '向け');
   const s = a.scores || {};
   // 明示症状
   (a.issues || []).forEach(i => {
-    if (i !== 'all_good' && p.matches.includes(i) && ISSUE_LABEL[i]) push(ISSUE_LABEL[i]);
+    if (i !== 'all_good' && p.matches.includes(i) && ISSUE_LABEL[i]) push(issueLabel(i));
   });
   // スライダー低スコア由来
-  if (s.shine <= 2 && p.matches.includes('low_shine')) push(ISSUE_LABEL.low_shine);
-  if (s.moisture <= 2 && p.matches.includes('low_moisture')) push(ISSUE_LABEL.low_moisture);
-  if (s.density <= 2 && p.matches.includes('low_volume')) push(ISSUE_LABEL.low_volume);
-  if (s.elasticity <= 2 && p.matches.includes('breakage')) push(ISSUE_LABEL.breakage);
+  if (s.shine <= 2 && p.matches.includes('low_shine')) push(issueLabel('low_shine'));
+  if (s.moisture <= 2 && p.matches.includes('low_moisture')) push(issueLabel('low_moisture'));
+  if (s.density <= 2 && p.matches.includes('low_volume')) push(issueLabel('low_volume'));
+  if (s.elasticity <= 2 && p.matches.includes('breakage')) push(issueLabel('breakage'));
   // 毛色
-  if ((a.color === 'white' || a.color === 'silver') && (p.matches.includes('white') || p.matches.includes('yellowing'))) push('白・淡色ケア');
-  if (a.color === 'black' && p.coats.includes('black_coat')) push('黒・濃色専用');
+  if ((a.color === 'white' || a.color === 'silver') && (p.matches.includes('white') || p.matches.includes('yellowing'))) push(en ? 'White / light care' : '白・淡色ケア');
+  if (a.color === 'black' && p.coats.includes('black_coat')) push(en ? 'Black / dark only' : '黒・濃色専用');
   // コート (ミックス時は省略)
   if (coat && coat !== 'all') {
-    if (p.coats.includes(coat)) push((COAT_LABEL[coat] || '') + '向け');
-    else if (COAT_PARENT[coat] && p.coats.includes(COAT_PARENT[coat])) push((COAT_LABEL[COAT_PARENT[coat]] || '') + '向け');
+    if (p.coats.includes(coat)) push(forCoat(coatLabel(coat)));
+    else if (COAT_PARENT[coat] && p.coats.includes(COAT_PARENT[coat])) push(forCoat(coatLabel(COAT_PARENT[coat])));
   }
   // 目的 (daily / shedding は症状ラベルと重複するため除外)
-  if (a.goal && a.goal !== 'daily' && a.goal !== 'shedding' && p.matches.includes(a.goal) && GOAL_LABEL[a.goal]) push(GOAL_LABEL[a.goal]);
+  if (a.goal && a.goal !== 'daily' && a.goal !== 'shedding' && p.matches.includes(a.goal) && GOAL_LABEL[a.goal]) push(goalLabel(a.goal));
   // フォールバック
-  if (out.length === 0) push(p.coats.includes('all') ? '全コート対応' : 'デイリーケア');
+  if (out.length === 0) push(p.coats.includes('all') ? (en ? 'All coats' : '全コート対応') : (en ? 'Daily care' : 'デイリーケア'));
   return out.slice(0, 4);
 }
 
@@ -4086,24 +4102,24 @@ function runDiagnosis() {
   document.getElementById('resultCoatType').textContent = COAT_LABEL_EN[coat];
   document.getElementById('resultDogName').textContent = a.name;
   document.getElementById('resultBreed').textContent = a.breedLabel;
-  document.getElementById('resultType').textContent = COAT_LABEL[coat];
-  document.getElementById('resultGoal').textContent = GOAL_LABEL[a.goal];
+  document.getElementById('resultType').textContent = coatLabel(coat);
+  document.getElementById('resultGoal').textContent = goalLabel(a.goal);
   document.getElementById('resultDate').textContent =
-    new Date().toLocaleDateString('ja-JP', { year:'numeric', month:'long', day:'numeric' });
+    new Date().toLocaleDateString(state.lang === 'en' ? 'en-AU' : 'ja-JP', { year:'numeric', month:'long', day:'numeric' });
 
   // Tags - 問題なし時は「一般的な推奨」と表示
   const tagsEl = document.getElementById('resultTags');
   tagsEl.innerHTML = '';
   if (a.issues.length === 0) {
-    tagsEl.innerHTML = '<span class="pp-tag">一般的な推奨</span>';
+    tagsEl.innerHTML = '<span class="pp-tag">' + (state.lang === 'en' ? 'General recommendation' : '一般的な推奨') + '</span>';
   } else if (a.issues.length === 1 && a.issues[0] === 'all_good') {
-    tagsEl.innerHTML = '<span class="pp-tag">良好なコンディション</span>';
+    tagsEl.innerHTML = '<span class="pp-tag">' + (state.lang === 'en' ? 'Good condition' : '良好なコンディション') + '</span>';
   } else {
     a.issues.forEach(iss => {
       if (iss === 'all_good') return;
       const t = document.createElement('span');
       t.className = 'pp-tag';
-      t.textContent = ISSUE_LABEL[iss];
+      t.textContent = issueLabel(iss);
       tagsEl.appendChild(t);
     });
   }
@@ -4337,7 +4353,7 @@ function renderProducts(picks) {
       ? `<div class="pp-product__image-wrap">
            <img class="pp-product__image"
                 src="${p.image}"
-                alt="${p.name}"
+                alt="${pName(p)}"
                 loading="lazy"
                 onerror="this.onerror=null;this.parentNode.classList.add('is-fallback');this.replaceWith(Object.assign(document.createElement('span'),{textContent:'${CAT_LABEL[p.cat] || ''}'}));">
          </div>`
@@ -4350,7 +4366,7 @@ function renderProducts(picks) {
       <div class="pp-product__rank">${i + 1}</div>
       ${imageHtml}
       <div class="pp-product__cat">${CAT_LABEL[p.cat] || ''}</div>
-      <h4 class="pp-product__name">${p.name}</h4>
+      <h4 class="pp-product__name">${pName(p)}</h4>
       ${matchHtml}
       <p class="pp-product__why">${p.desc}</p>
       <div class="pp-product__price">¥${p.price.toLocaleString()}<small>${p.size}</small></div>
@@ -4835,7 +4851,7 @@ function recHtml(key, scored) {
   let h = '<div class="pp-assessment__rec"><span class="pp-assessment__rec-label">推奨</span><div class="pp-assessment__rec-list">';
   prods.forEach(p => {
     h += '<a class="pp-rec-chip" href="' + shopUrl(p.url) + '" target="_blank" rel="noopener">' +
-      escapeHtml(p.name) + '<small>' + (CAT_LABEL[p.cat] || '') + ' ¥' + p.price.toLocaleString() + '</small></a>';
+      escapeHtml(pName(p)) + '<small>' + (CAT_LABEL[p.cat] || '') + ' ¥' + p.price.toLocaleString() + '</small></a>';
   });
   if (supp) {
     h += '<a class="pp-rec-chip pp-rec-chip--supp" href="' + supp.url + '" target="_blank" rel="noopener">' +
@@ -5044,12 +5060,12 @@ function renderSupplements(a) {
       <div class="pp-supp-add-item__image-wrap">
         <img class="pp-supp-add-item__image"
              src="${p.image}"
-             alt="${p.name}"
+             alt="${pName(p)}"
              loading="lazy"
              onerror="this.onerror=null;this.parentNode.classList.add('is-fallback');this.replaceWith(Object.assign(document.createElement('span'),{textContent:'${p.tag}'}));">
       </div>
       <div class="pp-supp-add-item__tag">${p.tag}</div>
-      <div class="pp-supp-add-item__name">${p.name}</div>
+      <div class="pp-supp-add-item__name">${pName(p)}</div>
       <div class="pp-supp-add-item__desc">${p.desc}</div>
       <span class="pp-supp-add-item__cta">CanineVet で購入する</span>
     </a>
@@ -5197,7 +5213,7 @@ function renderConcernTable() {
     const key = pair[0], label = pair[1];
     const prods = PRODUCTS.filter(p => p.matches.indexOf(key) >= 0).slice(0, 4);
     const supp = CV_ADDONS.find(s => s.triggers.indexOf(key) >= 0);
-    let cells = prods.map(p => '<a href="' + shopUrl(p.url) + '" target="_blank" rel="noopener">' + escapeHtml(p.name) + '</a>').join('、');
+    let cells = prods.map(p => '<a href="' + shopUrl(p.url) + '" target="_blank" rel="noopener">' + escapeHtml(pName(p)) + '</a>').join('、');
     if (supp) cells += (cells ? ' ／ ' : '') + '<a href="' + supp.url + '" target="_blank" rel="noopener">' + escapeHtml(supp.name) + '（サプリ）</a>';
     rows += '<tr><th>' + label + '</th><td>' + (cells || '—') + '</td></tr>';
   });
@@ -5220,7 +5236,7 @@ function renderProductGuide() {
     items.forEach(p => {
       const type = productTypeTag(p);
       html += '<div class="pp-guide__item">' +
-        '<div class="pp-guide__item-name">' + escapeHtml(p.name) + '</div>' +
+        '<div class="pp-guide__item-name">' + escapeHtml(pName(p)) + '</div>' +
         '<div class="pp-guide__item-meta">' + (p.size ? escapeHtml(p.size) + '・' : '') + '¥' + p.price.toLocaleString() + '</div>' +
         '<div class="pp-guide__tags">' +
           (type ? '<span class="pp-guide__tag pp-guide__tag--type">' + type + '</span>' : '') +
