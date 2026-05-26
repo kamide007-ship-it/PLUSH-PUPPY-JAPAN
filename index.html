@@ -947,6 +947,57 @@
     color: var(--pp-navy);
     margin-bottom: 8px;
   }
+  .pp-assessment__rec {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--pp-border-light);
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .pp-assessment__rec-label {
+    flex-shrink: 0;
+    font-size: 10px;
+    font-weight: 700;
+    color: #ffffff;
+    background: var(--pp-orange);
+    border-radius: 4px;
+    padding: 4px 8px;
+    margin-top: 2px;
+  }
+  .pp-assessment__rec-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    flex: 1;
+  }
+  .pp-rec-chip {
+    display: inline-flex;
+    flex-direction: column;
+    text-decoration: none;
+    border: 1px solid var(--pp-border-light);
+    border-radius: var(--radius-sm);
+    padding: 7px 12px;
+    background: #ffffff;
+    color: var(--pp-navy);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .pp-rec-chip small {
+    font-size: 10px;
+    color: var(--pp-text-muted);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+  .pp-rec-chip:hover {
+    border-color: var(--pp-navy);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+  .pp-rec-chip--supp { color: #2f9e7e; }
+  .pp-rec-chip--supp:hover { border-color: #2f9e7e; }
   .pp-assessment__obs,
   .pp-assessment__fix {
     font-size: 13px;
@@ -4355,6 +4406,24 @@ const CARE_EVIDENCE = {
 };
 
 /* 改善策をエビデンス階層 (外用→内用→環境) ＋ 各層の根拠注記で表示 */
+/* 考察カードに、その悩みに対応する推奨製品(外用)＋サプリ(内側)へのリンクを付与 */
+function recHtml(key, scored) {
+  const prods = (scored || []).filter(p => p.matches.includes(key)).slice(0, 2);
+  const supp = CV_ADDONS.find(s => s.triggers.includes(key));
+  if (!prods.length && !supp) return '';
+  let h = '<div class="pp-assessment__rec"><span class="pp-assessment__rec-label">推奨</span><div class="pp-assessment__rec-list">';
+  prods.forEach(p => {
+    h += '<a class="pp-rec-chip" href="' + p.url + '" target="_blank" rel="noopener">' +
+      escapeHtml(p.name) + '<small>' + (CAT_LABEL[p.cat] || '') + ' ¥' + p.price.toLocaleString() + '</small></a>';
+  });
+  if (supp) {
+    h += '<a class="pp-rec-chip pp-rec-chip--supp" href="' + supp.url + '" target="_blank" rel="noopener">' +
+      escapeHtml(supp.name) + '<small>サプリ（内側ケア）</small></a>';
+  }
+  h += '</div></div>';
+  return h;
+}
+
 function renderCareLayers(layers, issueKey) {
   const ev = CARE_EVIDENCE[issueKey] || {};
   const order = [['topical', '外用'], ['internal', '内用'], ['environment', '環境']];
@@ -4465,6 +4534,7 @@ function renderAssessment(a, coat) {
       '<p class="pp-assessment__fix"><b>改善</b>' + okFix + '</p>' +
       '</div></div>';
   } else {
+    const scored = scoreProducts(a);
     html += '<div class="pp-assessment__concerns">';
     concerns.forEach(c => {
       const ins = ISSUE_INSIGHT[c.key];
@@ -4476,6 +4546,7 @@ function renderAssessment(a, coat) {
         '<div class="pp-assessment__concern-label">' + escapeHtml(c.label) + '</div>' +
         '<p class="pp-assessment__obs"><b>考察</b>' + ins.obs[tone] + '</p>' +
         fixHtml +
+        recHtml(c.key, scored) +
         '</div>';
     });
     html += '</div>';
