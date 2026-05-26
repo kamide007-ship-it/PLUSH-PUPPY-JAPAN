@@ -1321,6 +1321,103 @@
   }
 
   /* ============================================
+     Product Guide (全製品 使い分け)
+     ============================================ */
+  .pp-guide__lead {
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--pp-text-light);
+    margin: 0 0 20px;
+  }
+  .pp-guide__cat { margin-bottom: 28px; }
+  .pp-guide__cat-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--pp-navy);
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--pp-navy-soft);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .pp-guide__cat-title span {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--pp-text-muted);
+  }
+  .pp-guide__cat-intro {
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--pp-text-light);
+    margin: 8px 0 14px;
+  }
+  .pp-guide__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+  }
+  .pp-guide__item {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--pp-border-light);
+    border-radius: var(--radius-sm);
+    background: #ffffff;
+    padding: 14px 16px;
+  }
+  .pp-guide__item-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--pp-text);
+    line-height: 1.5;
+  }
+  .pp-guide__item-meta {
+    font-family: var(--font-en);
+    font-size: 12px;
+    color: var(--pp-navy);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+  .pp-guide__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 8px 0;
+  }
+  .pp-guide__tag {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--pp-text-light);
+    background: var(--pp-bg-soft);
+    border: 1px solid var(--pp-border-light);
+    border-radius: var(--radius-pill);
+    padding: 2px 9px;
+  }
+  .pp-guide__tag--type {
+    color: #ffffff;
+    background: var(--pp-orange);
+    border-color: var(--pp-orange);
+  }
+  .pp-guide__desc {
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--pp-text-light);
+    margin: 0 0 12px;
+    flex-grow: 1;
+  }
+  .pp-guide__buy {
+    align-self: flex-start;
+    font-size: 12px;
+    font-weight: 600;
+    color: #ffffff;
+    background: var(--pp-navy);
+    border-radius: var(--radius-pill);
+    padding: 6px 16px;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pp-guide__buy:hover { background: var(--pp-navy-dark); }
+
+  /* ============================================
      Product Cards
      ============================================ */
   .pp-products {
@@ -2222,6 +2319,7 @@
       <div class="pp-menu__panel" id="menuPanel" role="menu" hidden>
         <button type="button" class="pp-menu__item" role="menuitem" onclick="menuGo('top')">診断する</button>
         <button type="button" class="pp-menu__item" role="menuitem" onclick="menuGo('learn')">コートの科学（学びの場）</button>
+        <button type="button" class="pp-menu__item" role="menuitem" onclick="menuGo('guide')">製品 使い分けガイド</button>
         <button type="button" class="pp-menu__item" role="menuitem" onclick="menuGo('products')">製品ラインナップ</button>
         <button type="button" class="pp-menu__item" role="menuitem" onclick="menuGo('supplements')">サプリメント</button>
       </div>
@@ -3220,6 +3318,16 @@
         ※本コンテンツは一般的な獣医皮膚科学・栄養学の知見に基づく教育目的の情報です。
         皮膚疾患が疑われる場合は、自己判断せず獣医師の診察を受けてください。
       </p>
+    </div>
+
+    <!-- Product Guide / 製品使い分けガイド（全製品） -->
+    <div class="pp-panel pp-panel--resource" id="guidePanel">
+      <div class="pp-section-title" style="margin-top:0;">
+        <div class="pp-section-title__en">Product Guide</div>
+        <div class="pp-section-title__jp">製品 使い分けガイド（全製品）</div>
+      </div>
+      <p class="pp-guide__lead">シャンプー・コンディショナー／トリートメント・フィニッシング（スプレー／クリーム／パウダー）・ブラシまで、<strong>全製品</strong>を「用途」と「向くコートタイプ」で一覧化しました。迷ったときの早見表としてご活用ください。</p>
+      <div id="productGuide"></div>
     </div>
 
     <!-- All Categories / 全製品ラインナップへの導線 -->
@@ -4845,7 +4953,7 @@ function menuGo(target) {
   const result = document.getElementById('result');
   // 診断前は resource パネル(学び/製品/サプリ)だけを表示
   if (result && !result.classList.contains('is-shown')) result.classList.add('is-resources');
-  const idMap = { learn: 'learnPanel', products: 'allProductsPanel', supplements: 'supplementPanel' };
+  const idMap = { learn: 'learnPanel', guide: 'guidePanel', products: 'allProductsPanel', supplements: 'supplementPanel' };
   const el = document.getElementById(idMap[target]);
   setTimeout(() => {
     if (el) { try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { el.scrollIntoView(); } }
@@ -4860,6 +4968,70 @@ new MutationObserver(notifyHeight).observe(document.body, { childList:true, subt
 
 /* 解析前でもサプリ追加カードを表示できるよう、初期表示を用意 */
 try { renderSupplements({ issues: [], goal: 'daily', scores: {}, age: '' }); } catch (e) {}
+
+/* 製品 使い分けガイド（全製品を PRODUCTS から動的生成） */
+function coatGroupLabel(t) {
+  if (t === 'all') return '全コート';
+  if (t.indexOf('cotton') === 0) return 'コットン';
+  if (t.indexOf('harsh') === 0 || t === 'dachshund_wire') return 'ハーシュ/ワイヤー';
+  if (t === 'silky' || t === 'dachshund_long' || t === 'chihuahua_long') return 'シルキー/長毛';
+  if (t === 'smooth' || t === 'dachshund_smooth' || t === 'chihuahua_smooth') return 'スムース/短毛';
+  if (t === 'double') return 'ダブル';
+  if (t === 'wavy') return 'ウェービー';
+  if (t === 'black_coat') return '黒・濃色';
+  if (t === 'white') return '白・淡色';
+  return t;
+}
+function coatsToText(coats) {
+  const set = [];
+  (coats || []).forEach(c => { const l = coatGroupLabel(c); if (set.indexOf(l) === -1) set.push(l); });
+  return set.length ? set.join('・') : '全コート';
+}
+function productTypeTag(p) {
+  if (p.cat !== 'finishing') return '';
+  const n = p.name;
+  if (n.indexOf('スプレー') >= 0) return 'スプレー';
+  if (n.indexOf('クリーム') >= 0) return 'クリーム';
+  if (n.indexOf('パウダー') >= 0 || n.indexOf('ダスト') >= 0 || n.indexOf('フロスト') >= 0 || n.indexOf('チョーク') >= 0 || n.indexOf('チョーケストラル') >= 0) return 'パウダー';
+  if (n.indexOf('オイル') >= 0) return 'オイル';
+  if (n.indexOf('バーム') >= 0) return 'バーム';
+  return '仕上げ材';
+}
+const GUIDE_CATS = [
+  { cat: 'shampoo', label: 'シャンプー（洗浄）', intro: '目的で選びます。基本は全身用1本＋悩みに合わせた専用シャンプー。週1回のディープクレンジングで皮脂をリセットするのも有効です。' },
+  { cat: 'conditioner', label: 'コンディショナー / トリートメント', intro: '入浴のたびの保湿・補修が基本（毎回）。乾燥やダメージが強い時は集中トリートメントを追加します。' },
+  { cat: 'finishing', label: 'フィニッシング（仕上げ）', intro: 'スプレー＝日常・ブラッシング補助／クリーム・パウダー＝ボリュームやショー仕上げ。質感で使い分けます。' },
+  { cat: 'brush', label: 'ブラシ', intro: 'コートに合うブラシ選びが毛切れ防止の要。必ず保湿してからブラッシングを。' }
+];
+function renderProductGuide() {
+  const wrap = document.getElementById('productGuide');
+  if (!wrap) return;
+  let html = '';
+  GUIDE_CATS.forEach(g => {
+    const items = PRODUCTS.filter(p => p.cat === g.cat);
+    if (!items.length) return;
+    html += '<div class="pp-guide__cat">' +
+      '<div class="pp-guide__cat-title">' + g.label + '<span>' + items.length + '点</span></div>' +
+      '<p class="pp-guide__cat-intro">' + g.intro + '</p>' +
+      '<div class="pp-guide__list">';
+    items.forEach(p => {
+      const type = productTypeTag(p);
+      html += '<div class="pp-guide__item">' +
+        '<div class="pp-guide__item-name">' + escapeHtml(p.name) + '</div>' +
+        '<div class="pp-guide__item-meta">' + (p.size ? escapeHtml(p.size) + '・' : '') + '¥' + p.price.toLocaleString() + '</div>' +
+        '<div class="pp-guide__tags">' +
+          (type ? '<span class="pp-guide__tag pp-guide__tag--type">' + type + '</span>' : '') +
+          '<span class="pp-guide__tag">向く: ' + escapeHtml(coatsToText(p.coats)) + '</span>' +
+        '</div>' +
+        '<p class="pp-guide__desc">' + escapeHtml(p.desc) + '</p>' +
+        '<a class="pp-guide__buy" href="' + p.url + '" target="_blank" rel="noopener">商品ページ</a>' +
+        '</div>';
+    });
+    html += '</div></div>';
+  });
+  wrap.innerHTML = html;
+}
+try { renderProductGuide(); } catch (e) {}
 
 /* 学びの場: 目次(クイックアクセス)を生成し、タップで該当項目を開いてスクロール。
    排他アコーディオン(name属性、対応ブラウザ)＋非対応ブラウザ向けに手動で他項目を閉じる */
