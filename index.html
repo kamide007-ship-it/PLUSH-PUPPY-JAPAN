@@ -4848,22 +4848,81 @@ function recHtml(key, scored) {
   const prods = (scored || []).filter(p => p.matches.includes(key)).slice(0, 2);
   const supp = CV_ADDONS.find(s => s.triggers.includes(key));
   if (!prods.length && !supp) return '';
-  let h = '<div class="pp-assessment__rec"><span class="pp-assessment__rec-label">推奨</span><div class="pp-assessment__rec-list">';
+  const en = state.lang === 'en';
+  let h = '<div class="pp-assessment__rec"><span class="pp-assessment__rec-label">' + (en ? 'Recommended' : '推奨') + '</span><div class="pp-assessment__rec-list">';
   prods.forEach(p => {
     h += '<a class="pp-rec-chip" href="' + shopUrl(p.url) + '" target="_blank" rel="noopener">' +
-      escapeHtml(pName(p)) + '<small>' + (CAT_LABEL[p.cat] || '') + ' ¥' + p.price.toLocaleString() + '</small></a>';
+      escapeHtml(pName(p)) + '<small>' + (CAT_LABEL[p.cat] || '') + (en ? '' : ' ¥' + p.price.toLocaleString()) + '</small></a>';
   });
   if (supp) {
     h += '<a class="pp-rec-chip pp-rec-chip--supp" href="' + supp.url + '" target="_blank" rel="noopener">' +
-      escapeHtml(supp.name) + '<small>サプリ（内側ケア）</small></a>';
+      escapeHtml(supp.name) + '<small>' + (en ? 'Supplement (inner care)' : 'サプリ（内側ケア）') + '</small></a>';
   }
   h += '</div></div>';
   return h;
 }
 
+/* ===== 英語版データ (assessment) ===== */
+const COAT_ANATOMY_EN = {
+  silky: { detailed: 'A guard-hair-dominant, continuously growing coat, fairly close to human hair. It develops a silky sheen when the cuticle is smooth, but as the hairs are fine with little undercoat it is delicate and prone to dryness, static and breakage.', gentle: 'Fine and supple, close to human hair. It shines beautifully when groomed, but is delicate and prone to dryness, static and split ends.' },
+  cotton: { detailed: 'A curled single coat with little undercoat. It sheds little but grows continuously, tangles densely, and mats easily if under-moisturised; soft, full volume is key to its look.', gentle: 'A fluffy curly coat that sheds little but keeps growing. It mats easily when dry, so moisture and brushing matter.' },
+  double: { detailed: 'A two-layer coat of guard hairs and a dense undercoat. Dogs have compound follicles (several hairs per follicle) and shed seasonally; watch for undercoat build-up and trapped sebum/dirt.', gentle: 'A double coat of coarse guard hairs and soft undercoat that sheds heavily by season. Regular de-shedding care is important.' },
+  harsh: { detailed: 'A hard, wiry coat. Its texture and colour are maintained by regular hand-stripping; over-softening with conditioner harms its natural firmness and dirt resistance.', gentle: 'A hard, wiry coat. Avoid over-softening it; wash with care to keep its natural texture.' },
+  wavy: { detailed: 'A gently wavy coat with guard hairs plus moderate undercoat. The feathering on ears and legs tangles easily; moisture and coat-flow management shape the finish.', gentle: 'A wavy coat whose ear/leg feathering tangles easily. Moisture and coat flow set the look.' },
+  smooth: { detailed: 'A short, close-lying coat. Sebum spreads evenly for a natural shine, but because the coat is short, skin condition shows readily on the surface.', gentle: 'A short coat that shines easily. Because it is short, skin condition shows on the surface.' },
+  all: { detailed: 'Coat type varies by breed and colour. Balancing moisture and cleansing while watching skin and coat condition is the basis of care.', gentle: 'Coat type varies between dogs. Balance moisture and cleansing while watching the skin and coat.' }
+};
+const ISSUE_INSIGHT_EN = {
+  low_shine: { obs:{ detailed:'Shine comes from a smooth outer cuticle reflecting light evenly. When the cuticle is disordered or the sebum/moisture balance drops, light scatters and shine is lost.', gentle:'Shine comes from a smooth hair surface reflecting light. A rough surface or lack of moisture makes it look dull.' }, fix:{ gentle:'Smooth the surface with a silk-protein conditioner and add nutrition to revitalise the hair.', layers:{ topical:'Repair and smooth the cuticle with a silk-protein conditioner; finish with a shine product.', internal:'Boost coat quality and colour with protein (amino acids), zinc and antioxidants.', environment:'Avoid high dryer heat, UV and friction that damage the cuticle.' } } },
+  low_moisture: { obs:{ detailed:"A dog's stratum corneum is thinner and the barrier delicate. Lack of intercellular lipids/sebum, rinse residue or a dry environment let water escape and the coat goes dry.", gentle:"A dog's skin is thinner and more delicate than ours. When moisture escapes, the coat becomes dry." }, fix:{ gentle:'Replenish both water and oil with a moisturising conditioner and nutrition.', layers:{ topical:'Replenish water and barrier lipids (ceramides) with a moisturising conditioner/leave-in to curb trans-epidermal water loss (TEWL).', internal:'Supply barrier lipids from within with essential fatty acids (omega-3) and nutrition.', environment:'Reduce dryness factors: low humidity, heating and over-washing (frequency/hot water).' } } },
+  oily: { obs:{ detailed:'Greasiness often arises not from excess sebum alone but as a result of a broken skin barrier (stratum-corneum lipids) and disturbed microbial balance. As the barrier weakens, water escapes and sebum is over-produced to compensate, then oxidises — causing odour and itch (dogs lack whole-body sweat glands, so sebum oxidises easily).', gentle:'Greasiness is not just excess oil — it can signal a wavering skin barrier. A weak barrier triggers extra sebum to compensate.' }, fix:{ gentle:'Cleanse well but never over-wash. Always finish with moisture to protect the barrier, and support from within with gut care and nutrition.', layers:{ topical:'Gently remove excess sebum/oxidised matter with deep cleansing → then always replenish moisture to rebuild the barrier (over-degreasing causes rebound sebum, so avoid it).', internal:'Correct barrier and sebum balance from within with gut health (probiotics) and essential fatty acids.', environment:'Avoid frequent/harsh over-washing; manage humid, hot conditions and allergens.' } } },
+  breakage: { obs:{ detailed:'Keratin and its bonds — the main hair component — weaken from friction, dryness and UV and snap mid-shaft. Finer hair breaks more easily.', gentle:'Hair weakened by dryness and friction snaps mid-strand. Finer hair breaks more easily.' }, fix:{ gentle:'Strengthen the hair with a repair treatment, and always brush gently after moisturising.', layers:{ topical:'Restore strength with a protein repair treatment; brush only after moisturising; protect ends with oil/balm.', internal:'Strengthen the hair from within with protein and antioxidants.', environment:'Avoid friction, dry brushing, UV and high dryer heat.' } } },
+  matting: { obs:{ detailed:'Undercoat and fine hairs interlock into mats. Continuously growing coats such as cotton types tangle especially easily.', gentle:'Fine hairs and undercoat tangle into mats. Curly coats tangle especially easily.' }, fix:{ gentle:'Spray to add slip before brushing, then ease tangles out from the tips.', layers:{ topical:'Add slip and moisture with a detangle spray and work from the tips (dryness raises friction and promotes matting).', environment:'For all but short coats, comb daily and never leave the coat wet.' } } },
+  low_volume: { obs:{ detailed:'Volume depends on hair thickness, density and lift. Poor nutrition, a stalled hair cycle or loss of body reduce it.', gentle:'When hair lacks thickness and lift, volume is hard to achieve.' }, fix:{ gentle:'Create lift with volumising care and add body with nutrition.', layers:{ topical:'Build lift and body with a volumising shampoo/finishing product.', internal:'Support fuller hair (density, body) from within with protein and peptides.', environment:'Avoid heavy products that flatten the roots.' } } },
+  static: { obs:{ detailed:'Dryness charges the cuticle, making hair spread and tangle. Fine, long hair is especially prone.', gentle:'Dryness causes static, making hair spread and tangle.' }, fix:{ gentle:'Restore surface moisture and reduce spread with moisturising and anti-static sprays.', layers:{ topical:'Replenish surface moisture/coating with moisturising and anti-static finishing products to curb charge.', environment:'Avoid low humidity; humidify and reduce friction from synthetic fabrics.' } } },
+  yellowing: { obs:{ detailed:'Dullness of white/light coats is mainly oxidation, tear staining and environmental deposits — pigment and dirt settling on the hair surface.', gentle:'Dull white coats are caused by oxidation, tear stains and built-up dirt.' }, fix:{ gentle:'Bring out whiteness with whitening care and prevent dullness with antioxidant nutrition.', layers:{ topical:'Remove pigment/dirt deposits and restore colour clarity with whitening products.', internal:'Suppress oxidative yellowing with antioxidants (astaxanthin, vitamin E).', environment:'Manage staining sources (tears, saliva, dirt) by wiping the eye/mouth area.' } } },
+  sensitive_skin: { obs:{ detailed:"A dog's skin pH is more neutral-to-alkaline than the human acidic range, with a thinner stratum corneum, so it is vulnerable to irritation; a weakened barrier brings itching and redness.", gentle:"A dog's skin is thinner and more delicate, so it is prone to irritation, itching and redness." }, fix:{ gentle:'Wash gently with a low-irritant dog shampoo and support the skin from within with gut care and nutrition.', layers:{ topical:'Wash gently with a low-irritant, dog-pH shampoo and reinforce the barrier with moisture (human products unsuitable).', internal:'Support the barrier and reduce inflammation from within with omega-3 and gut health.', environment:'Reduce allergens, over-washing and heat.' } } },
+  shedding: { obs:{ detailed:'Double coats shed heavily and seasonally along the hair cycle. Retained dead undercoat can cause skin trouble.', gentle:'Lots of undercoat sheds at the change of season. Leaving it can cause skin problems.' }, fix:{ gentle:'Remove loose hair with thorough cleansing and brushing, keeping the skin clean.', layers:{ topical:'Remove dead undercoat with deep cleansing and proper brushing.', internal:'Support skin and new hair with essential fatty acids and nutrition.', environment:'Keep the coat ventilated and clean during shedding season.' } } },
+  soft_coat: { obs:{ detailed:'A wire/harsh coat that should be hard has softened, losing texture and dirt resistance; over-conditioning can be a cause.', gentle:'A coat that should be hard has gone soft and lost its texture.' }, fix:{ gentle:'Restore natural firmness with a texturising shampoo and go easy on conditioner.', layers:{ topical:'Restore natural firmness with a texturising shampoo and limit softeners.', environment:'Avoid over-conditioning/softeners; maintain texture with hand-stripping as needed.' } } }
+};
+const BREED_NOTE_EN = {
+  maltese: { detailed: 'Maltese also tend toward seborrhoea (excess sebum), so greasiness, a characteristic odour and tear staining appear easily.', gentle: 'Maltese tend to get oily, so greasiness and odour appear easily.' },
+  shih_tzu: { detailed: 'Shih Tzu tend toward seborrhoea, with greasiness and odour appearing easily.', gentle: 'Shih Tzu get greasy and odorous easily.' },
+  cocker: { detailed: 'Cocker Spaniels are a classic seborrhoea breed, prone to greasiness, odour and ear problems.', gentle: 'Cockers are prone to greasiness, odour and ear problems.' },
+  setter: { detailed: 'Setters tend toward seborrhoea (excess sebum).', gentle: 'Setters tend to get greasy.' },
+  gordon_setter: { detailed: 'Gordon Setters tend toward seborrhoea (excess sebum).', gentle: 'Gordon Setters tend to get greasy.' },
+  west_highland: { detailed: 'West Highland White Terriers are very prone to atopic dermatitis and seborrhoea — watch for itching and greasiness.', gentle: 'Westies are prone to itching and greasiness.' },
+  dachshund_smooth: { detailed: 'Dachshunds are prone to seborrhoea and ear problems.', gentle: 'Dachshunds get greasy and have ear issues easily.' },
+  dachshund_long: { detailed: 'Dachshunds are prone to seborrhoea and ear problems.', gentle: 'Dachshunds get greasy and have ear issues easily.' },
+  dachshund_wire: { detailed: 'Dachshunds are prone to seborrhoea and ear problems.', gentle: 'Dachshunds get greasy and have ear issues easily.' },
+  pug: { detailed: 'Pugs trap greasiness and odour in their skin folds.', gentle: 'Pugs get greasy around the folds.' },
+  french_bulldog: { detailed: 'French Bulldogs get greasiness and odour in their skin folds and from seborrhoea.', gentle: 'Frenchies get greasy around the folds.' }
+};
+const AGE_NOTE_EN = {
+  puppy: { detailed: 'In puppyhood the skin barrier is immature and delicate — gentle washing with a low-irritant dog shampoo is the basis.', gentle: 'Puppies have delicate skin, so wash gently with a low-irritant shampoo.' },
+  senior: { detailed: 'With age, skin barrier, sebum and turnover decline, so dryness, dullness and oxidative stress progress. Alongside antioxidant (astaxanthin etc.) and nutritional inner care, choose low-irritant, moisturising shampoos for topical care. Even curly breeds like Toy Poodles can become dry with age.', gentle: 'With age the skin dries and shine fades. Use antioxidant and nutrition supplements plus a gentle, moisturising shampoo.' }
+};
+const CARE_EVIDENCE_EN = {
+  low_shine: { topical:'Cuticle alignment = light reflection', internal:'Keratin synthesis (sulphur amino acids, zinc)', environment:'Cuticle damage from heat/UV/friction' },
+  low_moisture: { topical:'Stratum-corneum lipids = ceramides / curb TEWL', internal:'Essential fatty acids → barrier lipids', environment:'Low humidity / over-washing raise TEWL' },
+  oily: { topical:'Over-degreasing → rebound sebum', internal:'Gut–skin axis / essential fatty acids', environment:'Commensals (Malassezia) / heat & humidity' },
+  breakage: { topical:'Repair of hair keratin / disulphide bonds', internal:'Protein, antioxidants (oxidative damage)', environment:'Mechanical / UV / heat stress' },
+  matting: { topical:'Reduce friction with moisture (dryness promotes matting)', environment:'Regular combing / avoid leaving wet' },
+  low_volume: { topical:'Lift and body', internal:'Hair cycle / fuller hair (protein)', environment:'Avoid heavy coating flattening roots' },
+  static: { topical:'Anti-static (triboelectric)', environment:'Low humidity raises charge' },
+  yellowing: { topical:'Remove porphyrin / environmental pigment', internal:'Antioxidants (suppress oxidative yellowing)', environment:'Tear/saliva (porphyrin) staining' },
+  sensitive_skin: { topical:'Dog skin pH (neutral–alkaline) / barrier protection', internal:'Omega-3 (anti-inflammatory) / gut–skin axis', environment:'Allergens / over-washing / heat' },
+  shedding: { topical:'Remove dead hair synced to telogen', internal:'Nutrition for skin & new hair', environment:'Ventilation / cleanliness' },
+  soft_coat: { topical:'Maintain natural harsh-coat texture', environment:'Avoid over-conditioning / hand-stripping' }
+};
+const SCORE_LABEL_EN = { shine: 'Shine', moisture: 'Moisture', density: 'Density', elasticity: 'Elasticity' };
+
 function renderCareLayers(layers, issueKey) {
-  const ev = CARE_EVIDENCE[issueKey] || {};
-  const order = [['topical', '外用'], ['internal', '内用'], ['environment', '環境']];
+  const en = state.lang === 'en';
+  const ev = (en ? CARE_EVIDENCE_EN[issueKey] : CARE_EVIDENCE[issueKey]) || {};
+  const order = en
+    ? [['topical', 'Topical'], ['internal', 'Internal'], ['environment', 'Environment']]
+    : [['topical', '外用'], ['internal', '内用'], ['environment', '環境']];
   let h = '<div class="pp-assessment__layers">';
   order.forEach(pair => {
     const key = pair[0], label = pair[1];
@@ -4873,7 +4932,7 @@ function renderCareLayers(layers, issueKey) {
       '<span class="pp-layer__tag pp-layer__tag--' + key + '">' + label + '</span>' +
       '<span class="pp-layer__body">' +
         '<span class="pp-layer__txt">' + layers[key] + '</span>' +
-        (basis ? '<span class="pp-layer__ev" title="根拠・機序">根拠: ' + basis + '</span>' : '') +
+        (basis ? '<span class="pp-layer__ev" title="' + (en ? 'Basis / mechanism' : '根拠・機序') + '">' + (en ? 'Basis: ' : '根拠: ') + basis + '</span>' : '') +
       '</span>' +
       '</div>';
   });
@@ -4915,73 +4974,82 @@ function renderAssessment(a, coat) {
   const scoreVals = Object.values(scores).filter(v => !isNaN(v));
   const avg = scoreVals.length ? scoreVals.reduce((s, v) => s + v, 0) / scoreVals.length : null;
 
+  const en = state.lang === 'en';
+  const CA = en ? COAT_ANATOMY_EN : COAT_ANATOMY;
+  const II = en ? ISSUE_INSIGHT_EN : ISSUE_INSIGHT;
+  const BN = en ? BREED_NOTE_EN : BREED_NOTE;
+  const AN = en ? AGE_NOTE_EN : AGE_NOTE;
+  const SLBL = en ? SCORE_LABEL_EN : SCORE_LABEL_JP;
+
   // 総評リード
   let overall;
   if (realIssues.length === 0 && (avg === null || avg >= 4)) {
-    overall = '総じて良好で、美しいコンディションを保てています。';
+    overall = en ? 'Overall in good condition, maintaining a beautiful coat.' : '総じて良好で、美しいコンディションを保てています。';
   } else if (realIssues.length >= 3 || (avg !== null && avg < 2.5)) {
-    overall = 'いくつかの課題が重なっており、重点的なケアが効果的です。';
+    overall = en ? 'Several concerns overlap — focused care will be effective.' : 'いくつかの課題が重なっており、重点的なケアが効果的です。';
   } else if (realIssues.length <= 1 && (avg === null || avg >= 3.5)) {
-    overall = 'おおむね健やかですが、いくつか伸びしろがあります。';
+    overall = en ? 'Largely healthy, with a little room to improve.' : 'おおむね健やかですが、いくつか伸びしろがあります。';
   } else {
-    overall = '良い部分と改善したい部分が混在する状態です。';
+    overall = en ? 'A mix of strong points and areas to improve.' : '良い部分と改善したい部分が混在する状態です。';
   }
 
   // 考察対象を構築 (症状 + 低スコア補完、重複排除)
   const seen = {};
   const concerns = [];
   realIssues.forEach(i => {
-    if (ISSUE_INSIGHT[i] && !seen[i]) { seen[i] = 1; concerns.push({ key: i, label: ISSUE_LABEL[i] }); }
+    if (II[i] && !seen[i]) { seen[i] = 1; concerns.push({ key: i, label: issueLabel(i) }); }
   });
   Object.keys(SCORE_INSIGHT).forEach(sk => {
     const iss = SCORE_INSIGHT[sk];
-    if (scores[sk] !== undefined && scores[sk] <= 2 && !seen[iss] && ISSUE_INSIGHT[iss]) {
+    if (scores[sk] !== undefined && scores[sk] <= 2 && !seen[iss] && II[iss]) {
       seen[iss] = 1;
-      concerns.push({ key: iss, label: ISSUE_LABEL[iss] + '（' + SCORE_LABEL_JP[sk] + 'スコア低め）' });
+      concerns.push({ key: iss, label: issueLabel(iss) + (en ? ' (low ' + SLBL[sk] + ' score)' : '（' + SLBL[sk] + 'スコア低め）') });
     }
   });
 
-  const leadCoat = (COAT_ANATOMY[base] || COAT_ANATOMY.all)[tone];
+  const leadCoat = (CA[base] || CA.all)[tone];
   let html = '<div class="pp-assessment__head">' +
-    '<span class="pp-assessment__head-title">Condition Assessment / 現状の考察</span>' +
-    '<span class="pp-tone-toggle" role="group" aria-label="文章のトーン">' +
+    '<span class="pp-assessment__head-title">' + (en ? 'Condition Assessment' : 'Condition Assessment / 現状の考察') + '</span>' +
+    '<span class="pp-tone-toggle" role="group" aria-label="' + (en ? 'Tone' : '文章のトーン') + '">' +
     '<button type="button" class="pp-tone-btn' + (tone === 'gentle' ? ' is-active' : '') +
-    '" onclick="setAssessmentTone(\'gentle\')">やさしく</button>' +
+    '" onclick="setAssessmentTone(\'gentle\')">' + (en ? 'Simple' : 'やさしく') + '</button>' +
     '<button type="button" class="pp-tone-btn' + (tone === 'detailed' ? ' is-active' : '') +
-    '" onclick="setAssessmentTone(\'detailed\')">くわしく</button>' +
+    '" onclick="setAssessmentTone(\'detailed\')">' + (en ? 'Detailed' : 'くわしく') + '</button>' +
     '</span></div>';
-  const bNote = (BREED_NOTE[a.breed] && BREED_NOTE[a.breed][tone]) || '';
-  const aNote = (AGE_NOTE[a.age] && AGE_NOTE[a.age][tone]) || '';
-  let lead = '<strong>' + escapeHtml(a.name) + '</strong>の被毛タイプは「<strong>' +
-    escapeHtml(COAT_LABEL[coat] || COAT_LABEL.all) + '</strong>」。' + overall + '<br>' + leadCoat;
+  const bNote = (BN[a.breed] && BN[a.breed][tone]) || '';
+  const aNote = (AN[a.age] && AN[a.age][tone]) || '';
+  let lead = en
+    ? '<strong>' + escapeHtml(a.name) + '</strong>’s coat type is “<strong>' + escapeHtml(coatLabel(coat)) + '</strong>”. ' + overall + '<br>' + leadCoat
+    : '<strong>' + escapeHtml(a.name) + '</strong>の被毛タイプは「<strong>' + escapeHtml(coatLabel(coat)) + '</strong>」。' + overall + '<br>' + leadCoat;
   if (bNote) lead += '<br>' + bNote;
   if (aNote) lead += '<br>' + aNote;
   html += '<p class="pp-assessment__lead">' + lead + '</p>';
 
+  const L_OBS = en ? 'Assessment' : '考察';
+  const L_FIX = en ? 'Care' : '改善';
   if (concerns.length === 0) {
     const okObs = tone === 'detailed'
-      ? '目立った問題はなく、皮膚・被毛のバランスが保たれています。'
-      : '気になるところはなく、肌も毛も良い調子です。';
+      ? (en ? 'No notable issues; skin and coat are well balanced.' : '目立った問題はなく、皮膚・被毛のバランスが保たれています。')
+      : (en ? 'Nothing of concern — skin and coat are in good shape.' : '気になるところはなく、肌も毛も良い調子です。');
     const okFix = tone === 'detailed'
-      ? '基本のシャンプー&コンディショナーと定期的なブラッシングで現状を維持しましょう。'
-      : '今のケアを続けて、定期的なブラッシングで良い状態をキープしましょう。';
+      ? (en ? 'Maintain with a basic shampoo & conditioner and regular brushing.' : '基本のシャンプー&コンディショナーと定期的なブラッシングで現状を維持しましょう。')
+      : (en ? 'Keep up your current care and regular brushing to maintain it.' : '今のケアを続けて、定期的なブラッシングで良い状態をキープしましょう。');
     html += '<div class="pp-assessment__concerns"><div class="pp-assessment__concern">' +
-      '<div class="pp-assessment__concern-label">良好なコンディション</div>' +
-      '<p class="pp-assessment__obs"><b>考察</b>' + okObs + '</p>' +
-      '<p class="pp-assessment__fix"><b>改善</b>' + okFix + '</p>' +
+      '<div class="pp-assessment__concern-label">' + (en ? 'Good condition' : '良好なコンディション') + '</div>' +
+      '<p class="pp-assessment__obs"><b>' + L_OBS + '</b>' + okObs + '</p>' +
+      '<p class="pp-assessment__fix"><b>' + L_FIX + '</b>' + okFix + '</p>' +
       '</div></div>';
   } else {
     const scored = scoreProducts(a);
     html += '<div class="pp-assessment__concerns">';
     concerns.forEach(c => {
-      const ins = ISSUE_INSIGHT[c.key];
-      // くわしく: 改善をエビデンス階層(外用→内用→環境)で提示 / やさしく: 一文
+      const ins = II[c.key];
       const fixHtml = (tone === 'detailed' && ins.fix.layers)
-        ? '<div class="pp-assessment__fix-head"><b>改善</b>エビデンス階層で対応</div>' + renderCareLayers(ins.fix.layers, c.key)
-        : '<p class="pp-assessment__fix"><b>改善</b>' + ins.fix.gentle + '</p>';
+        ? '<div class="pp-assessment__fix-head"><b>' + L_FIX + '</b>' + (en ? 'Evidence-based steps' : 'エビデンス階層で対応') + '</div>' + renderCareLayers(ins.fix.layers, c.key)
+        : '<p class="pp-assessment__fix"><b>' + L_FIX + '</b>' + ins.fix.gentle + '</p>';
       html += '<div class="pp-assessment__concern">' +
         '<div class="pp-assessment__concern-label">' + escapeHtml(c.label) + '</div>' +
-        '<p class="pp-assessment__obs"><b>考察</b>' + ins.obs[tone] + '</p>' +
+        '<p class="pp-assessment__obs"><b>' + L_OBS + '</b>' + ins.obs[tone] + '</p>' +
         fixHtml +
         recHtml(c.key, scored) +
         '</div>';
@@ -4990,13 +5058,13 @@ function renderAssessment(a, coat) {
   }
 
   const principle = tone === 'detailed'
-    ? '【ケアの原則】被毛・皮膚トラブルの多く(乾燥はもちろん、ベタつき・毛切れ・くすみ等も)は、皮膚バリア機能の低下が背景にあります。洗浄やケアの最後は保湿でバリアを整え、抗酸化・栄養で内側から支えることが、病態生理に基づく基本です。'
-    : '【ケアの原則】多くのトラブルは皮膚バリアの弱りが背景にあります。ケアの最後は保湿でバリアを守り、栄養で内側から支えてあげましょう。';
+    ? (en ? '[Care principle] Many coat &amp; skin problems — dryness, but also greasiness, breakage and dullness — stem from a weakened skin barrier. Finishing care with moisture to restore the barrier, and supporting from within with antioxidants and nutrition, is the pathophysiology-based basis.' : '【ケアの原則】被毛・皮膚トラブルの多く(乾燥はもちろん、ベタつき・毛切れ・くすみ等も)は、皮膚バリア機能の低下が背景にあります。洗浄やケアの最後は保湿でバリアを整え、抗酸化・栄養で内側から支えることが、病態生理に基づく基本です。')
+    : (en ? '[Care principle] Many problems stem from a weakened skin barrier. Finish care with moisture to protect the barrier, and support from within with nutrition.' : '【ケアの原則】多くのトラブルは皮膚バリアの弱りが背景にあります。ケアの最後は保湿でバリアを守り、栄養で内側から支えてあげましょう。');
   html += '<p class="pp-assessment__note pp-assessment__note--principle">' + principle + '</p>';
 
   const note = tone === 'detailed'
-    ? '※犬の被毛と人の髪は構造が異なります。犬は1つの毛包から複数の毛が生える複合毛包をもち、皮膚のpHは人(弱酸性)より中性〜弱アルカリ寄りで角層も薄め。人用ヘアケア製品はpHや刺激が合わないため、必ず犬用に設計された製品をお使いください。'
-    : '※犬の毛や肌は人とは違います。人用のシャンプーは刺激が強すぎることがあるので、必ず犬用の製品を使ってあげてください。';
+    ? (en ? "Note: a dog's coat differs from human hair. Dogs have compound follicles (several hairs per follicle), and their skin pH is more neutral-to-alkaline than the human acidic range, with a thinner stratum corneum. Human hair-care products don't match this pH or irritation level, so always use products made for dogs." : '※犬の被毛と人の髪は構造が異なります。犬は1つの毛包から複数の毛が生える複合毛包をもち、皮膚のpHは人(弱酸性)より中性〜弱アルカリ寄りで角層も薄め。人用ヘアケア製品はpHや刺激が合わないため、必ず犬用に設計された製品をお使いください。')
+    : (en ? "Note: a dog's coat and skin differ from ours. Human shampoo can be too harsh, so always use products made for dogs." : '※犬の毛や肌は人とは違います。人用のシャンプーは刺激が強すぎることがあるので、必ず犬用の製品を使ってあげてください。');
   html += '<p class="pp-assessment__note">' + note + '</p>';
 
   wrap.innerHTML = html;
