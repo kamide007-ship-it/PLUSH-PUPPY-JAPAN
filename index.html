@@ -1168,6 +1168,19 @@
   .pp-edu__body strong { color: var(--pp-text); font-weight: 600; }
   .pp-edu__body em { font-style: italic; }
   .pp-edu__body a { color: var(--pp-navy); text-decoration: underline; }
+  .pp-edu__body a.pp-edu__buy {
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #ffffff;
+    background: var(--pp-navy);
+    border-radius: var(--radius-pill);
+    padding: 3px 12px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .pp-edu__body a.pp-edu__buy:hover { background: var(--pp-navy-dark); }
   .pp-edu__evidence {
     margin: 12px 0 0;
     font-size: 12px;
@@ -2707,7 +2720,7 @@
               </ul>
               <p>これらを満たすことで、毛質・色冴え・密度・バリア機能を内側から底上げします。</p>
               <p class="pp-edu__evidence"><span>最新研究</span>経口の多価不飽和脂肪酸（オメガ3）が、かゆみ治療薬の必要量を減らしうると示した二重盲検・プラセボ対照試験があり、内側からの脂質ケアの意義を支持します（Schäfer 2024, <em>Vet Dermatol.</em> <a href="https://onlinelibrary.wiley.com/doi/10.1111/vde.13246" target="_blank" rel="noopener">出典</a>）。</p>
-              <p class="pp-edu__evidence"><span>最新研究</span>「皮膚は腸の鏡」と言われる<strong>腸-皮膚軸</strong>に関し、プロバイオティクスが腸内環境（dysbiosis）を整えて皮膚症状を改善したとする研究も報告されています（BMC Microbiol. 2025, <a href="https://link.springer.com/article/10.1186/s12866-025-03924-6" target="_blank" rel="noopener">出典</a>）。</p>
+              <p class="pp-edu__evidence"><span>最新研究</span>「皮膚は腸の鏡」と言われる<strong>腸-皮膚軸</strong>に関し、プロバイオティクスが腸内環境（dysbiosis）を整えて皮膚症状を改善したとする研究も報告されています（BMC Microbiol. 2025, <a href="https://link.springer.com/article/10.1186/s12866-025-03924-6" target="_blank" rel="noopener">出典</a>）。<a class="pp-edu__buy" href="https://www.caninevet.jp/canineサプリメント/prebiotics-probiotocs-サイリウム/" target="_blank" rel="noopener">乳酸菌サプリを購入</a></p>
             </div>
           </div>
         </details>
@@ -2993,7 +3006,7 @@
                 <li><strong>外用（シャンプー・入浴）</strong>：適切なシャンプーとファインバブル入浴で皮膚スコアが改善した無作為化比較試験（Taguchi 2024, <em>Vet Dermatol.</em> <a href="https://onlinelibrary.wiley.com/doi/full/10.1111/vde.13245" target="_blank" rel="noopener">出典</a>）。</li>
                 <li><strong>バリア・常在菌</strong>：皮膚バリア、皮膚マイクロバイオーム、宿主防御ペプチドの役割を整理した最新総説（Santoro 2024, <em>Vet Dermatol.</em> <a href="https://onlinelibrary.wiley.com/doi/10.1111/vde.13215" target="_blank" rel="noopener">出典</a>）。洗いすぎず常在菌バランスを保つことの重要性を支持。</li>
                 <li><strong>内側ケア（オメガ3）</strong>：経口の多価不飽和脂肪酸が、かゆみ治療薬（オクラシチニブ）の必要量を減らしうると示した二重盲検・プラセボ対照試験（Schäfer 2024, <em>Vet Dermatol.</em> <a href="https://onlinelibrary.wiley.com/doi/10.1111/vde.13246" target="_blank" rel="noopener">出典</a>）。</li>
-                <li><strong>腸-皮膚軸</strong>：プロバイオティクスが腸内dysbiosisを是正し皮膚症状を改善（BMC Microbiol. 2025, <a href="https://link.springer.com/article/10.1186/s12866-025-03924-6" target="_blank" rel="noopener">出典</a>）。犬の腸・皮膚マイクロバイオーム解析も進行（2023, <a href="https://pubmed.ncbi.nlm.nih.gov/37864204/" target="_blank" rel="noopener">出典</a>）。</li>
+                <li><strong>腸-皮膚軸</strong>：プロバイオティクスが腸内dysbiosisを是正し皮膚症状を改善（BMC Microbiol. 2025, <a href="https://link.springer.com/article/10.1186/s12866-025-03924-6" target="_blank" rel="noopener">出典</a>）。犬の腸・皮膚マイクロバイオーム解析も進行（2023, <a href="https://pubmed.ncbi.nlm.nih.gov/37864204/" target="_blank" rel="noopener">出典</a>）。<a class="pp-edu__buy" href="https://www.caninevet.jp/canineサプリメント/prebiotics-probiotocs-サイリウム/" target="_blank" rel="noopener">乳酸菌サプリを購入</a></li>
               </ul>
               <p class="pp-edu__minor">※これらは主に疾患（アトピー）研究の知見です。健康な子の予防・維持に応用する際は、個体差を踏まえ獣医師にご相談ください。</p>
             </div>
@@ -4433,8 +4446,8 @@ function renderAssessment(a, coat) {
     '</span></div>';
   const bNote = (BREED_NOTE[a.breed] && BREED_NOTE[a.breed][tone]) || '';
   const aNote = (AGE_NOTE[a.age] && AGE_NOTE[a.age][tone]) || '';
-  let lead = '<strong>' + escapeHtml(a.name) + '</strong>の' +
-    escapeHtml(COAT_LABEL[coat] || COAT_LABEL.all) + 'は、' + overall + '<br>' + leadCoat;
+  let lead = '<strong>' + escapeHtml(a.name) + '</strong>の被毛タイプは「<strong>' +
+    escapeHtml(COAT_LABEL[coat] || COAT_LABEL.all) + '</strong>」。' + overall + '<br>' + leadCoat;
   if (bNote) lead += '<br>' + bNote;
   if (aNote) lead += '<br>' + aNote;
   html += '<p class="pp-assessment__lead">' + lead + '</p>';
