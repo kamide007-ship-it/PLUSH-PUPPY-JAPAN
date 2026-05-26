@@ -225,6 +225,32 @@
     align-items: center;
     gap: 16px;
   }
+  /* 言語切替 (EN/JP) */
+  body[data-lang="en"] [data-lang-ja],
+  body[data-lang="ja"] [data-lang-en] { display: none !important; }
+  .pp-lang {
+    display: inline-flex;
+    border: 1px solid var(--pp-border-light);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+  }
+  .pp-lang button {
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
+    background: #ffffff;
+    color: var(--pp-text-light);
+    font-family: var(--font-en);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 7px 12px;
+    cursor: pointer;
+  }
+  .pp-lang button.is-active { background: var(--pp-navy); color: #ffffff; }
+  @media (max-width: 600px) {
+    .pp-lang button { padding: 6px 10px; font-size: 11px; }
+  }
   /* Top-right menu */
   .pp-menu { position: relative; }
   .pp-menu__btn {
@@ -2330,7 +2356,7 @@
 </style>
 </head>
 
-<body>
+<body data-lang="ja">
 
 <!-- JavaScript無効時のフォールバック -->
 <noscript>
@@ -2360,18 +2386,22 @@
   <div class="pp-header__right">
     <div class="pp-header__title">
       COAT DIAGNOSIS
-      <small>被毛診断</small>
+      <small><span data-lang-ja>被毛診断</span><span data-lang-en>Coat Diagnosis</span></small>
+    </div>
+    <div class="pp-lang" role="group" aria-label="Language">
+      <button type="button" data-set-lang="ja" class="is-active" onclick="setLang('ja')">日本語</button>
+      <button type="button" data-set-lang="en" onclick="setLang('en')">EN</button>
     </div>
     <div class="pp-menu">
       <button type="button" class="pp-menu__btn" id="menuBtn" aria-label="メニュー" aria-haspopup="true" aria-expanded="false" onclick="toggleMenu()">
         <span></span><span></span><span></span>
       </button>
       <div class="pp-menu__panel" id="menuPanel" role="menu" hidden>
-        <button type="button" class="pp-menu__item" role="menuitem" onclick="menuGo('top')">診断する</button>
-        <button type="button" class="pp-menu__item" role="menuitem" onclick="menuGo('learn')">コートの科学（学びの場）</button>
-        <button type="button" class="pp-menu__item" role="menuitem" onclick="menuGo('guide')">製品 使い分けガイド</button>
-        <button type="button" class="pp-menu__item" role="menuitem" onclick="menuGo('products')">製品ラインナップ</button>
-        <button type="button" class="pp-menu__item" role="menuitem" onclick="menuGo('supplements')">サプリメント</button>
+        <button type="button" class="pp-menu__item" role="menuitem" onclick="menuGo('top')"><span data-lang-ja>診断する</span><span data-lang-en>Start Diagnosis</span></button>
+        <button type="button" class="pp-menu__item" role="menuitem" onclick="menuGo('learn')"><span data-lang-ja>コートの科学（学びの場）</span><span data-lang-en>Coat Science</span></button>
+        <button type="button" class="pp-menu__item" role="menuitem" onclick="menuGo('guide')"><span data-lang-ja>製品 使い分けガイド</span><span data-lang-en>Product Guide</span></button>
+        <button type="button" class="pp-menu__item" role="menuitem" onclick="menuGo('products')"><span data-lang-ja>製品ラインナップ</span><span data-lang-en>All Products</span></button>
+        <button type="button" class="pp-menu__item" role="menuitem" onclick="menuGo('supplements')"><span data-lang-ja>サプリメント</span><span data-lang-en>Supplements</span></button>
       </div>
     </div>
   </div>
@@ -2385,12 +2415,15 @@
        ============================================ -->
   <section class="pp-hero">
     <h1 class="pp-hero__title">Coat Diagnosis</h1>
-    <p class="pp-hero__subtitle">被毛診断</p>
+    <p class="pp-hero__subtitle"><span data-lang-ja>被毛診断</span><span data-lang-en>by Plush Puppy</span></p>
     <hr class="pp-hero__divider">
     <p class="pp-hero__lead">
-      全ての犬種を思い通りの仕上がりに。<br>
+      <span data-lang-ja>全ての犬種を思い通りの仕上がりに。<br>
       愛犬の毛質と現在のコンディションから、最適な
-      シャンプー・コンディショナー・フィニッシング剤をご提案します。
+      シャンプー・コンディショナー・フィニッシング剤をご提案します。</span>
+      <span data-lang-en>The perfect finish for every breed.<br>
+      Based on your dog's coat type and current condition, we recommend the ideal
+      shampoo, conditioner and finishing products.</span>
     </p>
   </section>
 
@@ -2400,9 +2433,12 @@
        ============================================ -->
   <section class="pp-panel">
     <p class="pp-form-note">
-      <strong>入力は任意です。</strong>
+      <span data-lang-ja><strong>入力は任意です。</strong>
       わかる項目だけご入力ください。詳しいほどパーソナライズされた診断になりますが、
-      何も選ばなくても基本的な推奨を表示します。
+      何も選ばなくても基本的な推奨を表示します。</span>
+      <span data-lang-en><strong>All fields are optional.</strong>
+      Fill in only what you know. The more detail you provide, the more personalised the result —
+      but even with nothing selected we'll show general recommendations.</span>
     </p>
 
     <!-- セクション 01 プロフィール -->
@@ -2410,7 +2446,7 @@
       <div class="pp-section-head">
         <span class="pp-section-num">01</span>
         <div>
-          <h2 class="pp-section-h">愛犬のプロフィール</h2>
+          <h2 class="pp-section-h"><span data-lang-ja>愛犬のプロフィール</span><span data-lang-en>Your Dog's Profile</span></h2>
           <p class="pp-section-sub">Basic Profile</p>
         </div>
       </div>
@@ -2535,8 +2571,8 @@
       <div class="pp-section-head">
         <span class="pp-section-num">02</span>
         <div>
-          <h2 class="pp-section-h">現在のコート状態</h2>
-          <p class="pp-section-sub">Coat Condition (複数選択可)</p>
+          <h2 class="pp-section-h"><span data-lang-ja>現在のコート状態</span><span data-lang-en>Current Coat Condition</span></h2>
+          <p class="pp-section-sub"><span data-lang-ja>Coat Condition (複数選択可)</span><span data-lang-en>Coat Condition (select all that apply)</span></p>
         </div>
       </div>
 
@@ -2675,7 +2711,7 @@
       <div class="pp-section-head">
         <span class="pp-section-num">03</span>
         <div>
-          <h2 class="pp-section-h">ケアの目的</h2>
+          <h2 class="pp-section-h"><span data-lang-ja>ケアの目的</span><span data-lang-en>Care Goal</span></h2>
           <p class="pp-section-sub">Care Goal</p>
         </div>
       </div>
@@ -2723,9 +2759,9 @@
     <!-- 診断ボタン (1個だけ) -->
     <div class="pp-submit">
       <button class="pp-btn pp-btn--primary pp-btn--lg" onclick="runDiagnosis()">
-        この内容で診断する
+        <span data-lang-ja>この内容で診断する</span><span data-lang-en>Run Diagnosis</span>
       </button>
-      <p class="pp-submit__note">入力していない項目は一般的な推奨で補完されます</p>
+      <p class="pp-submit__note"><span data-lang-ja>入力していない項目は一般的な推奨で補完されます</span><span data-lang-en>Unspecified fields are filled with general recommendations.</span></p>
     </div>
   </section>
 
@@ -3424,27 +3460,31 @@
       </div>
       <div style="text-align:center; margin-top:24px; padding-top:24px; border-top:1px solid var(--pp-border-light);">
         <a href="https://www.plushpuppyjapan.com" target="_blank" rel="noopener" class="pp-btn pp-btn--primary">
-          Plush Puppy Japan 公式サイトへ
+          <span data-lang-ja>Plush Puppy Japan 公式サイトへ</span><span data-lang-en>Visit Plush Puppy Australia</span>
         </a>
         <p style="margin-top:10px; font-size:11px; color:var(--pp-text-muted); letter-spacing:0.1em;">
-          オーストラリア本国の情報は
+          <span data-lang-ja>オーストラリア本国の情報は
           <a href="https://plushpuppy.com.au" target="_blank" rel="noopener" style="color:var(--pp-text-light); text-decoration:underline;">plushpuppy.com.au</a>
-          をご覧ください
+          をご覧ください</span>
+          <span data-lang-en>For Japan, visit <a href="https://www.plushpuppyjapan.com" data-keep-href target="_blank" rel="noopener" style="color:var(--pp-text-light); text-decoration:underline;">plushpuppyjapan.com</a></span>
         </p>
       </div>
     </div>
 
     <!-- Actions -->
     <div class="pp-result__actions">
-      <button class="pp-btn pp-btn--ghost" onclick="resetDiagnosis()">もう一度診断する</button>
-      <button class="pp-btn pp-btn--ghost" onclick="shareReport()">結果を共有</button>
-      <button class="pp-btn pp-btn--primary" onclick="window.print()">レポートを印刷 / PDF保存</button>
+      <button class="pp-btn pp-btn--ghost" onclick="resetDiagnosis()"><span data-lang-ja>もう一度診断する</span><span data-lang-en>Start over</span></button>
+      <button class="pp-btn pp-btn--ghost" onclick="shareReport()"><span data-lang-ja>結果を共有</span><span data-lang-en>Share result</span></button>
+      <button class="pp-btn pp-btn--primary" onclick="window.print()"><span data-lang-ja>レポートを印刷 / PDF保存</span><span data-lang-en>Print / Save PDF</span></button>
     </div>
 
     <p class="pp-disclaimer">
-      本診断は被毛ケア製品選びの参考としてご利用ください。<br>
+      <span data-lang-ja>本診断は被毛ケア製品選びの参考としてご利用ください。<br>
       皮膚疾患などの症状がある場合は獣医師にご相談ください。<br>
-      製品は健康補助・グルーミング用品であり、医薬品ではありません。
+      製品は健康補助・グルーミング用品であり、医薬品ではありません。</span>
+      <span data-lang-en>This diagnosis is a guide for choosing coat-care products.<br>
+      If your dog shows signs of a skin condition, please consult a veterinarian.<br>
+      Products are grooming/health-support items, not medicines.</span>
     </p>
 
   </section>
@@ -3802,7 +3842,52 @@ const CAT_LABEL = {
   finishing:'Finishing', brush:'Brush'
 };
 
-let state = { answers: {} };
+let state = { answers: {}, lang: 'ja', coat: 'all', picks: [] };
+
+/* ============================================
+   言語切替 (EN / JP)。英語版のショップ系リンクはオーストラリア本社へ
+   ============================================ */
+const AU_BASE = 'https://plushpuppy.com.au/';
+function shopUrl(u) { return state.lang === 'en' ? AU_BASE : (u || AU_BASE); }
+function setLang(lang) {
+  state.lang = (lang === 'en') ? 'en' : 'ja';
+  document.body.setAttribute('data-lang', state.lang);
+  try { document.documentElement.lang = state.lang; } catch (e) {}
+  document.querySelectorAll('.pp-lang button').forEach(b => {
+    b.classList.toggle('is-active', b.getAttribute('data-set-lang') === state.lang);
+  });
+  // <select> の option を data-en があれば切替
+  document.querySelectorAll('select option').forEach(o => {
+    if (o.getAttribute('data-en') !== null) {
+      if (state.lang === 'en') {
+        if (o.getAttribute('data-ja') === null) o.setAttribute('data-ja', o.textContent);
+        o.textContent = o.getAttribute('data-en');
+      } else if (o.getAttribute('data-ja') !== null) {
+        o.textContent = o.getAttribute('data-ja');
+      }
+    }
+  });
+  // 動的コンテンツの再描画(リンクのAU切替・内容反映)
+  try { renderProductGuide(); } catch (e) {}
+  try { renderSupplements((state.answers && state.answers.issues) ? state.answers : { issues: [], goal: 'daily', scores: {}, age: '' }); } catch (e) {}
+  const resultEl = document.getElementById('result');
+  if (resultEl && resultEl.classList.contains('is-shown') && state.answers && state.coat) {
+    try { renderAssessment(state.answers, state.coat); } catch (e) {}
+    try { renderProducts(state.picks); } catch (e) {}
+    try { renderProgramSummary(state.picks); } catch (e) {}
+    if (state.answers.goal === 'show_prep') { try { renderSchedule(state.answers.showDate, state.coat); } catch (e) {} }
+  }
+  // 静的な Plush Puppy Japan リンクは英語版でオーストラリア本社へ
+  document.querySelectorAll('a[href]').forEach(a => {
+    if (a.hasAttribute('data-keep-href')) return;
+    const orig = a.getAttribute('data-orig-href') || a.getAttribute('href');
+    if (orig && orig.indexOf('plushpuppyjapan.com') >= 0) {
+      if (!a.getAttribute('data-orig-href')) a.setAttribute('data-orig-href', orig);
+      a.setAttribute('href', state.lang === 'en' ? AU_BASE : orig);
+    }
+  });
+  setTimeout(notifyHeight, 60);
+}
 
 /* Show date field toggle (ショー準備選択時のみ表示) */
 document.querySelectorAll('input[name="goal"]').forEach(r => {
@@ -4018,6 +4103,7 @@ function runDiagnosis() {
     ...pickByCat(scored, 'finishing', 1),   // フィニッシング1点
     ...pickByCat(scored, 'brush', 1),       // ブラシ1点
   ];
+  state.picks = picks;
   renderProducts(picks);
   renderProgramSummary(picks);
 
@@ -4248,7 +4334,7 @@ function renderProducts(picks) {
       ${matchHtml}
       <p class="pp-product__why">${p.desc}</p>
       <div class="pp-product__price">¥${p.price.toLocaleString()}<small>${p.size}</small></div>
-      <a href="${p.url}" target="_blank" rel="noopener" class="pp-product__cta">商品ページを見る</a>
+      <a href="${shopUrl(p.url)}" target="_blank" rel="noopener" class="pp-product__cta"><span data-lang-ja>商品ページを見る</span><span data-lang-en>View product</span></a>
     `;
     list.appendChild(card);
   });
@@ -4269,7 +4355,7 @@ function renderProgramSummary(picks) {
         '<div class="pp-program__total">¥' + total.toLocaleString() + '</div>' +
         '<div class="pp-program__note">下の各製品から個別にご購入いただけます</div>' +
       '</div>' +
-      '<a class="pp-program__cta" href="https://www.plushpuppyjapan.com" target="_blank" rel="noopener">Plush Puppy で揃える</a>' +
+      '<a class="pp-program__cta" href="' + shopUrl('https://www.plushpuppyjapan.com') + '" target="_blank" rel="noopener">' + (state.lang === 'en' ? 'Shop the program' : 'Plush Puppy で揃える') + '</a>' +
     '</div>';
 }
 
@@ -4386,7 +4472,7 @@ function renderSchedule(showDateStr, coat) {
     const isNow = daysLeft !== null && daysLeft <= p.th + 3 && daysLeft >= p.th - 3;
     const tip = p.tip && p.tip[base];
     const tipHtml = tip ? `<div class="pp-schedule__tip"><strong>このコート向け：</strong>${tip}</div>` : '';
-    const buys = (p.products || []).map(x => `<a class="pp-rec-chip" href="${ITEM_BASE}${x.id}" target="_blank" rel="noopener">${x.n}</a>`).join('');
+    const buys = (p.products || []).map(x => `<a class="pp-rec-chip" href="${shopUrl(ITEM_BASE + x.id)}" target="_blank" rel="noopener">${x.n}</a>`).join('');
     const buysHtml = buys ? `<div class="pp-schedule__buys">${buys}</div>` : '';
     html += `
       <div class="pp-schedule__row ${isNow ? 'is-now' : ''}">
@@ -4728,7 +4814,7 @@ function recHtml(key, scored) {
   if (!prods.length && !supp) return '';
   let h = '<div class="pp-assessment__rec"><span class="pp-assessment__rec-label">推奨</span><div class="pp-assessment__rec-list">';
   prods.forEach(p => {
-    h += '<a class="pp-rec-chip" href="' + p.url + '" target="_blank" rel="noopener">' +
+    h += '<a class="pp-rec-chip" href="' + shopUrl(p.url) + '" target="_blank" rel="noopener">' +
       escapeHtml(p.name) + '<small>' + (CAT_LABEL[p.cat] || '') + ' ¥' + p.price.toLocaleString() + '</small></a>';
   });
   if (supp) {
@@ -5091,7 +5177,7 @@ function renderConcernTable() {
     const key = pair[0], label = pair[1];
     const prods = PRODUCTS.filter(p => p.matches.indexOf(key) >= 0).slice(0, 4);
     const supp = CV_ADDONS.find(s => s.triggers.indexOf(key) >= 0);
-    let cells = prods.map(p => '<a href="' + p.url + '" target="_blank" rel="noopener">' + escapeHtml(p.name) + '</a>').join('、');
+    let cells = prods.map(p => '<a href="' + shopUrl(p.url) + '" target="_blank" rel="noopener">' + escapeHtml(p.name) + '</a>').join('、');
     if (supp) cells += (cells ? ' ／ ' : '') + '<a href="' + supp.url + '" target="_blank" rel="noopener">' + escapeHtml(supp.name) + '（サプリ）</a>';
     rows += '<tr><th>' + label + '</th><td>' + (cells || '—') + '</td></tr>';
   });
@@ -5121,7 +5207,7 @@ function renderProductGuide() {
           coatRatingChips(p.coats) +
         '</div>' +
         '<p class="pp-guide__desc">' + escapeHtml(p.desc) + '</p>' +
-        '<a class="pp-guide__buy" href="' + p.url + '" target="_blank" rel="noopener">商品ページ</a>' +
+        '<a class="pp-guide__buy" href="' + shopUrl(p.url) + '" target="_blank" rel="noopener">' + (state.lang === 'en' ? 'View' : '商品ページ') + '</a>' +
         '</div>';
     });
     html += '</div></div>';
