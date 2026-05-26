@@ -1540,6 +1540,31 @@
     font-weight: 700;
     margin: 0 4px;
   }
+  .pp-schedule__routine {
+    background: var(--pp-navy-soft);
+    border: 1px solid var(--pp-border-light);
+    border-left: 3px solid var(--pp-navy);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    margin-bottom: 20px;
+  }
+  .pp-schedule__routine-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--pp-navy);
+    margin-bottom: 8px;
+  }
+  .pp-schedule__routine ul {
+    margin: 0;
+    padding-left: 1.2em;
+  }
+  .pp-schedule__routine li {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--pp-text-light);
+    margin-bottom: 5px;
+  }
+  .pp-schedule__routine strong { color: var(--pp-text); font-weight: 600; }
   .pp-schedule__row {
     display: grid;
     grid-template-columns: 110px 1fr;
@@ -3065,6 +3090,27 @@
         </details>
 
         <details class="pp-edu__item">
+          <summary>スプレー製品の使い分け（グルーミングスプレー等）</summary>
+          <div class="pp-edu__body">
+            <div class="pp-edu__simple">
+              <p>スプレーは<strong>「ブラッシングの摩擦を減らす・静電気を抑える・仕上げる」</strong>ための心強い味方です。<strong>乾いた毛に無理やりブラシをかけず、まずスプレー</strong>してから、がコツ。</p>
+              <p>毎日の定番は<strong>「OMG グルーミングスプレー」</strong>（毛玉・もつれをほどく1本）です。</p>
+            </div>
+            <div class="pp-edu__detailed">
+              <p>用途別に使い分けると、仕上がりと被毛の保護が大きく変わります（いずれも略さない正式名称）。</p>
+              <ul>
+                <li><strong>OMG グルーミングスプレー</strong>：毛玉・もつれを優しくほどくデイリー仕上げスプレー。ブラッシング前に吹きかけ、摩擦と毛切れを軽減します。<a class="pp-edu__buy" href="https://www.plushpuppyjapan.com/view/item/000000000101" target="_blank" rel="noopener">購入</a></li>
+                <li><strong>T.L.C コートコンディショナー</strong>：リーブイン／リンスアウト両用。ブラッシング前の保湿・指通り改善の必需品。日常の毛流れ管理にも。<a class="pp-edu__buy" href="https://www.plushpuppyjapan.com/view/item/000000000091" target="_blank" rel="noopener">購入</a></li>
+                <li><strong>ボリューマイジング スプレー</strong>：軽い使用感で根元から立ち上げ、日常的にふんわり感をキープ。コットン系・ボリュームが欲しい被毛に。<a class="pp-edu__buy" href="https://www.plushpuppyjapan.com/view/item/000000000082" target="_blank" rel="noopener">購入</a></li>
+                <li><strong>FAST ブロードライ スプレー</strong>：ドライ時間を短縮するスプレー。キューティクルを整えながら素早く乾かし、ブロー時の熱ダメージ・時間を抑えます。乾かす前に。<a class="pp-edu__buy" href="https://www.plushpuppyjapan.com/view/item/000000000071" target="_blank" rel="noopener">購入</a></li>
+                <li><strong>アンティスタティック コートコントロール</strong>：静電気・帯電を抑えるスプレー。冬場の乾燥や fly-away（毛の広がり）を防ぎ、毛流れを整えます。<a class="pp-edu__buy" href="https://www.plushpuppyjapan.com/view/item/000000000154" target="_blank" rel="noopener">購入</a></li>
+              </ul>
+              <p class="pp-edu__minor">使い方のコツ：毛に直接たっぷりではなく、少量を全体に均一に。<strong>乾いた毛のブラッシング前</strong>に使うのが基本です。ショー当日はリング直前の最終仕上げにも有効。</p>
+            </div>
+          </div>
+        </details>
+
+        <details class="pp-edu__item">
           <summary>参考文献・エビデンスについて</summary>
           <div class="pp-edu__body">
             <p>本コンテンツは、獣医皮膚科学・獣医栄養学で標準的に用いられる以下の文献・指針に基づく教育目的の要約です（一文ごとの引用ではなく、分野のコンセンサスに基づきます）。</p>
@@ -4061,16 +4107,25 @@ function renderSchedule(showDateStr) {
     daysLeft = Math.ceil((showDate - today) / 86400000);
   }
   const phases = [
-    { when:'30 DAYS',  jp:'30日前', what:'ディープクレンジング シャンプーで毛穴と皮脂をリセット。保湿ケアを開始してください。', th:30 },
-    { when:'14 DAYS',  jp:'14日前', what:'コートレスキューで集中保湿。ブラッシング頻度を上げ、毛切れを予防します。', th:14 },
-    { when:'7 DAYS',   jp:'7日前',  what:'シルクプロテイン コンディショナーで仕上がり調整。最終トリミング推奨。', th:7 },
-    { when:'1 DAY',    jp:'前日',   what:'入念な洗浄と完全ドライ。T.L.C で全体を整え、就寝前のブラッシングを丁寧に。', th:1 },
-    { when:'SHOW DAY', jp:'当日朝', what:'OMG・ボリューマイジング クリーム・チョーケストラルで決定的な仕上げを。', th:0 },
+    { when:'8 WEEKS', jp:'8週間前', what:'<strong>コンディションづくりの土台。</strong>良質なタンパク質・必須脂肪酸・抗酸化を継続して被毛を最良の状態へ育てます。週1回のディープクレンジングで地肌と毛穴をリセット。傷んだ毛先は計画的にカットして新しい毛に入れ替えます。', th:56 },
+    { when:'4 WEEKS', jp:'4週間前', what:'<strong>集中ケア期。</strong>コートレスキューやシーブリーズオイルで保湿・補修し、乾燥と毛切れを予防。骨格・毛流れに合わせたベースのトリミングを開始します。', th:28 },
+    { when:'2 WEEKS', jp:'2週間前', what:'<strong>形と質感の調整。</strong>毛玉・もつれを完全に除去し、ボリューム系ケアと栄養でハリ・立ち上がりを底上げ。理想のシルエットへ中間トリミング。', th:14 },
+    { when:'1 WEEK',  jp:'1週間前', what:'<strong>仕上がりの最終確認。</strong>質感・色冴え・艶をチェックし、必要なら微調整トリミング。白・淡色はステイン（涙やけ・黄ばみ）対策を強化します。', th:7 },
+    { when:'1 DAY',   jp:'前日',   what:'<strong>本番準備。</strong>入念な洗浄→完全ドライ→「T.L.C コートコンディショナー」（リーブイン スプレー）で毛流れを整えます。白・淡色はチョーク／ホワイトニングの下地を準備。就寝前のブラッシングを丁寧に。', th:1 },
+    { when:'SHOW DAY',jp:'当日朝', what:'<strong>決定的な仕上げ。</strong>「OMG グルーミングスプレー」でもつれを取り、「ボリューマイジング クリーム」で立ち上げ、「チョーケストラル」／「フェアリーフロスト」等でショー仕上げ。リング直前に仕上げスプレーで毛流れを整えます。', th:0 },
   ];
   let html = '';
   if (daysLeft !== null && daysLeft >= 0) {
     html += `<p class="pp-schedule__note">ショーまであと <strong>${daysLeft}</strong> 日</p>`;
   }
+  html += `<div class="pp-schedule__routine">
+      <div class="pp-schedule__routine-label">基本ルーティン（期間中ずっと）</div>
+      <ul>
+        <li><strong>入浴のたびに</strong>コンディショナー（シルクプロテイン等）で保湿・補修。コンディショナーは毎回が基本です。</li>
+        <li>ブラッシングは<strong>必ず保湿してから</strong>。乾いた毛の無理なブラッシングは毛切れの原因に。短毛種以外は日々のコーミングを。</li>
+        <li>栄養（タンパク質・必須脂肪酸・抗酸化）は<strong>通期で継続</strong>。美しい被毛は体の中から作られます。</li>
+      </ul>
+    </div>`;
   phases.forEach(p => {
     const isNow = daysLeft !== null && daysLeft <= p.th + 3 && daysLeft >= p.th - 3;
     html += `
