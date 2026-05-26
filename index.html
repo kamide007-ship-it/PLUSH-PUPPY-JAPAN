@@ -228,6 +228,7 @@
   /* 言語切替 (EN/JP) */
   body[data-lang="en"] [data-lang-ja],
   body[data-lang="ja"] [data-lang-en] { display: none !important; }
+  body[data-lang="en"] .pp-section-title__jp { display: none; }
   .pp-lang {
     display: inline-flex;
     border: 1px solid var(--pp-border-light);
@@ -3412,7 +3413,7 @@
         <div class="pp-section-title__en">Product Guide</div>
         <div class="pp-section-title__jp">製品 使い分けガイド（全製品）</div>
       </div>
-      <p class="pp-guide__lead">シャンプー・コンディショナー／トリートメント・フィニッシング（スプレー／クリーム／パウダー）・ブラシまで、<strong>全製品</strong>を「用途」と「向くコートタイプ」で一覧化しました。迷ったときの早見表としてご活用ください。</p>
+      <p class="pp-guide__lead"><span data-lang-ja>シャンプー・コンディショナー／トリートメント・フィニッシング（スプレー／クリーム／パウダー）・ブラシまで、<strong>全製品</strong>を「用途」と「向くコートタイプ」で一覧化しました。迷ったときの早見表としてご活用ください。</span><span data-lang-en>From shampoo and conditioner/treatment to finishing (spray/cream/powder) and brushes — <strong>every product</strong>, listed by purpose and the coat types it suits. Use it as a quick reference.</span></p>
       <div id="productGuide"></div>
     </div>
 
@@ -3851,6 +3852,44 @@ function issueLabel(k) { return (state.lang === 'en' && ISSUE_LABEL_EN[k]) ? ISS
 function goalLabel(k) { return (state.lang === 'en' && GOAL_LABEL_EN[k]) ? GOAL_LABEL_EN[k] : (GOAL_LABEL[k] || k); }
 function coatLabel(k) { return (state.lang === 'en' && COAT_LABEL_EN[k]) ? COAT_LABEL_EN[k] : (COAT_LABEL[k] || COAT_LABEL.all); }
 function pName(p) { return (state.lang === 'en' && p.en) ? p.en : p.name; }
+const PRODUCT_DESC_EN = {
+  pp_all_purpose: 'Everyday all-breed base shampoo; the baseline for daily care.',
+  pp_whitening: 'Henna & ginseng. Lifts dullness from white/light coats and restores natural colour clarity.',
+  pp_bodybuilding: 'Wheatgerm for volume and body; a staple for Poodles, Bichons and other cotton coats.',
+  pp_conditioning_shampoo: 'Evening primrose. Deeply moisturises and softens dry coats.',
+  pp_sensitive: 'Low-irritant formula for sensitive skin; daily care for itch-prone dogs.',
+  pp_deep_cleansing: 'Seaweed & green tea. Clears excess oil from skin and coat; for shedding season and oily types.',
+  pp_texture_plus: 'For harsh coats. Restores the natural firmness and texture of terriers and wire coats.',
+  pp_black_opal: 'For black & dark coats. Brings out their natural depth and lustre.',
+  pp_wonder_wash: 'Waterless instant shampoo; clean up quickly on show day or in a pinch.',
+  pp_face_it: 'Gentle face & eye-area wash; cares for tear stains and around the eyes.',
+  pp_powder_puff: 'Waterless powder cleanser; a pro staple for cleaning feet before the show ring.',
+  pp_silk_protein_100: 'Trial size. Silk protein repairs damage for a smooth, glossy silky coat.',
+  pp_silk_protein_500: 'Silk protein repairs damage for a smooth, glossy silky coat.',
+  pp_tlc: 'Leave-in / rinse-out conditioner; a must before daily brushing.',
+  pp_coat_rescue: 'Intensive moisture treatment; ideal for the 14-day pre-show recovery.',
+  pp_omg: 'Gently releases mats and tangles; a daily brushing companion.',
+  pp_volumising_cream: 'The show-day finisher; sculpts the ideal silhouette and volume.',
+  pp_volumising_spray: 'Lightweight volume spray; keeps everyday fullness.',
+  pp_chalkestral: 'Chalk base for show finishing; a pro touch to make white/light coats pop.',
+  pp_hold: 'Shaping finisher; holds form for the show ring.',
+  pp_shine_comb: 'Shine for smooth/short coats; apply and comb for added lustre.',
+  pp_seabreeze: 'Calendula, wheatgerm & evening primrose all-purpose oil for healthy coat and skin.',
+  pp_pixie_dust: 'Finishing powder; the show-groomer staple for sparkle and colour clarity.',
+  pp_fairy_frost: 'Sparkling finishing powder; shows your dog at its most beautiful in the ring.',
+  pp_protein_balm: 'Tip-protecting balm; shields long-coat ends and tames ring-side spread.',
+  pp_swishy: 'Tames static and smooths coat flow; a brushing essential.',
+  pp_fast: 'Cuts dry time; smooths the cuticle while drying faster.',
+  pp_antistatic: 'Anti-static spray; tames winter dryness and fly-aways.',
+  pp_cover_up: 'Covers stains/yellowing on white coats; spot fixes just before the show.',
+  pp_ultimate_soft: 'Pro soft slicker; strong de-matting with gentle, coat-safe action.',
+  pp_slicker_soft: 'Everyday soft slicker; the best all-round brush for home users.',
+  pp_slicker_mini: 'Mini size for small dogs; for Toy Poodles, Chihuahuas and the like.',
+  pp_pin_brush: 'Long-coat pin brush; brush along the flow without damaging the ends.',
+  pp_bristle: 'Natural bristle brush; a traditional finisher that adds shine to smooth coats.',
+  pp_porcupine: 'Anti-static bristle + pin combo brush.'
+};
+function pDesc(p) { return (state.lang === 'en' && PRODUCT_DESC_EN[p.id]) ? PRODUCT_DESC_EN[p.id] : p.desc; }
 const CAT_LABEL = {
   shampoo:'Shampoo', conditioner:'Conditioner',
   finishing:'Finishing', brush:'Brush'
@@ -4368,7 +4407,7 @@ function renderProducts(picks) {
       <div class="pp-product__cat">${CAT_LABEL[p.cat] || ''}</div>
       <h4 class="pp-product__name">${pName(p)}</h4>
       ${matchHtml}
-      <p class="pp-product__why">${p.desc}</p>
+      <p class="pp-product__why">${pDesc(p)}</p>
       <div class="pp-product__price">¥${p.price.toLocaleString()}<small>${p.size}</small></div>
       <a href="${shopUrl(p.url)}" target="_blank" rel="noopener" class="pp-product__cta"><span data-lang-ja>商品ページを見る</span><span data-lang-en>View product</span></a>
     `;
@@ -5229,24 +5268,27 @@ function coatsToText(coats) {
 }
 function productTypeTag(p) {
   if (p.cat !== 'finishing') return '';
-  const n = p.name;
-  if (n.indexOf('スプレー') >= 0) return 'スプレー';
-  if (n.indexOf('クリーム') >= 0) return 'クリーム';
-  if (n.indexOf('パウダー') >= 0 || n.indexOf('ダスト') >= 0 || n.indexOf('フロスト') >= 0 || n.indexOf('チョーク') >= 0 || n.indexOf('チョーケストラル') >= 0) return 'パウダー';
-  if (n.indexOf('オイル') >= 0) return 'オイル';
-  if (n.indexOf('バーム') >= 0) return 'バーム';
-  return '仕上げ材';
+  const n = p.name, en = state.lang === 'en';
+  if (n.indexOf('スプレー') >= 0) return en ? 'Spray' : 'スプレー';
+  if (n.indexOf('クリーム') >= 0) return en ? 'Cream' : 'クリーム';
+  if (n.indexOf('パウダー') >= 0 || n.indexOf('ダスト') >= 0 || n.indexOf('フロスト') >= 0 || n.indexOf('チョーク') >= 0 || n.indexOf('チョーケストラル') >= 0) return en ? 'Powder' : 'パウダー';
+  if (n.indexOf('オイル') >= 0) return en ? 'Oil' : 'オイル';
+  if (n.indexOf('バーム') >= 0) return en ? 'Balm' : 'バーム';
+  return en ? 'Finisher' : '仕上げ材';
 }
 const GUIDE_CATS = [
-  { cat: 'shampoo', label: 'シャンプー（洗浄）', intro: '目的で選びます。基本は全身用1本＋悩みに合わせた専用シャンプー。週1回のディープクレンジングで皮脂をリセットするのも有効です。' },
-  { cat: 'conditioner', label: 'コンディショナー / トリートメント', intro: '入浴のたびの保湿・補修が基本（毎回）。乾燥やダメージが強い時は集中トリートメントを追加します。' },
-  { cat: 'finishing', label: 'フィニッシング（仕上げ）', intro: 'スプレー＝日常・ブラッシング補助／クリーム・パウダー＝ボリュームやショー仕上げ。質感で使い分けます。' },
-  { cat: 'brush', label: 'ブラシ', intro: 'コートに合うブラシ選びが毛切れ防止の要。必ず保湿してからブラッシングを。' }
+  { cat: 'shampoo', label: 'シャンプー（洗浄）', labelEn: 'Shampoo (cleansing)', intro: '目的で選びます。基本は全身用1本＋悩みに合わせた専用シャンプー。週1回のディープクレンジングで皮脂をリセットするのも有効です。', introEn: 'Choose by purpose. Use one all-over shampoo plus a targeted one for specific concerns; a weekly deep cleanse to reset sebum also helps.' },
+  { cat: 'conditioner', label: 'コンディショナー / トリートメント', labelEn: 'Conditioner / Treatment', intro: '入浴のたびの保湿・補修が基本（毎回）。乾燥やダメージが強い時は集中トリートメントを追加します。', introEn: 'Moisturise and repair at every bath (every time). Add an intensive treatment when dryness or damage is significant.' },
+  { cat: 'finishing', label: 'フィニッシング（仕上げ）', labelEn: 'Finishing', intro: 'スプレー＝日常・ブラッシング補助／クリーム・パウダー＝ボリュームやショー仕上げ。質感で使い分けます。', introEn: 'Spray = daily / brushing aid; cream & powder = volume and show finishing. Choose by texture.' },
+  { cat: 'brush', label: 'ブラシ', labelEn: 'Brushes', intro: 'コートに合うブラシ選びが毛切れ防止の要。必ず保湿してからブラッシングを。', introEn: 'Choosing the right brush for the coat is key to preventing breakage. Always moisturise before brushing.' }
 ];
 /* 製品のコート別 推奨度(◎=特におすすめ / ○=汎用で使用可) チップ */
 function coatRatingChips(coats) {
   coats = coats || [];
-  const groups = [['silky','シルキー'],['cotton','コットン'],['double','ダブル'],['harsh','ハーシュ'],['wavy','ウェービー'],['smooth','スムース']];
+  const en = state.lang === 'en';
+  const groups = en
+    ? [['silky','Silky'],['cotton','Cotton'],['double','Double'],['harsh','Harsh'],['wavy','Wavy'],['smooth','Smooth']]
+    : [['silky','シルキー'],['cotton','コットン'],['double','ダブル'],['harsh','ハーシュ'],['wavy','ウェービー'],['smooth','スムース']];
   const member = {
     silky:['silky','dachshund_long','chihuahua_long'],
     cotton:['cotton','cotton_toy','cotton_mini','cotton_med','cotton_std'],
@@ -5260,57 +5302,59 @@ function coatRatingChips(coats) {
   const chips = [];
   if (strong.length) {
     strong.forEach(g => chips.push('<span class="pp-guide__rate pp-guide__rate--a">' + g[1] + ' ◎</span>'));
-    if (isAll) chips.push('<span class="pp-guide__rate pp-guide__rate--b">その他 ○</span>');
+    if (isAll) chips.push('<span class="pp-guide__rate pp-guide__rate--b">' + (en ? 'Others ○' : 'その他 ○') + '</span>');
   } else if (isAll) {
-    chips.push('<span class="pp-guide__rate pp-guide__rate--a">全コート ◎</span>');
+    chips.push('<span class="pp-guide__rate pp-guide__rate--a">' + (en ? 'All coats ◎' : '全コート ◎') + '</span>');
   }
-  if (coats.indexOf('black_coat') >= 0) chips.push('<span class="pp-guide__rate pp-guide__rate--a">黒・濃色 ◎</span>');
-  if (coats.indexOf('white') >= 0) chips.push('<span class="pp-guide__rate pp-guide__rate--a">白・淡色 ◎</span>');
-  return chips.length ? chips.join('') : '<span class="pp-guide__rate pp-guide__rate--b">汎用 ○</span>';
+  if (coats.indexOf('black_coat') >= 0) chips.push('<span class="pp-guide__rate pp-guide__rate--a">' + (en ? 'Black / dark ◎' : '黒・濃色 ◎') + '</span>');
+  if (coats.indexOf('white') >= 0) chips.push('<span class="pp-guide__rate pp-guide__rate--a">' + (en ? 'White / light ◎' : '白・淡色 ◎') + '</span>');
+  return chips.length ? chips.join('') : '<span class="pp-guide__rate pp-guide__rate--b">' + (en ? 'General ○' : '汎用 ○') + '</span>';
 }
 
 /* 悩み → おすすめ製品 早見表 */
 const GUIDE_ISSUES = [
-  ['low_shine','艶不足'], ['low_moisture','乾燥'], ['oily','油分過多・ベタつき'], ['breakage','毛切れ'],
-  ['matting','毛玉・もつれ'], ['low_volume','ボリューム不足'], ['static','静電気'], ['yellowing','白毛のくすみ'],
-  ['sensitive_skin','敏感肌'], ['shedding','換毛・抜け毛'], ['soft_coat','コートの軟化']
+  ['low_shine','艶不足','Dull / no shine'], ['low_moisture','乾燥','Dryness'], ['oily','油分過多・ベタつき','Excess oil / greasy'], ['breakage','毛切れ','Breakage'],
+  ['matting','毛玉・もつれ','Matting / tangles'], ['low_volume','ボリューム不足','Low volume'], ['static','静電気','Static'], ['yellowing','白毛のくすみ','Dull white coat'],
+  ['sensitive_skin','敏感肌','Sensitive skin'], ['shedding','換毛・抜け毛','Shedding'], ['soft_coat','コートの軟化','Soft coat']
 ];
 function renderConcernTable() {
+  const en = state.lang === 'en';
   let rows = '';
   GUIDE_ISSUES.forEach(pair => {
-    const key = pair[0], label = pair[1];
+    const key = pair[0], label = en ? pair[2] : pair[1];
     const prods = PRODUCTS.filter(p => p.matches.indexOf(key) >= 0).slice(0, 4);
     const supp = CV_ADDONS.find(s => s.triggers.indexOf(key) >= 0);
-    let cells = prods.map(p => '<a href="' + shopUrl(p.url) + '" target="_blank" rel="noopener">' + escapeHtml(pName(p)) + '</a>').join('、');
-    if (supp) cells += (cells ? ' ／ ' : '') + '<a href="' + supp.url + '" target="_blank" rel="noopener">' + escapeHtml(supp.name) + '（サプリ）</a>';
+    let cells = prods.map(p => '<a href="' + shopUrl(p.url) + '" target="_blank" rel="noopener">' + escapeHtml(pName(p)) + '</a>').join(en ? ', ' : '、');
+    if (supp) cells += (cells ? ' / ' : '') + '<a href="' + supp.url + '" target="_blank" rel="noopener">' + escapeHtml(supp.name) + (en ? ' (supplement)' : '（サプリ）') + '</a>';
     rows += '<tr><th>' + label + '</th><td>' + (cells || '—') + '</td></tr>';
   });
-  return '<div class="pp-guide__table-head">悩み別 早見表（タップで商品ページ）</div>' +
+  return '<div class="pp-guide__table-head">' + (en ? 'Quick reference (tap for product page)' : '悩み別 早見表（タップで商品ページ）') + '</div>' +
     '<div class="pp-guide__table-wrap"><table class="pp-guide__table"><tbody>' + rows + '</tbody></table></div>';
 }
 
 function renderProductGuide() {
   const wrap = document.getElementById('productGuide');
   if (!wrap) return;
+  const en = state.lang === 'en';
   let html = renderConcernTable();
-  html += '<div class="pp-guide__legend">コート別の推奨度：<b>◎</b> 特におすすめ ／ <b>○</b> 使用可（汎用）</div>';
+  html += '<div class="pp-guide__legend">' + (en ? 'Coat fit: <b>◎</b> highly recommended / <b>○</b> usable (general)' : 'コート別の推奨度：<b>◎</b> 特におすすめ ／ <b>○</b> 使用可（汎用）') + '</div>';
   GUIDE_CATS.forEach(g => {
     const items = PRODUCTS.filter(p => p.cat === g.cat);
     if (!items.length) return;
     html += '<div class="pp-guide__cat">' +
-      '<div class="pp-guide__cat-title">' + g.label + '<span>' + items.length + '点</span></div>' +
-      '<p class="pp-guide__cat-intro">' + g.intro + '</p>' +
+      '<div class="pp-guide__cat-title">' + (en ? g.labelEn : g.label) + '<span>' + items.length + (en ? ' items' : '点') + '</span></div>' +
+      '<p class="pp-guide__cat-intro">' + (en ? g.introEn : g.intro) + '</p>' +
       '<div class="pp-guide__list">';
     items.forEach(p => {
       const type = productTypeTag(p);
       html += '<div class="pp-guide__item">' +
         '<div class="pp-guide__item-name">' + escapeHtml(pName(p)) + '</div>' +
-        '<div class="pp-guide__item-meta">' + (p.size ? escapeHtml(p.size) + '・' : '') + '¥' + p.price.toLocaleString() + '</div>' +
+        '<div class="pp-guide__item-meta">' + (p.size ? escapeHtml(p.size) + (en ? '' : '・') : '') + (en ? '' : '¥' + p.price.toLocaleString()) + '</div>' +
         '<div class="pp-guide__tags">' +
           (type ? '<span class="pp-guide__tag pp-guide__tag--type">' + type + '</span>' : '') +
           coatRatingChips(p.coats) +
         '</div>' +
-        '<p class="pp-guide__desc">' + escapeHtml(p.desc) + '</p>' +
+        '<p class="pp-guide__desc">' + escapeHtml(pDesc(p)) + '</p>' +
         '<a class="pp-guide__buy" href="' + shopUrl(p.url) + '" target="_blank" rel="noopener">' + (state.lang === 'en' ? 'View' : '商品ページ') + '</a>' +
         '</div>';
     });
