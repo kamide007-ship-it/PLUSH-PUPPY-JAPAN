@@ -4300,7 +4300,7 @@ let state = { answers: {}, lang: 'ja', coat: 'all', picks: [] };
 /* ============================================
    言語切替 (EN / JP)。英語版のショップ系リンクはオーストラリア本社へ
    ============================================ */
-const AU_BASE = 'https://plushpuppy.com.au/';
+const AU_BASE = 'https://plushpuppy.com.au/shop/';
 function shopUrl(u) { return state.lang === 'en' ? AU_BASE : (u || AU_BASE); }
 function setLang(lang) {
   state.lang = (lang === 'en') ? 'en' : 'ja';
