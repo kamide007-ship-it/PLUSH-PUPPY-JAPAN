@@ -258,30 +258,58 @@
   .pp-menu__btn {
     appearance: none;
     -webkit-appearance: none;
-    border: 1px solid var(--pp-border-light);
-    background: #ffffff;
-    width: 42px;
+    border: 1.5px solid var(--pp-navy);
+    background: var(--pp-navy);
+    color: #ffffff;
     height: 42px;
+    padding: 0 14px 0 12px;
     border-radius: 10px;
-    display: flex;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 9px;
+    cursor: pointer;
+    font-family: var(--font-jp);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    box-shadow: 0 4px 12px rgba(67, 86, 159, 0.32);
+    transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .pp-menu__btn:hover {
+    background: var(--pp-navy-dark);
+    box-shadow: 0 6px 16px rgba(67, 86, 159, 0.42);
+    transform: translateY(-1px);
+  }
+  .pp-menu__btn:focus-visible {
+    outline: 3px solid var(--pp-navy-light);
+    outline-offset: 2px;
+  }
+  .pp-menu__btn-bars {
+    display: inline-flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 4px;
-    cursor: pointer;
-    padding: 0;
+    width: 20px;
+    height: 18px;
+    flex-shrink: 0;
   }
-  .pp-menu__btn span {
+  .pp-menu__btn-bars span {
     display: block;
     width: 20px;
     height: 2px;
-    background: var(--pp-navy);
+    background: #ffffff;
     border-radius: 2px;
     transition: transform 0.2s, opacity 0.2s;
   }
-  .pp-menu__btn[aria-expanded="true"] span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
-  .pp-menu__btn[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
-  .pp-menu__btn[aria-expanded="true"] span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+  .pp-menu__btn-label { display: inline-block; line-height: 1; }
+  .pp-menu__btn[aria-expanded="true"] .pp-menu__btn-bars span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .pp-menu__btn[aria-expanded="true"] .pp-menu__btn-bars span:nth-child(2) { opacity: 0; }
+  .pp-menu__btn[aria-expanded="true"] .pp-menu__btn-bars span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+  @media (max-width: 600px) {
+    .pp-menu__btn { padding: 0 12px 0 10px; gap: 7px; font-size: 12px; }
+  }
   .pp-menu__panel {
     position: absolute;
     top: calc(100% + 10px);
@@ -2397,7 +2425,8 @@
     </div>
     <div class="pp-menu">
       <button type="button" class="pp-menu__btn" id="menuBtn" aria-label="メニュー" aria-haspopup="true" aria-expanded="false" onclick="toggleMenu()">
-        <span></span><span></span><span></span>
+        <span class="pp-menu__btn-bars" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="pp-menu__btn-label" data-lang-ja>メニュー</span><span class="pp-menu__btn-label" data-lang-en>Menu</span>
       </button>
       <div class="pp-menu__panel" id="menuPanel" role="menu" hidden>
         <button type="button" class="pp-menu__item" role="menuitem" onclick="menuGo('top')"><span data-lang-ja>診断する</span><span data-lang-en>Start Diagnosis</span></button>
