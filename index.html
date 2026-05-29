@@ -349,6 +349,81 @@
   }
   .pp-menu__overlay[hidden] { display: none; }
 
+  /* Section-level navigation strip (injected into each resource panel) */
+  .pp-section-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 18px;
+    padding: 10px 12px;
+    background: var(--pp-navy-soft);
+    border: 1px solid var(--pp-border-light);
+    border-radius: 12px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 8px;
+    z-index: 50;
+    backdrop-filter: saturate(140%) blur(2px);
+  }
+  .pp-section-nav__back {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 1.5px solid var(--pp-navy);
+    background: #ffffff;
+    color: var(--pp-navy);
+    font-family: var(--font-jp);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: background 0.15s ease, color 0.15s ease;
+    flex-shrink: 0;
+  }
+  .pp-section-nav__back:hover { background: var(--pp-navy); color: #ffffff; }
+  .pp-section-nav__back[disabled] { opacity: 0.45; cursor: not-allowed; }
+  .pp-section-nav__back[disabled]:hover { background: #ffffff; color: var(--pp-navy); }
+  .pp-section-nav__items {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    flex: 1;
+    justify-content: flex-end;
+    min-width: 0;
+  }
+  .pp-section-nav__items button {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--pp-text);
+    font-family: var(--font-jp);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  .pp-section-nav__items button:hover {
+    background: #ffffff;
+    border-color: var(--pp-border-light);
+    color: var(--pp-navy);
+  }
+  .pp-section-nav__items button.is-active {
+    background: var(--pp-navy);
+    color: #ffffff;
+    border-color: var(--pp-navy);
+  }
+  @media (max-width: 600px) {
+    .pp-section-nav { padding: 8px 10px; gap: 8px; }
+    .pp-section-nav__back { font-size: 12px; padding: 5px 10px; }
+    .pp-section-nav__items button { font-size: 12px; padding: 5px 8px; }
+  }
+
   /* 解析前でも resource パネル(学び/製品/サプリ)を表示できるプレビュー */
   .pp-result.is-resources { display: block; }
   .pp-result.is-resources:not(.is-shown) > .pp-panel:not(.pp-panel--resource),
@@ -5904,19 +5979,84 @@ function closeMenu() {
   if (ov) ov.hidden = true;
   if (btn) btn.setAttribute('aria-expanded', 'false');
 }
-function menuGo(target) {
+/* Section navigation: history + back support */
+const NAV_TARGETS = ['top', 'learn', 'guide', 'products', 'supplements'];
+const NAV_PANEL_ID = { learn: 'learnPanel', guide: 'guidePanel', products: 'allProductsPanel', supplements: 'supplementPanel' };
+const NAV_LABELS = {
+  top:         { ja: '診断',   en: 'Diagnosis' },
+  learn:       { ja: '学び',   en: 'Learn' },
+  guide:       { ja: 'ガイド', en: 'Guide' },
+  products:    { ja: '製品',   en: 'Products' },
+  supplements: { ja: 'サプリ', en: 'Supps' }
+};
+const navHistory = [];
+let currentNav = 'top';
+
+function menuGo(target, opts) {
+  opts = opts || {};
   closeMenu();
+  if (!opts.fromBack && currentNav && currentNav !== target) navHistory.push(currentNav);
+  currentNav = target;
+  updateSectionNavActive(target);
   if (target === 'top') { smoothScrollTo('top'); return; }
   const result = document.getElementById('result');
   // 診断前は resource パネル(学び/製品/サプリ)だけを表示
   if (result && !result.classList.contains('is-shown')) result.classList.add('is-resources');
-  const idMap = { learn: 'learnPanel', guide: 'guidePanel', products: 'allProductsPanel', supplements: 'supplementPanel' };
-  const el = document.getElementById(idMap[target]);
+  const el = document.getElementById(NAV_PANEL_ID[target]);
   setTimeout(() => {
     if (el) { try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { el.scrollIntoView(); } }
     notifyHeight();
   }, 70);
 }
+function navBack() {
+  if (navHistory.length === 0) { menuGo('top', { fromBack: true }); return; }
+  const prev = navHistory.pop();
+  menuGo(prev, { fromBack: true });
+}
+function updateSectionNavActive(target) {
+  document.querySelectorAll('.pp-section-nav__items button[data-nav-target]').forEach(b => {
+    b.classList.toggle('is-active', b.dataset.navTarget === target);
+  });
+  document.querySelectorAll('.pp-section-nav__back').forEach(b => {
+    if (navHistory.length === 0) b.setAttribute('disabled', '');
+    else b.removeAttribute('disabled');
+  });
+}
+function buildSectionNav(activeTarget) {
+  const nav = document.createElement('nav');
+  nav.className = 'pp-section-nav';
+  nav.setAttribute('aria-label', 'セクション内ナビゲーション');
+  const back = document.createElement('button');
+  back.type = 'button';
+  back.className = 'pp-section-nav__back';
+  back.setAttribute('onclick', 'navBack()');
+  back.setAttribute('aria-label', '戻る');
+  back.innerHTML = '<span aria-hidden="true">←</span><span data-lang-ja>戻る</span><span data-lang-en>Back</span>';
+  nav.appendChild(back);
+  const items = document.createElement('div');
+  items.className = 'pp-section-nav__items';
+  NAV_TARGETS.forEach(t => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.dataset.navTarget = t;
+    btn.setAttribute('onclick', "menuGo('" + t + "')");
+    if (t === activeTarget) btn.className = 'is-active';
+    btn.innerHTML = '<span data-lang-ja>' + NAV_LABELS[t].ja + '</span><span data-lang-en>' + NAV_LABELS[t].en + '</span>';
+    items.appendChild(btn);
+  });
+  nav.appendChild(items);
+  return nav;
+}
+function injectSectionNavs() {
+  const mapping = { learnPanel: 'learn', guidePanel: 'guide', allProductsPanel: 'products', supplementPanel: 'supplements' };
+  Object.keys(mapping).forEach(id => {
+    const panel = document.getElementById(id);
+    if (!panel || panel.querySelector(':scope > .pp-section-nav')) return;
+    panel.insertBefore(buildSectionNav(mapping[id]), panel.firstChild);
+  });
+  updateSectionNavActive(currentNav);
+}
+injectSectionNavs();
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
 
 window.addEventListener('load', () => setTimeout(notifyHeight, 200));
