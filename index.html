@@ -1781,21 +1781,34 @@
     font-weight: 400;
   }
   .pp-product__cta {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
     background: var(--pp-navy);
     color: white;
     text-decoration: none;
-    padding: 10px;
+    padding: 12px 14px;
     border-radius: var(--radius-pill);
-    font-size: 13px;
-    font-weight: 500;
-    transition: all 0.2s;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
     margin-top: auto;
+    box-shadow: 0 3px 10px rgba(67, 86, 159, 0.25);
   }
   .pp-product__cta:hover {
     background: var(--pp-navy-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 14px rgba(67, 86, 159, 0.35);
     opacity: 1;
   }
+  .pp-product__cta::after {
+    content: '→';
+    font-weight: 700;
+    transition: transform 0.2s;
+  }
+  .pp-product__cta:hover::after { transform: translateX(3px); }
 
   /* ============================================
      Show Schedule (NEWSリスト風)
@@ -2449,6 +2462,146 @@
   .pp-cat-tile--accent .pp-cat-tile__more {
     color: white;
   }
+
+  /* ============================================
+     All Products Direct Catalog (mini-cards)
+     ============================================ */
+  .pp-allp-catalog {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+  .pp-allp-catalog__lead {
+    text-align: center;
+    color: var(--pp-text-light);
+    font-size: 14px;
+    margin: 0 auto 8px;
+    max-width: 560px;
+  }
+  .pp-allp-group__title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--pp-navy);
+    margin: 0 0 14px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--pp-navy-soft);
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .pp-allp-group__count {
+    font-family: var(--font-en);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--pp-text-light);
+    letter-spacing: 0.05em;
+  }
+  .pp-allp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 14px;
+  }
+  @media (max-width: 600px) {
+    .pp-allp-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  }
+  .pp-allp-card {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border: 1px solid var(--pp-border-light);
+    border-radius: var(--radius-sm);
+    padding: 10px 10px 12px;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    text-decoration: none;
+    color: inherit;
+  }
+  .pp-allp-card:hover {
+    border-color: var(--pp-navy);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+  }
+  .pp-allp-card__image-wrap {
+    width: 100%;
+    padding-top: 100%;
+    position: relative;
+    background: #ffffff;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin-bottom: 8px;
+    border: 1px solid var(--pp-border-light);
+  }
+  .pp-allp-card__image-wrap.is-fallback {
+    background: var(--pp-navy-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-en);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--pp-text-muted);
+  }
+  .pp-allp-card__image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 6px;
+    background: #ffffff;
+    transition: transform 0.3s ease;
+  }
+  .pp-allp-card:hover .pp-allp-card__image { transform: scale(1.04); }
+  .pp-allp-card__name {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--pp-text);
+    margin: 4px 0 6px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.8em;
+  }
+  .pp-allp-card__price {
+    font-family: var(--font-en);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--pp-text);
+    margin-bottom: 10px;
+  }
+  .pp-allp-card__price small {
+    font-family: var(--font-en);
+    font-size: 11px;
+    color: var(--pp-text-light);
+    margin-left: 6px;
+    font-weight: 400;
+  }
+  .pp-allp-card__cta {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    background: var(--pp-navy);
+    color: #ffffff;
+    text-decoration: none;
+    padding: 9px 8px;
+    border-radius: var(--radius-pill);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    transition: background 0.15s ease;
+  }
+  .pp-allp-card__cta::after {
+    content: '→';
+    font-weight: 700;
+    transition: transform 0.15s ease;
+  }
+  .pp-allp-card:hover .pp-allp-card__cta { background: var(--pp-navy-dark); }
+  .pp-allp-card:hover .pp-allp-card__cta::after { transform: translateX(3px); }
 
   /* ============================================
      Print
@@ -4168,6 +4321,15 @@
           <div class="pp-cat-tile__more">VIEW ALL ›</div>
         </a>
       </div>
+
+      <!-- Direct purchase catalog: every product, grouped by category, with a Buy button -->
+      <div class="pp-allp-catalog" id="allProductsCatalog">
+        <p class="pp-allp-catalog__lead">
+          <span data-lang-ja>気になる商品をそのままタップして、すぐにご購入いただけます。</span>
+          <span data-lang-en>Tap any item to go straight to its product page and buy.</span>
+        </p>
+      </div>
+
       <div style="text-align:center; margin-top:24px; padding-top:24px; border-top:1px solid var(--pp-border-light);">
         <a href="https://www.plushpuppyjapan.com" target="_blank" rel="noopener" class="pp-btn pp-btn--primary">
           <span data-lang-ja>Plush Puppy Japan 公式サイトへ</span><span data-lang-en>Visit Plush Puppy Australia</span>
@@ -5119,7 +5281,7 @@ function renderProducts(picks) {
       ${matchHtml}
       <p class="pp-product__why">${pDesc(p)}</p>
       <div class="pp-product__price">¥${p.price.toLocaleString()}<small>${p.size}</small></div>
-      <a href="${shopUrl(p.url)}" target="_blank" rel="noopener" class="pp-product__cta"><span data-lang-ja>商品ページを見る</span><span data-lang-en>View product</span></a>
+      <a href="${shopUrl(p.url)}" target="_blank" rel="noopener" class="pp-product__cta"><span data-lang-ja>今すぐ購入する</span><span data-lang-en>Buy now</span></a>
     `;
     list.appendChild(card);
   });
@@ -6181,6 +6343,55 @@ function renderProductGuide() {
   wrap.innerHTML = html;
 }
 try { renderProductGuide(); } catch (e) {}
+
+/* 全製品ラインナップ: PRODUCTS から全製品をカテゴリ別ミニカードで描画し、直接購入導線を提供 */
+const ALLP_GROUPS = [
+  { key: 'shampoo',     ja: 'シャンプー',                       en: 'Shampoos' },
+  { key: 'conditioner', ja: 'コンディショナー / トリートメント', en: 'Conditioners / Treatments' },
+  { key: 'finishing',   ja: 'フィニッシング（仕上げ）',          en: 'Finishing' },
+  { key: 'brush',       ja: 'ブラシ',                            en: 'Brushes' }
+];
+function renderAllProductsCatalog() {
+  const container = document.getElementById('allProductsCatalog');
+  if (!container) return;
+  const lead = container.querySelector('.pp-allp-catalog__lead');
+  const leadHtml = lead ? lead.outerHTML : '';
+  let h = leadHtml;
+  ALLP_GROUPS.forEach(g => {
+    const items = PRODUCTS.filter(p => p.cat === g.key);
+    if (!items.length) return;
+    h += '<div class="pp-allp-group">';
+    h += '<h3 class="pp-allp-group__title">';
+    h +=   '<span data-lang-ja>' + g.ja + '</span><span data-lang-en>' + g.en + '</span>';
+    h +=   '<span class="pp-allp-group__count"><span data-lang-ja>' + items.length + '点</span><span data-lang-en>' + items.length + ' items</span></span>';
+    h += '</h3>';
+    h += '<div class="pp-allp-grid">';
+    items.forEach(p => { h += renderAllProductsCard(p); });
+    h += '</div></div>';
+  });
+  container.innerHTML = h;
+}
+function renderAllProductsCard(p) {
+  const name = escapeHtml(pName(p));
+  const fallbackLabel = escapeHtml(CAT_LABEL[p.cat] || '');
+  const imgHtml = p.image
+    ? '<div class="pp-allp-card__image-wrap">' +
+        '<img class="pp-allp-card__image" src="' + p.image + '" alt="' + name + '" loading="lazy" ' +
+        'onerror="this.onerror=null;var w=this.parentNode;w.classList.add(\'is-fallback\');w.innerHTML=\'<span>' + fallbackLabel + '</span>\';">' +
+      '</div>'
+    : '<div class="pp-allp-card__image-wrap is-fallback"><span>' + fallbackLabel + '</span></div>';
+  const sizeHtml = p.size ? '<small>' + escapeHtml(p.size) + '</small>' : '';
+  return '' +
+    '<a class="pp-allp-card" href="' + shopUrl(p.url) + '" target="_blank" rel="noopener" aria-label="' + name + ' を購入する">' +
+      imgHtml +
+      '<h4 class="pp-allp-card__name">' + name + '</h4>' +
+      '<div class="pp-allp-card__price">¥' + (p.price || 0).toLocaleString() + sizeHtml + '</div>' +
+      '<span class="pp-allp-card__cta">' +
+        '<span data-lang-ja>購入する</span><span data-lang-en>Buy now</span>' +
+      '</span>' +
+    '</a>';
+}
+try { renderAllProductsCatalog(); } catch (e) {}
 
 /* 学びの場: 目次(クイックアクセス)を生成し、タップで該当項目を開いてスクロール。
    各項目は独立に開閉(非排他)。他項目を閉じないため、上の項目が畳まれて
