@@ -2766,7 +2766,7 @@
               <option value="schnauzer_std" data-en="Schnauzer (Standard)">シュナウザー (スタンダード)</option>
               <option value="schnauzer_giant" data-en="Schnauzer (Giant)">シュナウザー (ジャイアント)</option>
             </optgroup>
-            <optgroup label="その他ハーシュ / テリア" data-en="Other Harsh / Terrier">
+            <optgroup label="その他ワイヤー（剛毛）／テリア" data-en="Other Harsh / Terrier">
               <option value="west_highland" data-en="West Highland White Terrier">ウエストハイランドホワイトテリア</option>
               <option value="scottish_terrier" data-en="Scottish Terrier">スコティッシュテリア</option>
               <option value="airedale" data-en="Airedale Terrier">エアデールテリア</option>
@@ -2917,7 +2917,7 @@
         <label class="pp-check">
           <input type="checkbox" data-issue="soft_coat">
           <div class="pp-check__body">
-            <span class="pp-check__title"><span data-lang-ja>ハーシュコートが柔らかい</span><span data-lang-en>Soft harsh coat</span></span>
+            <span class="pp-check__title"><span data-lang-ja>硬い毛がふんわり柔らかくなってきた</span><span data-lang-en>Soft harsh coat</span></span>
             <span class="pp-check__desc"><span data-lang-ja>本来の硬さを失っている</span><span data-lang-en>lost its natural texture</span></span>
           </div>
         </label>
@@ -3880,7 +3880,7 @@
             </div>
             <div class="pp-edu__detailed">
               <div data-lang-ja>
-                <p><strong>硬い毛（ワイヤー／ハーシュ）</strong>：毛径が太く、キューティクル・コルテックスが厚く髄質も発達→コシ・防水・防汚性に優れる。テリア等で、本来の質感は休止期の毛を手で抜く<strong>ハンドストリッピング</strong>で維持します（バリカンで刈ると徐々に軟化・退色）。</p>
+                <p><strong>硬い毛（ワイヤー・剛毛タイプ）</strong>：毛径が太く、キューティクル・コルテックスが厚く髄質も発達→コシ・防水・防汚性に優れる。テリア等で、本来の質感は休止期の毛を手で抜く<strong>ハンドストリッピング</strong>で維持します（バリカンで刈ると徐々に軟化・退色）。</p>
                 <p><strong>柔らかい毛</strong>：毛径が細く、2次毛（アンダーコート）の比率が高くしなやか。</p>
                 <p>毛質は<strong>遺伝的素因＋手入れ方法</strong>の両方で決まります。</p>
                 <p><strong>毛質をしっかりさせるには</strong></p>
@@ -4453,7 +4453,7 @@ const PRODUCTS = [
     url: ITEM_BASE + '000000000031',
     image: IMG_BASE + '000000000031_r6H1ru3.jpg',
     matches:['soft_coat'], coats:['harsh','harsh_mini','harsh_std','harsh_giant','dachshund_wire'],
-    desc:'ハーシュコート専用。テリア種・ワイヤーが本来持つ硬さとテクスチャを取り戻します。' },
+    desc:'ワイヤー（剛毛）コート専用。テリア種・ワイヤーが本来持つ硬さとテクスチャを取り戻します。' },
   { id:'pp_black_opal', cat:'shampoo', name:'ブラック オパール シャンプー', en:'Black Opal Shampoo',
     price:6160, size:'500ml',
     url: ITEM_BASE + '000000000022',
@@ -4686,8 +4686,8 @@ const COAT_LABEL = {
   cotton_toy:'コットン (トイ)', cotton_mini:'コットン (ミニ)',
   cotton_med:'コットン (ミディアム)', cotton_std:'コットン (スタンダード)',
   double:'ダブルコート',
-  harsh:'ハーシュコート', harsh_mini:'ハーシュ (ミニ)',
-  harsh_std:'ハーシュ (スタンダード)', harsh_giant:'ハーシュ (ジャイアント)',
+  harsh:'ワイヤーコート（剛毛）', harsh_mini:'ワイヤー（剛毛・ミニ）',
+  harsh_std:'ワイヤー（剛毛・スタンダード）', harsh_giant:'ワイヤー（剛毛・ジャイアント）',
   wavy:'ウェービーコート', smooth:'スムースコート',
   dachshund_smooth:'ダックス (スムース)', dachshund_long:'ダックス (ロング)',
   dachshund_wire:'ダックス (ワイヤー)',
@@ -5425,7 +5425,7 @@ function renderSchedule(showDateStr, coat) {
     cotton: 'コットン系（プードル・ビション等）は<strong>ボリュームとシルエット</strong>が命。保湿で寝かせすぎず、当日の立ち上げとスカルプティングが鍵です。',
     silky: 'シルキー系（マルチーズ・ヨーキー等）は<strong>飾り毛の長さ維持と毛切れ防止</strong>が最重要。シルクプロテインとオイルで保護し、毛玉を作りません。',
     double: 'ダブルコート（ポメ・柴等）は<strong>アンダーコートの管理</strong>が要点。死毛を除いて立ち上げ、バリカンで刈り込みすぎないこと。',
-    harsh: 'ハーシュ／ワイヤー（テリア・シュナ等）は<strong>質感維持</strong>が命。数週間前までに<strong>ハンドストリッピング</strong>でテクスチャを合わせ、柔軟剤は避けます。',
+    harsh: 'ワイヤー（剛毛）コート（テリア・シュナ等）は<strong>質感維持</strong>が命。数週間前までに<strong>ハンドストリッピング</strong>でテクスチャを合わせ、柔軟剤は避けます。',
     wavy: 'ウェービー系は<strong>飾り毛の絡み</strong>に注意。保湿と毛流れを整えます。',
     smooth: 'スムース系は短毛。<strong>艶出しと皮膚コンディション</strong>の仕上げが中心です。',
     all: 'コートタイプに合わせて、保湿・ボリューム・質感のバランスを調整します。'
@@ -5708,7 +5708,7 @@ const ISSUE_INSIGHT = {
   },
   soft_coat: {
     obs: {
-      detailed: '本来硬いはずのワイヤー/ハーシュコートが軟化し、テクスチャと防汚性が低下しています。過度なコンディショニングが一因のこともあります。',
+      detailed: '本来硬いはずのワイヤー（剛毛）コートが軟化し、テクスチャと防汚性が低下しています。過度なコンディショニングが一因のこともあります。',
       gentle: '本来硬いはずの毛がやわらかくなり、質感が落ちています。'
     },
     fix: {
@@ -5837,7 +5837,7 @@ const CARE_EVIDENCE = {
     environment: '通気・清潔の維持'
   },
   soft_coat: {
-    topical: 'ハーシュコート本来の質感維持',
+    topical: 'ワイヤー（剛毛）コート本来の質感維持',
     environment: '過コンディショニング回避／プラッキング'
   }
 };
@@ -6286,7 +6286,7 @@ try { renderSupplements({ issues: [], goal: 'daily', scores: {}, age: '' }); } c
 function coatGroupLabel(t) {
   if (t === 'all') return '全コート';
   if (t.indexOf('cotton') === 0) return 'コットン';
-  if (t.indexOf('harsh') === 0 || t === 'dachshund_wire') return 'ハーシュ/ワイヤー';
+  if (t.indexOf('harsh') === 0 || t === 'dachshund_wire') return 'ワイヤー（剛毛）';
   if (t === 'silky' || t === 'dachshund_long' || t === 'chihuahua_long') return 'シルキー/長毛';
   if (t === 'smooth' || t === 'dachshund_smooth' || t === 'chihuahua_smooth') return 'スムース/短毛';
   if (t === 'double') return 'ダブル';
@@ -6322,7 +6322,7 @@ function coatRatingChips(coats) {
   const en = state.lang === 'en';
   const groups = en
     ? [['silky','Silky'],['cotton','Cotton'],['double','Double'],['harsh','Harsh'],['wavy','Wavy'],['smooth','Smooth']]
-    : [['silky','シルキー'],['cotton','コットン'],['double','ダブル'],['harsh','ハーシュ'],['wavy','ウェービー'],['smooth','スムース']];
+    : [['silky','シルキー'],['cotton','コットン'],['double','ダブル'],['harsh','ワイヤー（剛毛）'],['wavy','ウェービー'],['smooth','スムース']];
   const member = {
     silky:['silky','dachshund_long','chihuahua_long'],
     cotton:['cotton','cotton_toy','cotton_mini','cotton_med','cotton_std'],
