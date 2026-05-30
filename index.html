@@ -1060,6 +1060,13 @@
     color: var(--pp-text);
     margin-bottom: 20px;
   }
+  .pp-assessment__lead-tech {
+    font-size: 12px;
+    color: var(--pp-text-muted);
+    font-weight: 400;
+    margin-left: 2px;
+    white-space: nowrap;
+  }
   .pp-assessment__concerns {
     display: flex;
     flex-direction: column;
@@ -4700,6 +4707,50 @@ const COAT_LABEL_EN = {
   chihuahua_smooth:'CHIHUAHUA · SMOOTH', chihuahua_long:'CHIHUAHUA · LONG',
   all:'MIXED COAT'
 };
+/* やさしい表現 (lead 文の本文に出すユーザー向け説明)
+   技術的な COAT_LABEL は補足表示用に残します */
+const COAT_FRIENDLY = {
+  silky:'なめらかで艶のあるロングコートタイプ',
+  cotton:'ふわふわの巻き毛タイプ',
+  cotton_toy:'ふわふわの巻き毛タイプ（小型サイズ）',
+  cotton_mini:'ふわふわの巻き毛タイプ（小〜中型サイズ）',
+  cotton_med:'ふわふわの巻き毛タイプ（中型サイズ）',
+  cotton_std:'ふわふわの巻き毛タイプ（標準サイズ）',
+  double:'二重毛で換毛するタイプ',
+  harsh:'ごわっと硬めの毛のタイプ',
+  harsh_mini:'ごわっと硬めの毛のタイプ（小型サイズ）',
+  harsh_std:'ごわっと硬めの毛のタイプ（標準サイズ）',
+  harsh_giant:'ごわっと硬めの毛のタイプ（大型サイズ）',
+  wavy:'やわらかなウェーブのある毛のタイプ',
+  smooth:'短くてツヤのある毛のタイプ',
+  dachshund_smooth:'ダックスフンドの短毛タイプ',
+  dachshund_long:'ダックスフンドの長毛タイプ',
+  dachshund_wire:'ダックスフンドの硬毛（ワイヤー）タイプ',
+  chihuahua_smooth:'チワワの短毛タイプ',
+  chihuahua_long:'チワワの長毛タイプ',
+  all:'いろいろな毛質が混在するタイプ'
+};
+const COAT_FRIENDLY_EN = {
+  silky:'smooth, glossy long-coat type',
+  cotton:'fluffy curly-coat type',
+  cotton_toy:'fluffy curly-coat type (toy size)',
+  cotton_mini:'fluffy curly-coat type (mini size)',
+  cotton_med:'fluffy curly-coat type (medium size)',
+  cotton_std:'fluffy curly-coat type (standard size)',
+  double:'double-coated, shedding type',
+  harsh:'firm, wiry-textured type',
+  harsh_mini:'firm, wiry-textured type (mini size)',
+  harsh_std:'firm, wiry-textured type (standard size)',
+  harsh_giant:'firm, wiry-textured type (giant size)',
+  wavy:'soft wavy-coat type',
+  smooth:'short, sleek and shiny type',
+  dachshund_smooth:'Dachshund short-coat type',
+  dachshund_long:'Dachshund long-coat type',
+  dachshund_wire:'Dachshund wire-coat (firm) type',
+  chihuahua_smooth:'Chihuahua short-coat type',
+  chihuahua_long:'Chihuahua long-coat type',
+  all:'mixed coat type'
+};
 const GOAL_LABEL = {
   daily:'日常ケア', show_prep:'ショー準備', skin_care:'敏感肌ケア', shedding:'換毛期対策'
 };
@@ -4722,6 +4773,7 @@ const ISSUE_LABEL_EN = {
 function issueLabel(k) { return (state.lang === 'en' && ISSUE_LABEL_EN[k]) ? ISSUE_LABEL_EN[k] : (ISSUE_LABEL[k] || k); }
 function goalLabel(k) { return (state.lang === 'en' && GOAL_LABEL_EN[k]) ? GOAL_LABEL_EN[k] : (GOAL_LABEL[k] || k); }
 function coatLabel(k) { return (state.lang === 'en' && COAT_LABEL_EN[k]) ? COAT_LABEL_EN[k] : (COAT_LABEL[k] || COAT_LABEL.all); }
+function coatFriendly(k) { return (state.lang === 'en' && COAT_FRIENDLY_EN[k]) ? COAT_FRIENDLY_EN[k] : (COAT_FRIENDLY[k] || COAT_FRIENDLY.all); }
 function pName(p) { return (state.lang === 'en' && p.en) ? p.en : p.name; }
 const PRODUCT_DESC_EN = {
   pp_all_purpose: 'Everyday all-breed base shampoo; the baseline for daily care.',
@@ -5966,9 +6018,11 @@ function renderAssessment(a, coat) {
     '</span></div>';
   const bNote = (BN[a.breed] && BN[a.breed][tone]) || '';
   const aNote = (AN[a.age] && AN[a.age][tone]) || '';
+  const friendly = escapeHtml(coatFriendly(coat));
+  const technical = escapeHtml(coatLabel(coat));
   let lead = en
-    ? '<strong>' + escapeHtml(a.name) + '</strong>’s coat type is “<strong>' + escapeHtml(coatLabel(coat)) + '</strong>”. ' + overall + '<br>' + leadCoat
-    : '<strong>' + escapeHtml(a.name) + '</strong>の被毛タイプは「<strong>' + escapeHtml(coatLabel(coat)) + '</strong>」。' + overall + '<br>' + leadCoat;
+    ? '<strong>' + escapeHtml(a.name) + '</strong>’s coat is a <strong>' + friendly + '</strong> <span class="pp-assessment__lead-tech">(' + technical + ')</span>. ' + overall + '<br>' + leadCoat
+    : '<strong>' + escapeHtml(a.name) + '</strong>の被毛は <strong>' + friendly + '</strong><span class="pp-assessment__lead-tech">（' + technical + '）</span>。' + overall + '<br>' + leadCoat;
   if (bNote) lead += '<br>' + bNote;
   if (aNote) lead += '<br>' + aNote;
   html += '<p class="pp-assessment__lead">' + lead + '</p>';
