@@ -4751,6 +4751,118 @@ const COAT_FRIENDLY_EN = {
   chihuahua_long:'Chihuahua long-coat type',
   all:'mixed coat type'
 };
+/* 犬種別のやさしい説明 (lead 文の主役)
+   犬種が判明している場合、COAT_FRIENDLY より優先して使用 */
+const BREED_FRIENDLY = {
+  // シルキー
+  maltese:'マルチーズらしい、まっすぐ伸びる絹のような長毛',
+  yorkie:'ヨークシャーテリアらしい、つややかで細い絹毛',
+  shih_tzu:'シーズーらしい、ふんわり流れる長毛',
+  afghan:'アフガンハウンドらしい、流れるような長毛',
+  lhasa_apso:'ラサ・アプソらしい、重厚で長いストレート毛',
+  silky_terrier:'シルキーテリアらしい、絹のように細い長毛',
+  // プードル
+  poodle_toy:'トイプードルらしい、ふわふわのカール毛',
+  poodle_mini:'ミニチュアプードルらしい、ふわふわのカール毛',
+  poodle_med:'ミディアムプードルらしい、ふわふわのカール毛',
+  poodle_std:'スタンダードプードルらしい、ふわふわのカール毛',
+  // その他カール系
+  bichon:'ビションフリーゼらしい、ふわふわで弾力のあるカール毛',
+  bedlington:'ベドリントンテリアらしい、独特な巻きのある被毛',
+  havanese:'ハバニーズらしい、やわらかなウェーブの長毛',
+  // ダブル
+  pomeranian:'ポメラニアンらしい、ふわふわのダブルコート',
+  shiba:'柴犬らしい、しっかりした短めのダブルコート',
+  corgi:'コーギーらしい、密度の高い短毛ダブルコート',
+  husky:'シベリアンハスキーらしい、厚みのあるダブルコート',
+  samoyed:'サモエドらしい、白く豊かなダブルコート',
+  chow_chow:'チャウチャウらしい、ライオンのような豊かな厚毛',
+  german_shepherd:'ジャーマンシェパードらしい、密度の高いダブルコート',
+  collie_rough:'ラフコリーらしい、長く流れるダブルコート',
+  aussie_shepherd:'オーストラリアン・シェパードらしい、波打つダブルコート',
+  // シュナウザー
+  schnauzer_mini:'ミニチュアシュナウザーらしい、硬く弾力のあるワイヤー毛',
+  schnauzer_std:'スタンダードシュナウザーらしい、しっかり硬めのワイヤー毛',
+  schnauzer_giant:'ジャイアントシュナウザーらしい、力強く硬いワイヤー毛',
+  // テリア
+  west_highland:'ウエストハイランドホワイトテリアらしい、白くしっかりした硬毛',
+  scottish_terrier:'スコティッシュテリアらしい、密度の高い硬毛',
+  airedale:'エアデールテリアらしい、独特なクリンプのある硬毛',
+  cairn:'ケアンテリアらしい、自然な硬毛',
+  jack_russell_rough:'ジャック・ラッセルらしい、しっかり張りのある硬毛',
+  border_terrier:'ボーダーテリアらしい、二重構造のしっかりした硬毛',
+  // ダックス
+  dachshund_smooth:'ダックスフンドらしい、短くツヤのある滑らかな毛',
+  dachshund_long:'ダックスフンドらしい、長く美しいシルキー毛',
+  dachshund_wire:'ダックスフンドらしい、硬く張りのあるワイヤー毛',
+  // チワワ
+  chihuahua_smooth:'チワワらしい、短くツヤのある滑らかな毛',
+  chihuahua_long:'チワワらしい、ふわふわの長毛',
+  // ウェービー
+  cocker:'コッカースパニエルらしい、絹のような流れるウェーブ毛',
+  cavalier:'キャバリアらしい、柔らかなウェーブ毛',
+  setter:'セッターらしい、流れるような飾り毛',
+  gordon_setter:'ゴードンセッターらしい、深いツヤのある飾り毛',
+  papillon:'パピヨンらしい、ふわふわの長い飾り毛',
+  // スムース
+  french_bulldog:'フレンチブルドッグらしい、短く滑らかな毛',
+  boxer:'ボクサーらしい、しなやかな短毛',
+  doberman:'ドーベルマンらしい、艶のある短毛',
+  pug:'パグらしい、短く密度のある毛',
+  beagle:'ビーグルらしい、しっかりとした短毛',
+  staffy:'スタッフォードシャー・ブルテリアらしい、密度のある短毛',
+  whippet:'ウィペットらしい、薄く滑らかな短毛'
+};
+const BREED_FRIENDLY_EN = {
+  maltese:"Maltese-style silky, straight long coat",
+  yorkie:"Yorkshire Terrier-style fine, glossy silky coat",
+  shih_tzu:"Shih Tzu-style softly flowing long coat",
+  afghan:"Afghan Hound-style flowing long coat",
+  lhasa_apso:"Lhasa Apso-style heavy, straight long coat",
+  silky_terrier:"Silky Terrier-style fine, silken long coat",
+  poodle_toy:"Toy Poodle-style fluffy curly coat",
+  poodle_mini:"Miniature Poodle-style fluffy curly coat",
+  poodle_med:"Medium Poodle-style fluffy curly coat",
+  poodle_std:"Standard Poodle-style fluffy curly coat",
+  bichon:"Bichon Frise-style fluffy, springy curly coat",
+  bedlington:"Bedlington Terrier-style distinctive curled coat",
+  havanese:"Havanese-style soft wavy long coat",
+  pomeranian:"Pomeranian-style fluffy double coat",
+  shiba:"Shiba Inu-style firm, short double coat",
+  corgi:"Corgi-style dense, short double coat",
+  husky:"Siberian Husky-style thick double coat",
+  samoyed:"Samoyed-style white, plush double coat",
+  chow_chow:"Chow Chow-style lion-like, dense coat",
+  german_shepherd:"German Shepherd-style dense double coat",
+  collie_rough:"Rough Collie-style long, flowing double coat",
+  aussie_shepherd:"Australian Shepherd-style flowing double coat",
+  schnauzer_mini:"Miniature Schnauzer-style firm, springy wire coat",
+  schnauzer_std:"Standard Schnauzer-style firm wire coat",
+  schnauzer_giant:"Giant Schnauzer-style powerful, firm wire coat",
+  west_highland:"West Highland White Terrier-style firm white coat",
+  scottish_terrier:"Scottish Terrier-style dense, firm coat",
+  airedale:"Airedale Terrier-style firm coat with characteristic crimp",
+  cairn:"Cairn Terrier-style naturally firm coat",
+  jack_russell_rough:"Jack Russell-style firm, springy coat",
+  border_terrier:"Border Terrier-style double-layered firm coat",
+  dachshund_smooth:"Dachshund-style short, sleek glossy coat",
+  dachshund_long:"Dachshund-style long, silky coat",
+  dachshund_wire:"Dachshund-style firm, springy wire coat",
+  chihuahua_smooth:"Chihuahua-style short, sleek glossy coat",
+  chihuahua_long:"Chihuahua-style fluffy long coat",
+  cocker:"Cocker Spaniel-style silky, flowing wavy coat",
+  cavalier:"Cavalier King Charles-style soft wavy coat",
+  setter:"Setter-style flowing feathering",
+  gordon_setter:"Gordon Setter-style deeply glossy feathering",
+  papillon:"Papillon-style fluffy, long feathering",
+  french_bulldog:"French Bulldog-style short, sleek coat",
+  boxer:"Boxer-style supple short coat",
+  doberman:"Doberman-style glossy short coat",
+  pug:"Pug-style short, dense coat",
+  beagle:"Beagle-style firm short coat",
+  staffy:"Staffordshire Bull Terrier-style dense short coat",
+  whippet:"Whippet-style thin, sleek short coat"
+};
 const GOAL_LABEL = {
   daily:'日常ケア', show_prep:'ショー準備', skin_care:'敏感肌ケア', shedding:'換毛期対策'
 };
@@ -4774,6 +4886,10 @@ function issueLabel(k) { return (state.lang === 'en' && ISSUE_LABEL_EN[k]) ? ISS
 function goalLabel(k) { return (state.lang === 'en' && GOAL_LABEL_EN[k]) ? GOAL_LABEL_EN[k] : (GOAL_LABEL[k] || k); }
 function coatLabel(k) { return (state.lang === 'en' && COAT_LABEL_EN[k]) ? COAT_LABEL_EN[k] : (COAT_LABEL[k] || COAT_LABEL.all); }
 function coatFriendly(k) { return (state.lang === 'en' && COAT_FRIENDLY_EN[k]) ? COAT_FRIENDLY_EN[k] : (COAT_FRIENDLY[k] || COAT_FRIENDLY.all); }
+function breedFriendly(breed) {
+  if (!breed || breed === 'other') return '';
+  return (state.lang === 'en' && BREED_FRIENDLY_EN[breed]) ? BREED_FRIENDLY_EN[breed] : (BREED_FRIENDLY[breed] || '');
+}
 function pName(p) { return (state.lang === 'en' && p.en) ? p.en : p.name; }
 const PRODUCT_DESC_EN = {
   pp_all_purpose: 'Everyday all-breed base shampoo; the baseline for daily care.',
@@ -6018,7 +6134,8 @@ function renderAssessment(a, coat) {
     '</span></div>';
   const bNote = (BN[a.breed] && BN[a.breed][tone]) || '';
   const aNote = (AN[a.age] && AN[a.age][tone]) || '';
-  const friendly = escapeHtml(coatFriendly(coat));
+  /* 犬種別の描写を最優先し、未登録の場合のみコートタイプの汎用描写にフォールバック */
+  const friendly = escapeHtml(breedFriendly(a.breed) || coatFriendly(coat));
   const technical = escapeHtml(coatLabel(coat));
   let lead = en
     ? '<strong>' + escapeHtml(a.name) + '</strong>’s coat is a <strong>' + friendly + '</strong> <span class="pp-assessment__lead-tech">(' + technical + ')</span>. ' + overall + '<br>' + leadCoat
