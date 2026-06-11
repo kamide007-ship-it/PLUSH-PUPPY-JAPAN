@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="description" content="プラッシュパピー 被毛診断 - 愛犬の毛質と現在のコンディションから、最適なシャンプー・コンディショナー・フィニッシング剤をご提案します。">
+<meta name="description" content="プラッシュパピー 被毛診断 - 愛犬の毛質と現在のコンディションから、最適なシャンプー・コンディショナー・フィニッシング剤をご提案。獣医師監修「コートの科学」では、毛玉の予防・正しいシャンプー/乾かし方・犬種別ケア（プードル等）をエビデンス付きで解説します。">
+<meta name="keywords" content="被毛診断,犬 シャンプー,トリミング,毛玉 予防,プードル ケア,コートの科学,Plush Puppy,グルーミング,ドッグショー,被毛 ケア">
+<link rel="canonical" href="https://plush-puppy-coat-clinic.onrender.com/">
 <meta name="theme-color" content="#43569f">
 <meta name="format-detection" content="telephone=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -24,10 +26,12 @@
 <link rel="manifest" href="manifest.json">
 
 <!-- OGP (SNS共有時) -->
-<meta property="og:title" content="被毛診断 | Plush Puppy Japan">
-<meta property="og:description" content="愛犬の毛質と現在のコンディションから、最適なケア製品をご提案します。">
+<meta property="og:title" content="被毛診断 ＆ コートの科学 | Plush Puppy Japan">
+<meta property="og:description" content="愛犬の毛質と現在のコンディションから最適なケア製品をご提案。獣医師監修「コートの科学」で毛玉予防・正しい洗い方/乾かし方・犬種別ケアをエビデンス付き解説。">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://plush-puppy-coat-clinic.onrender.com/">
 <meta property="og:site_name" content="PLUSH PUPPY JAPAN GROOMING PRODUCTS">
+<meta name="twitter:card" content="summary">
 
 <title>被毛診断 | PLUSH PUPPY JAPAN GROOMING PRODUCTS</title>
 
@@ -1337,6 +1341,35 @@
   }
   .pp-edu__item[open] > summary { background: var(--pp-navy-soft); }
   .pp-edu__item[open] > summary::after { content: '−'; }
+  /* Per-article "copy link" (deep link / SEO anchor) */
+  .pp-edu__sharebar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: -4px 0 14px;
+    flex-wrap: wrap;
+  }
+  .pp-edu__sharelink {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 1px solid var(--pp-border-light);
+    background: #ffffff;
+    color: var(--pp-navy);
+    font-family: var(--font-jp);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 11px;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  .pp-edu__sharelink::before { content: '🔗'; font-size: 12px; }
+  .pp-edu__sharelink:hover { background: var(--pp-navy-soft); border-color: var(--pp-navy-light); }
+  .pp-edu__sharelink.is-copied { background: var(--pp-navy); color: #ffffff; border-color: var(--pp-navy); }
+  .pp-edu__sharelink.is-copied::before { content: '✓'; }
   .pp-edu__body {
     padding: 16px;
     font-size: 13px;
@@ -3213,7 +3246,7 @@
       <div class="pp-edu__index" id="eduIndex" aria-label="目次（タップで各項目へ）"></div>
 
       <div class="pp-edu is-simple" id="eduList">
-        <details class="pp-edu__item">
+        <details class="pp-edu__item" id="learn-skin-coat-basics">
           <summary><span data-lang-ja>犬の皮膚と被毛の基礎</span><span data-lang-en>Skin &amp; Coat Basics</span></summary>
           <div class="pp-edu__body">
             <div class="pp-edu__simple">
@@ -3259,7 +3292,7 @@
           </div>
         </details>
 
-        <details class="pp-edu__item">
+        <details class="pp-edu__item" id="learn-why-shampoo">
           <summary><span data-lang-ja>なぜシャンプーが必要なのか（外用ケア）</span><span data-lang-en>Why shampoo matters (topical care)</span></summary>
           <div class="pp-edu__body">
             <div class="pp-edu__simple">
@@ -3321,7 +3354,7 @@
           </div>
         </details>
 
-        <details class="pp-edu__item">
+        <details class="pp-edu__item" id="learn-why-nutrition">
           <summary><span data-lang-ja>なぜ栄養が必要なのか（内側ケア）</span><span data-lang-en>Why nutrition matters (inner care)</span></summary>
           <div class="pp-edu__body">
             <div class="pp-edu__simple">
@@ -3381,7 +3414,7 @@
           </div>
         </details>
 
-        <details class="pp-edu__item">
+        <details class="pp-edu__item" id="learn-skin-barrier-moisture">
           <summary><span data-lang-ja>皮膚バリアと「最後は保湿」</span><span data-lang-en>Skin barrier &amp; “finish with moisture”</span></summary>
           <div class="pp-edu__body">
             <div class="pp-edu__simple">
@@ -3425,7 +3458,7 @@
           </div>
         </details>
 
-        <details class="pp-edu__item">
+        <details class="pp-edu__item" id="learn-integrated-care">
           <summary><span data-lang-ja>外用 × 内用 × 環境の統合ケア</span><span data-lang-en>Topical × Internal × Environmental care</span></summary>
           <div class="pp-edu__body">
             <div class="pp-edu__simple">
@@ -3483,7 +3516,7 @@
           </div>
         </details>
 
-        <details class="pp-edu__item">
+        <details class="pp-edu__item" id="learn-how-to-bathe">
           <summary><span data-lang-ja>正しいシャンプーのやり方</span><span data-lang-en>How to bathe correctly</span></summary>
           <div class="pp-edu__body">
             <div class="pp-edu__simple">
@@ -3537,7 +3570,7 @@
           </div>
         </details>
 
-        <details class="pp-edu__item">
+        <details class="pp-edu__item" id="learn-hard-soft-water">
           <summary><span data-lang-ja>硬水・軟水が被毛と皮膚に与える影響</span><span data-lang-en>How hard vs soft water affects coat &amp; skin</span></summary>
           <div class="pp-edu__body">
             <div class="pp-edu__simple">
@@ -3631,7 +3664,7 @@
           </div>
         </details>
 
-        <details class="pp-edu__item">
+        <details class="pp-edu__item" id="learn-how-to-dry">
           <summary><span data-lang-ja>正しい乾かし方（ドライング）</span><span data-lang-en>How to dry correctly</span></summary>
           <div class="pp-edu__body">
             <div class="pp-edu__simple">
@@ -3683,7 +3716,7 @@
           </div>
         </details>
 
-        <details class="pp-edu__item">
+        <details class="pp-edu__item" id="learn-brushing-basics">
           <summary><span data-lang-ja>ブラッシングの基本とコツ</span><span data-lang-en>Brushing fundamentals</span></summary>
           <div class="pp-edu__body">
             <div class="pp-edu__simple">
@@ -3733,7 +3766,7 @@
           </div>
         </details>
 
-        <details class="pp-edu__item">
+        <details class="pp-edu__item" id="learn-tools-and-air">
           <summary><span data-lang-ja>道具の選び方と「空気を含ませる」仕上げ</span><span data-lang-en>Choosing tools &amp; grooming "air" into the coat</span></summary>
           <div class="pp-edu__body">
             <div class="pp-edu__simple">
@@ -3807,7 +3840,7 @@
           </div>
         </details>
 
-        <details class="pp-edu__item">
+        <details class="pp-edu__item" id="learn-poodle-setup">
           <summary><span data-lang-ja>初心者のためのプードル・セットアップ（犬種標準に基づく）</span><span data-lang-en>Poodle setup for beginners (based on the breed standard)</span></summary>
           <div class="pp-edu__body">
             <div class="pp-edu__simple">
@@ -4011,7 +4044,7 @@
           </div>
         </details>
 
-        <details class="pp-edu__item">
+        <details class="pp-edu__item" id="learn-why-mats-form">
           <summary><span data-lang-ja>なぜ毛玉ができるのか — 仕組みを知って予防する</span><span data-lang-en>Why mats form — understand the mechanism to prevent them</span></summary>
           <div class="pp-edu__body">
             <div class="pp-edu__simple">
@@ -4125,7 +4158,7 @@
           </div>
         </details>
 
-        <details class="pp-edu__item">
+        <details class="pp-edu__item" id="learn-mat-proneness">
           <summary><span data-lang-ja>毛玉のなりやすさ — 犬種差・個体差と見極め方</span><span data-lang-en>Mat-proneness — breed &amp; individual variation, and how to judge it</span></summary>
           <div class="pp-edu__body">
             <div class="pp-edu__simple">
@@ -4233,7 +4266,7 @@
           </div>
         </details>
 
-        <details class="pp-edu__item">
+        <details class="pp-edu__item" id="learn-mat-prevention-handling">
           <summary><span data-lang-ja>毛玉（マット）の予防と対処</span><span data-lang-en>Preventing &amp; handling mats</span></summary>
           <div class="pp-edu__body">
             <div class="pp-edu__simple">
@@ -4349,7 +4382,7 @@
           </div>
         </details>
 
-        <details class="pp-edu__item">
+        <details class="pp-edu__item" id="learn-seasonal-care">
           <summary><span data-lang-ja>季節のケア（換毛期・夏・冬）</span><span data-lang-en>Seasonal care (moult, summer, winter)</span></summary>
           <div class="pp-edu__body">
             <div class="pp-edu__simple">
@@ -4395,7 +4428,7 @@
           </div>
         </details>
 
-        <details class="pp-edu__item">
+        <details class="pp-edu__item" id="learn-hair-cycle">
           <summary><span data-lang-ja>毛のサイクル（毛周期）</span><span data-lang-en>The hair cycle</span></summary>
           <div class="pp-edu__body">
             <div class="pp-edu__fig">
@@ -4517,7 +4550,7 @@
           </div>
         </details>
 
-        <details class="pp-edu__item">
+        <details class="pp-edu__item" id="learn-growth-regrowth">
           <summary><span data-lang-ja>発育スピードと発毛までの時間</span><span data-lang-en>Growth rate &amp; regrowth time</span></summary>
           <div class="pp-edu__body">
             <div class="pp-edu__simple">
@@ -4609,7 +4642,7 @@
           </div>
         </details>
 
-        <details class="pp-edu__item">
+        <details class="pp-edu__item" id="learn-hair-skin-anatomy">
           <summary><span data-lang-ja>毛と皮膚の解剖学</span><span data-lang-en>Hair &amp; skin anatomy</span></summary>
           <div class="pp-edu__body">
             <div class="pp-edu__fig">
@@ -4710,7 +4743,7 @@
           </div>
         </details>
 
-        <details class="pp-edu__item">
+        <details class="pp-edu__item" id="learn-coat-colour-quality">
           <summary><span data-lang-ja>毛色による毛質の違いと対応</span><span data-lang-en>Coat colour &amp; hair quality</span></summary>
           <div class="pp-edu__body">
             <div class="pp-edu__simple">
@@ -4758,7 +4791,7 @@
           </div>
         </details>
 
-        <details class="pp-edu__item">
+        <details class="pp-edu__item" id="learn-coat-texture">
           <summary><span data-lang-ja>毛質の違い（硬い毛・柔らかい毛）</span><span data-lang-en>Coat texture (harsh vs soft)</span></summary>
           <div class="pp-edu__body">
             <div class="pp-edu__fig">
@@ -4821,7 +4854,7 @@
           </div>
         </details>
 
-        <details class="pp-edu__item">
+        <details class="pp-edu__item" id="learn-coat-density">
           <summary><span data-lang-ja>毛量の違い</span><span data-lang-en>Coat density</span></summary>
           <div class="pp-edu__body">
             <div class="pp-edu__simple">
@@ -4877,7 +4910,7 @@
           </div>
         </details>
 
-        <details class="pp-edu__item">
+        <details class="pp-edu__item" id="learn-hair-loss-conditions">
           <summary><span data-lang-ja>脱毛する疾患（注意すべきサイン）</span><span data-lang-en>Hair-loss conditions (warning signs)</span></summary>
           <div class="pp-edu__body">
             <div class="pp-edu__simple">
@@ -4943,7 +4976,7 @@
           </div>
         </details>
 
-        <details class="pp-edu__item">
+        <details class="pp-edu__item" id="learn-latest-research">
           <summary><span data-lang-ja>最新研究からわかってきたこと</span><span data-lang-en>Latest research takeaways</span></summary>
           <div class="pp-edu__body">
             <div class="pp-edu__simple">
@@ -4989,7 +5022,7 @@
           </div>
         </details>
 
-        <details class="pp-edu__item">
+        <details class="pp-edu__item" id="learn-choosing-sprays">
           <summary><span data-lang-ja>スプレー製品の使い分け（グルーミングスプレー等）</span><span data-lang-en>Choosing sprays (grooming sprays, etc.)</span></summary>
           <div class="pp-edu__body">
             <div class="pp-edu__simple">
@@ -5099,7 +5132,7 @@
           </div>
         </details>
 
-        <details class="pp-edu__item">
+        <details class="pp-edu__item" id="learn-references">
           <summary><span data-lang-ja>参考文献・エビデンスについて</span><span data-lang-en>References &amp; evidence</span></summary>
           <div class="pp-edu__body">
             <div data-lang-ja>
@@ -7486,7 +7519,7 @@ function buildEduIndex() {
   idx.innerHTML = '';
   const items = Array.from(list.querySelectorAll('.pp-edu__item'));
   items.forEach((it, i) => {
-    if (!it.id) it.id = 'edu-' + (i + 1);
+    if (!it.id) it.id = 'learn-' + (i + 1);
     const sum = it.querySelector('summary');
     let label = '項目' + (i + 1);
     if (sum) {
@@ -7497,17 +7530,155 @@ function buildEduIndex() {
     chip.type = 'button';
     chip.className = 'pp-edu__indexchip';
     chip.textContent = label;
-    chip.addEventListener('click', () => {
-      it.open = true;
-      setTimeout(() => {
-        try { it.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { it.scrollIntoView(); }
-        notifyHeight();
-      }, 60);
-    });
+    chip.addEventListener('click', () => openEduArticle(it, true));
     idx.appendChild(chip);
+
+    // Per-article "copy link" share bar (deep link to this article)
+    injectEduShareBar(it);
+    // Keep the URL hash in sync when an article is opened, so it is shareable
+    // (guard so re-running buildEduIndex on language switch doesn't stack listeners)
+    if (!it._hashSync) {
+      it._hashSync = true;
+      it.addEventListener('toggle', () => {
+        if (it.open && it.id) {
+          try { history.replaceState(null, '', '#' + it.id); } catch (e) {}
+        }
+      });
+    }
   });
 }
+
+function injectEduShareBar(it) {
+  const body = it.querySelector('.pp-edu__body');
+  if (!body) return;
+  const existing = body.querySelector(':scope > .pp-edu__sharebar .pp-edu__sharelink');
+  if (existing) {
+    // Already injected — just refresh the label for the current language
+    if (!existing.classList.contains('is-copied') && existing._setLabel) existing._setLabel();
+    return;
+  }
+  const bar = document.createElement('div');
+  bar.className = 'pp-edu__sharebar';
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'pp-edu__sharelink';
+  const setLabel = () => {
+    btn.textContent = state.lang === 'en' ? 'Copy link' : 'リンクをコピー';
+  };
+  setLabel();
+  btn.addEventListener('click', () => {
+    const url = eduArticleUrl(it.id);
+    const done = () => {
+      btn.classList.add('is-copied');
+      btn.textContent = state.lang === 'en' ? 'Copied!' : 'コピーしました';
+      setTimeout(() => { btn.classList.remove('is-copied'); setLabel(); }, 1800);
+    };
+    try {
+      navigator.clipboard.writeText(url).then(done, () => fallbackCopy(url, done));
+    } catch (e) { fallbackCopy(url, done); }
+  });
+  bar.appendChild(btn);
+  // Re-label on language switch
+  btn._setLabel = setLabel;
+  body.insertBefore(bar, body.firstChild);
+}
+
+function eduArticleUrl(id) {
+  // Prefer the top-level page URL so shared links open the standalone clinic page.
+  let base;
+  try {
+    base = (window.top && window.top.location && window.top.location.href) || location.href;
+  } catch (e) {
+    base = location.href; // cross-origin parent: fall back to this document's URL
+  }
+  return base.split('#')[0] + '#' + id;
+}
+
+function fallbackCopy(text, done) {
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'absolute';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    if (done) done();
+  } catch (e) {}
+}
+
+function openEduArticle(it, scroll) {
+  if (!it) return;
+  // Make sure the Learn panel is visible even before a diagnosis has run
+  const result = document.getElementById('result');
+  if (result && !result.classList.contains('is-shown')) result.classList.add('is-resources');
+  it.open = true;
+  if (it.id) { try { history.replaceState(null, '', '#' + it.id); } catch (e) {} }
+  if (scroll !== false) {
+    setTimeout(() => {
+      try { it.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { it.scrollIntoView(); }
+      notifyHeight();
+    }, 60);
+  }
+}
+
+// Deep-linking: open + scroll to the article named in the URL hash (#learn-...)
+function openEduFromHash() {
+  const id = (location.hash || '').replace(/^#/, '');
+  if (!id) return false;
+  const el = document.getElementById(id);
+  if (el && el.classList.contains('pp-edu__item')) {
+    openEduArticle(el, true);
+    return true;
+  }
+  return false;
+}
+
+// SEO: emit an ItemList of the learn articles with their deep-link URLs,
+// so search engines can surface and link directly to each article.
+function buildEduStructuredData() {
+  try {
+    const list = document.getElementById('eduList');
+    if (!list) return;
+    const items = Array.from(list.querySelectorAll('.pp-edu__item'));
+    if (!items.length) return;
+    const canonical = (document.querySelector('link[rel="canonical"]') || {}).href
+      || location.href.split('#')[0];
+    const elements = items.map((it, i) => {
+      const sum = it.querySelector('summary');
+      const ja = sum && sum.querySelector('[data-lang-ja]');
+      const name = (ja ? ja.textContent : (sum ? sum.textContent : '')).trim();
+      return {
+        '@type': 'ListItem',
+        position: i + 1,
+        name: name,
+        url: canonical.split('#')[0] + '#' + it.id
+      };
+    });
+    const data = {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: 'コートの科学 — 学びの場 / Coat Science',
+      description: '獣医師監修の被毛・皮膚ケアの学習ハブ。各項目は個別URLで直接リンクできます。',
+      numberOfItems: elements.length,
+      itemListElement: elements
+    };
+    const tag = document.createElement('script');
+    tag.type = 'application/ld+json';
+    tag.id = 'eduStructuredData';
+    tag.textContent = JSON.stringify(data);
+    const old = document.getElementById('eduStructuredData');
+    if (old) old.remove();
+    document.head.appendChild(tag);
+  } catch (e) {}
+}
+
 buildEduIndex();
+buildEduStructuredData();
+openEduFromHash();
+window.addEventListener('hashchange', openEduFromHash);
 </script>
 </body>
 </html>
