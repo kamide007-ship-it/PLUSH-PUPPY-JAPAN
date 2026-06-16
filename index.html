@@ -1849,6 +1849,20 @@
     transition: transform 0.2s;
   }
   .pp-product__cta:hover::after { transform: translateX(3px); }
+  .pp-product__details-link {
+    display: block;
+    margin-top: 8px;
+    text-align: center;
+    color: var(--pp-navy);
+    font-family: var(--font-jp);
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--pp-navy-light);
+    text-underline-offset: 3px;
+    transition: color 0.15s ease;
+  }
+  .pp-product__details-link:hover { color: var(--pp-navy-dark); }
 
   /* ============================================
      Show Schedule (NEWSリスト風)
@@ -2642,6 +2656,99 @@
   }
   .pp-allp-card:hover .pp-allp-card__cta { background: var(--pp-navy-dark); }
   .pp-allp-card:hover .pp-allp-card__cta::after { transform: translateX(3px); }
+  /* "NEW" badge for newly added products (e.g. Drop It) */
+  .pp-allp-card__badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: var(--pp-orange);
+    color: #ffffff;
+    font-family: var(--font-en);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 999px;
+    z-index: 2;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  }
+  /* Per-product "もっと詳しく" expander + share row */
+  .pp-allp-card__details {
+    margin-top: 8px;
+    border-top: 1px dashed var(--pp-border-light);
+    padding-top: 8px;
+  }
+  .pp-allp-card__details > summary {
+    list-style: none;
+    cursor: pointer;
+    color: var(--pp-navy);
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    padding: 2px 0;
+  }
+  .pp-allp-card__details > summary::-webkit-details-marker { display: none; }
+  .pp-allp-card__details > summary::after {
+    content: '＋';
+    color: var(--pp-orange);
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .pp-allp-card__details[open] > summary::after { content: '−'; }
+  .pp-allp-card__info {
+    margin-top: 8px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--pp-text-light);
+  }
+  .pp-allp-card__info dt {
+    color: var(--pp-navy);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    margin-top: 6px;
+  }
+  .pp-allp-card__info dt:first-child { margin-top: 0; }
+  .pp-allp-card__info dd { margin: 2px 0 0; padding: 0; }
+  .pp-allp-card__share {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  .pp-allp-card__sharebtn {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 1px solid var(--pp-border-light);
+    background: #ffffff;
+    color: var(--pp-navy);
+    font-family: var(--font-jp);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .pp-allp-card__sharebtn::before { content: '🔗'; font-size: 11px; }
+  .pp-allp-card__sharebtn:hover { background: var(--pp-navy-soft); border-color: var(--pp-navy-light); }
+  .pp-allp-card__sharebtn.is-copied { background: var(--pp-navy); color: #ffffff; border-color: var(--pp-navy); }
+  .pp-allp-card__sharebtn.is-copied::before { content: '✓'; }
+  /* The card itself becomes an <article> with id="product-..." for SEO/anchor.
+     Allow nested click targets (Buy link, details summary, copy-link button). */
+  .pp-allp-card { position: relative; scroll-margin-top: 16px; }
+  .pp-allp-card__main {
+    color: inherit;
+    text-decoration: none;
+    display: contents;
+  }
 
   /* ============================================
      Print
@@ -5537,6 +5644,15 @@ const PRODUCTS = [
     image: IMG_BASE + '000000000024_i3pXMN4.jpg',
     matches:['oily','shedding'], coats:['double','all'],
     desc:'海藻・緑茶配合で毛穴と被毛の余分な油分をしっかりオフ。換毛期や脂性タイプに。' },
+  /* NEW: Drop It Shampoo (Deshed Assist). 商品ページ公開後、url と image を実IDに差し替えること。
+     暫定で plushpuppyjapan.com のシャンプーカテゴリへリンク、画像はカテゴリ・プレースホルダー描画。 */
+  { id:'pp_drop_it', cat:'shampoo', name:'ドロップ イット シャンプー（抜け毛ケア）', en:'Drop It Shampoo (Deshed Assist)',
+    price:null, size:'1L',
+    url: 'https://www.plushpuppyjapan.com/view/category/shampoo',
+    image: '',
+    matches:['shedding','low_volume'], coats:['double','all','cotton','cotton_std','cotton_med','wavy'],
+    desc:'抜け毛・アンダーコート除去をサポートする換毛期ケア用シャンプー。ふんわり軽やかな仕上がりで、ショードッグから日常ケアまで対応。',
+    isNew:true },
   { id:'pp_texture_plus', cat:'shampoo', name:'テクスチャープラス シャンプー', en:'Texture Plus Shampoo',
     price:5170, size:'500ml',
     url: ITEM_BASE + '000000000031',
@@ -5987,6 +6103,7 @@ const PRODUCT_DESC_EN = {
   pp_conditioning_shampoo: 'Evening primrose. Deeply moisturises and softens dry coats.',
   pp_sensitive: 'Low-irritant formula for sensitive skin; daily care for itch-prone dogs.',
   pp_deep_cleansing: 'Seaweed & green tea. Clears excess oil from skin and coat; for shedding season and oily types.',
+  pp_drop_it: 'Deshed Assist shampoo. Helps lift loose hair and undercoat for an easier moult, finishing the coat soft and lightweight — for show dogs and everyday care alike.',
   pp_texture_plus: 'For harsh coats. Restores the natural firmness and texture of terriers and wire coats.',
   pp_black_opal: 'For black & dark coats. Brings out their natural depth and lustre.',
   pp_wonder_wash: 'Waterless instant shampoo; clean up quickly on show day or in a pinch.',
@@ -6018,6 +6135,165 @@ const PRODUCT_DESC_EN = {
   pp_porcupine: 'Anti-static bristle + pin combo brush.'
 };
 function pDesc(p) { return (state.lang === 'en' && PRODUCT_DESC_EN[p.id]) ? PRODUCT_DESC_EN[p.id] : p.desc; }
+
+/* 製品の「分かりやすい解説」(クリックで開く詳細). 既存 desc を構造化した「向く子 / 使うとき / 使い方 / ポイント」。
+   公式情報を超える主張は避け、既存記述の範囲内で表現。未登録製品は短い desc にフォールバック。 */
+const PRODUCT_INFO = {
+  pp_all_purpose: {
+    ja: { who:'全犬種・全コート。日常ケアの基準点を探している方に。', when:'いつも使うベースシャンプーとして。', how:'希釈してよく泡立て、地肌までやさしく洗い、十分にすすぐ。', points:'最初の1本に最適。状態に応じて他の専用シャンプーと使い分けます。' },
+    en: { who:'All breeds and coat types — for owners looking for an everyday baseline.', when:'As the regular base shampoo for daily care.', how:'Dilute, lather well, work to the skin gently, rinse thoroughly.', points:'A great first bottle; pair with specialty shampoos as needs arise.' }
+  },
+  pp_whitening: {
+    ja: { who:'白・淡色被毛（マルチーズ、ビション、サモエド等）。', when:'くすみ・黄ばみ・色冴え不足が気になるとき。', how:'希釈・泡立て後、地肌にしっかり当てて数分置き、よくすすぐ。', points:'ヘンナ・ジンセン配合。残留すると黄色く見えるため、すすぎ残しに注意。' },
+    en: { who:'White / light coats (Maltese, Bichon, Samoyed, etc.).', when:'When the coat looks dull, yellowed or lacks colour clarity.', how:'Dilute, lather, work to the skin, leave for a few minutes, then rinse well.', points:'Henna & ginseng. Residue can look yellow — rinse thoroughly.' }
+  },
+  pp_bodybuilding: {
+    ja: { who:'プードル・ビション・ハバニーズなどコットン系。ボリュームが欲しい子に。', when:'毛量・コシを引き出したいとき、ショー準備時。', how:'根元中心に泡を行き渡らせ、根元を立ち上げる意識で乾かす（ブラードライ）。', points:'小麦胚芽配合。"丸さ"の土台を作る一本。' },
+    en: { who:'Cotton coats (Poodle, Bichon, Havanese) and anyone wanting more volume.', when:'When you want to draw out body and density, or for show prep.', how:'Focus lather at the roots, then brush-dry lifting from the roots.', points:'Wheatgerm formula — the foundation for that round, full silhouette.' }
+  },
+  pp_conditioning_shampoo: {
+    ja: { who:'シルキー・ウェービーの長毛で乾燥や毛切れが気になる子。', when:'パサつき・絡み・静電気が出やすい時期に。', how:'すすぎ後にコンディショナーで保湿を重ねるとさらに効果的。', points:'イブニングプリムローズ配合。深い保湿と柔軟性を与えます。' },
+    en: { who:'Long silky / wavy coats prone to dryness or breakage.', when:'During dry, tangle-prone or static-heavy periods.', how:'Follow with a conditioner for layered moisture.', points:'Evening primrose for deep moisture and softness.' }
+  },
+  pp_sensitive: {
+    ja: { who:'敏感肌・痒みが出やすい子。', when:'いつものシャンプーで肌の赤み・痒みが出るとき、デイリーケアに。', how:'お湯はぬるめに、ごしごし擦らずやさしく洗い、すすぎを念入りに。', points:'低刺激処方。赤み・痒みが続く場合は獣医師に相談を。' },
+    en: { who:'Dogs with sensitive or itch-prone skin.', when:'When other shampoos cause redness/itch, or for daily care.', how:'Use cooler water, wash gently without scrubbing, rinse thoroughly.', points:'Low-irritant formula. See a vet if redness/itch persists.' }
+  },
+  pp_deep_cleansing: {
+    ja: { who:'脂性・におい・換毛期のダブルコート種。', when:'皮脂蓄積をリセットしたい時、月1〜数か月に1回。', how:'2度洗いの1度目に使用、または定期リセットに。', points:'海藻・緑茶配合。毎日使用ではなく"定期リセット"用。' },
+    en: { who:'Oily skin, odour, or double-coats during the moult.', when:'To reset sebum build-up — monthly or every few months.', how:'Use as the first of a double-wash, or as a periodic reset.', points:'Seaweed & green tea. Reset, not daily.' }
+  },
+  pp_drop_it: {
+    ja: { who:'ダブルコート種・換毛期の子・抜け毛が多いタイプ。ショードッグから日常ケアまで。', when:'換毛期や抜け毛が増えた時期。', how:'希釈して泡立て、毛流れに沿って洗い、十分にすすぎ完全に乾燥。乾燥後にブラッシング／レーキで抜け毛を除去。', points:'抜け毛・アンダーコートの除去をサポートし、ふんわり軽やかな仕上がりに。' },
+    en: { who:'Double-coats and heavy shedders, from show dogs to everyday pets.', when:'During the moult or any high-shed period.', how:'Dilute, lather, wash along the lie, rinse well, dry completely, then brush/rake out the loose hair.', points:'Helps lift loose hair and undercoat for a soft, lightweight finish.' }
+  },
+  pp_texture_plus: {
+    ja: { who:'テリア種・シュナウザー等のワイヤー（剛毛）コート。', when:'本来の硬さが失われ、軟化が気になるとき。', how:'コンディショナーを最小限にしてテクスチャを保つ。', points:'柔軟剤系の使用は避け、ハンドストリッピングと併用。' },
+    en: { who:'Wire / harsh coats (terriers, Schnauzers).', when:'When the coat has softened and lost its natural texture.', how:'Minimise conditioner to preserve the texture.', points:'Avoid softeners; pair with hand-stripping.' }
+  },
+  pp_black_opal: {
+    ja: { who:'黒・濃色被毛（ラブラドール、シュナウザー、シャンプー後にくすむ黒毛など）。', when:'退色や赤みが気になるとき、ショー前。', how:'地肌までしっかり泡を当てて数分置き、よくすすぐ。', points:'黒被毛本来の深みと艶を引き出します。' },
+    en: { who:'Black and dark coats that have lost depth.', when:'When fading or red cast shows; before a show.', how:'Lather to the skin, leave on briefly, rinse well.', points:'Restores the natural depth and lustre of dark coats.' }
+  },
+  pp_wonder_wash: {
+    ja: { who:'外出先・お試し利用・ショー会場の方。', when:'入浴できない時、急な汚れ、ショー直前のリフレッシュに。', how:'タオルやスポンジに取って汚れに当て、拭き取り／コーミング。', points:'水を使わない速攻クレンジング。' },
+    en: { who:'On the road, in a pinch, or at a show.', when:'When a bath isn\'t possible, for spot cleaning or a pre-ring refresh.', how:'Apply to a towel or sponge, wipe/comb through.', points:'Waterless quick cleansing.' }
+  },
+  pp_face_it: {
+    ja: { who:'顔まわり・目周りのケアが必要な子。涙やけが気になる場合にも。', when:'顔まわりの汚れ・涙やけのデイリーケアに。', how:'コットンや柔らかい布に取り、目に入らないようにやさしく拭く。', points:'目周りはとくに優しく。異常があれば獣医師に相談を。' },
+    en: { who:'Dogs needing face / eye-area care, including tear staining.', when:'Daily care of face dirt and tear stains.', how:'Apply to cotton or a soft cloth and wipe gently — avoid the eyes.', points:'Be extra gentle around the eyes; consult a vet if anything looks wrong.' }
+  },
+  pp_powder_puff: {
+    ja: { who:'ショードッグ・足先を白く保ちたい子。', when:'ショー直前の足先クレンジングに。', how:'パウダーを毛にもみ込み、ブラシで丁寧に落とす。', points:'プロも使う水なしクレンジング。' },
+    en: { who:'Show dogs and anyone wanting clean white paws.', when:'Pre-ring cleaning of the feet.', how:'Work the powder into the coat, then brush out thoroughly.', points:'A waterless cleanser used by pros.' }
+  },
+  pp_silk_protein_100: {
+    ja: { who:'シルキー・ウェービーの長毛。お試しサイズ。', when:'ダメージや艶不足が気になるとき。', how:'シャンプー後、毛全体になじませて数分置き、すすぐ。', points:'シルクプロテインで補修。指通りの良い艶のあるコートへ。' },
+    en: { who:'Long silky / wavy coats — trial size.', when:'When damage or lack of shine shows.', how:'Apply after shampoo, leave for a few minutes, then rinse.', points:'Silk protein for repair and a smooth, glossy finish.' }
+  },
+  pp_silk_protein_500: {
+    ja: { who:'シルキー・ウェービー長毛のレギュラー使用。', when:'毎回のコンディショニングに。', how:'毛先中心になじませ、数分置いてすすぐ。リーブイン少量も可。', points:'継続使用で艶と質感を維持。' },
+    en: { who:'Regular use for long silky / wavy coats.', when:'Every-bath conditioning.', how:'Work through the lengths, leave briefly, rinse. Small leave-in amounts work too.', points:'Maintains shine and texture with continued use.' }
+  },
+  pp_tlc: {
+    ja: { who:'全コートタイプ。', when:'毎日のブラッシング前の保湿に。シャンプー時のリンスアウトにも。', how:'霧吹きで全体に薄く吹きかけ、層ごとにブラッシング（ラインブラッシング）。', points:'リーブイン／リンスアウト両用。乾いた毛に直接ブラシを当てないための必需品。' },
+    en: { who:'All coat types.', when:'Before daily brushing for slip; also as a rinse-out.', how:'Mist lightly over the coat and line-brush by sections.', points:'Leave-in or rinse-out. The essential to avoid brushing dry hair.' }
+  },
+  pp_coat_rescue: {
+    ja: { who:'ダメージ毛・乾燥が強い子・ショー前14日のリカバリー期。', when:'集中保湿が必要なとき。', how:'毛先中心に塗布し数分置く。仕上がりが重い時はすすぎ多めに。', points:'集中保湿トリートメント。' },
+    en: { who:'Damaged or very dry coats; the 14-day pre-show recovery window.', when:'When intensive moisture is needed.', how:'Apply mostly to the lengths and leave on briefly; rinse more if it feels heavy.', points:'Intensive moisture treatment.' }
+  },
+  pp_omg: {
+    ja: { who:'全コート、特に毛玉ができやすい子。', when:'毎日のブラッシング前、軽い絡みのほぐしに。', how:'絡みに直接スプレーし、指で裂いてからブラシ。', points:'グルーミング全般の補助スプレー。' },
+    en: { who:'All coats, especially mat-prone dogs.', when:'Before daily brushing, to soften light tangles.', how:'Spray directly on tangles, finger-split, then brush.', points:'A general grooming-assist spray.' }
+  },
+  pp_volumising_cream: {
+    ja: { who:'コットン系・プードル・ショードッグ。', when:'仕上げ時、ボリュームと丸い輪郭を出したい時。', how:'手のひらで温めてから根元に揉み込み、ブラシで整える。', points:'ショーリングのシルエットを作る仕上げクリーム。' },
+    en: { who:'Cotton coats, Poodles, show dogs.', when:'At finishing, to build volume and a rounded outline.', how:'Warm in the palm, work into the roots, brush to shape.', points:'The finishing cream that builds a show-ring silhouette.' }
+  },
+  pp_volumising_spray: {
+    ja: { who:'日常的にボリュームを保ちたい子。', when:'ブロー中・仕上げに。', how:'根元から軽くスプレーし、ブラシで起こしながら乾かす。', points:'クリームより軽く、毎日でも使いやすい。' },
+    en: { who:'For everyday volume maintenance.', when:'During blow-drying and at finishing.', how:'Light spray at the roots and brush-up while drying.', points:'Lighter than the cream — easy for daily use.' }
+  },
+  pp_chalkestral: {
+    ja: { who:'ショードッグ（白・淡色）。', when:'チョーク使用前の下地材として。', how:'毛に薄く塗布した上にチョークを乗せる。', points:'プロ向けの下地材。' },
+    en: { who:'Show dogs (white / light coats).', when:'As a base before applying chalk.', how:'Apply lightly to the coat, then add the chalk.', points:'A pro-level chalk base.' }
+  },
+  pp_hold: {
+    ja: { who:'ショードッグ・形を保ちたい仕上げ。', when:'ショーリング直前のシェイピング。', how:'必要部位に薄く塗布し、ブラシで形を整える。', points:'仕上がりをキープするシェイパー。' },
+    en: { who:'Show dogs needing shape retention.', when:'Just before entering the ring.', how:'Apply thinly to the areas you want to hold, then brush to shape.', points:'A shaping finisher that holds form.' }
+  },
+  pp_shine_comb: {
+    ja: { who:'スムース・短毛種、黒/濃色被毛。', when:'仕上げに艶を出したい時。', how:'塗布してコームでとかすだけ。', points:'簡単に光沢が出る艶出しスプレー。' },
+    en: { who:'Smooth / short coats and black/dark coats.', when:'For a glossy finishing pass.', how:'Apply and comb through.', points:'Easy shine from spray-and-comb.' }
+  },
+  pp_seabreeze: {
+    ja: { who:'乾燥毛・ダメージ毛、毛玉ふやかしにも。', when:'毛先の保湿・毛玉のほぐし・全身ケアに。', how:'少量を指でなじませ、毛玉は指で裂いてからブラシ。', points:'カレンデュラ・小麦胚芽・イブニングプリムローズ配合の万能オイル。' },
+    en: { who:'Dry or damaged coats; also softens mats.', when:'Tip moisture, mat softening, all-over care.', how:'Work a small amount in with your fingers; finger-split mats, then brush.', points:'All-purpose oil with calendula, wheatgerm and evening primrose.' }
+  },
+  pp_pixie_dust: {
+    ja: { who:'ショードッグ。', when:'リング前の最終仕上げ。', how:'必要部位に薄く付け、ブラシで均す。', points:'プロも愛用する仕上げパウダー。' },
+    en: { who:'Show dogs.', when:'Final finishing before the ring.', how:'Apply lightly to the area, then brush smooth.', points:'A finishing powder loved by pros.' }
+  },
+  pp_fairy_frost: {
+    ja: { who:'ショードッグ。', when:'リング前の輝き・色冴え強調に。', how:'必要部位に少量つけてブラシで整える。', points:'きらめきを与える仕上げパウダー。' },
+    en: { who:'Show dogs.', when:'For sparkle and colour clarity before the ring.', how:'Apply a little to the area and brush smooth.', points:'A sparkling finishing powder.' }
+  },
+  pp_protein_balm: {
+    ja: { who:'長毛種、毛先の保護が必要な子。', when:'飾り毛の保護・リング外での広がり対策に。', how:'毛先中心に薄くなじませる。', points:'毛先保護のバーム。' },
+    en: { who:'Long coats needing tip protection.', when:'Protecting furnishings and taming ring-side spread.', how:'Work a thin layer into the tips.', points:'A tip-protection balm.' }
+  },
+  pp_swishy: {
+    ja: { who:'全コート、特に静電気・絡みが気になる子。', when:'ブラッシング時、毛流れを整えたい時。', how:'毛全体に軽くスプレーしてブラシ。', points:'帯電と絡みを抑え、毛流れを整える。' },
+    en: { who:'All coats, especially static- or tangle-prone ones.', when:'When brushing or setting the lie.', how:'Light spray over the coat, then brush.', points:'Reduces static and tangles, smooths the lie.' }
+  },
+  pp_fast: {
+    ja: { who:'全コート。乾燥時間を短くしたい時に。', when:'タオルドライ後、ブロー前。', how:'全体に軽くスプレーしてから乾かす。', points:'キューティクルを整えながら時短。' },
+    en: { who:'All coats — when you want to cut dry time.', when:'After towel-drying, before the blow-dry.', how:'Light all-over spray, then dry.', points:'Smooths the cuticle while shortening drying time.' }
+  },
+  pp_antistatic: {
+    ja: { who:'冬・暖房で静電気が出やすい子、シルキー・コットン・ウェービー。', when:'乾燥期（冬）、ブラッシング時。', how:'根元から少量スプレーし、ブラシ。', points:'静電気・フライアウェイを抑える。' },
+    en: { who:'Dogs prone to winter / heated-room static; silky, cotton, wavy.', when:'Dry seasons (winter) and during brushing.', how:'Light spray near the roots, then brush.', points:'Tames static and fly-aways.' }
+  },
+  pp_cover_up: {
+    ja: { who:'ショードッグ（白・淡色）。', when:'ショー直前のスポット修正。', how:'気になる部位に薄く塗布し、ブラシで均す。', points:'ステイン・黄ばみの即時カバー用。' },
+    en: { who:'Show dogs (white / light coats).', when:'Spot fixes just before the show.', how:'Apply thinly to the area and brush smooth.', points:'An instant cover for stains and yellowing.' }
+  },
+  pp_ultimate_soft: {
+    ja: { who:'プロ・本格家庭ケア。コットン・シルキー・ウェービー・ダブル。', when:'毎日のブラッシングとデマット。', how:'保湿後、根元を押さえて毛先側から少しずつ。', points:'デマット力と優しさを両立したプロ仕様。' },
+    en: { who:'Pros and serious home users — cotton, silky, wavy, double.', when:'Daily brushing and de-matting.', how:'After moisturising, hold the roots and work from the tips in, in small steps.', points:'Pro-grade de-matting with coat-safe gentleness.' }
+  },
+  pp_slicker_soft: {
+    ja: { who:'家庭ユーザー全般。', when:'毎日のブラッシングに。', how:'必ず保湿してから、根元から層ごとに。', points:'まずおすすめできる定番ソフトスリッカー。' },
+    en: { who:'General home users.', when:'For daily brushing.', how:'Moisturise first, then work in layers from the roots.', points:'The go-to soft slicker to start with.' }
+  },
+  pp_slicker_mini: {
+    ja: { who:'トイプードル・チワワ等の小型犬、子犬。', when:'毎日のブラッシング・細部のケア。', how:'小型なので顔まわり・足先など細部もコントロールしやすい。', points:'小さな体に合うミニサイズ。' },
+    en: { who:'Small dogs (Toy Poodle, Chihuahua) and puppies.', when:'Daily brushing and detail work.', how:'The small head controls easily around the face and feet.', points:'A mini size matched to small dogs.' }
+  },
+  pp_pin_brush: {
+    ja: { who:'シルキー長毛・ウェービー・飾り毛のある犬種。', when:'毛流れを整える時、仕上げに。', how:'毛流れに沿って優しく通す。', points:'毛先を傷めにくいピンブラシ。' },
+    en: { who:'Long silky / wavy coats and breeds with furnishings.', when:'Setting the lie and at finishing.', how:'Pass gently along the lie of the coat.', points:'A pin brush that\'s easy on the tips.' }
+  },
+  pp_bristle: {
+    ja: { who:'スムース・短毛種、黒/濃色被毛。', when:'仕上げの艶出しに。', how:'毛流れに沿って軽くなでる。', points:'天然獣毛の伝統的な艶出しブラシ。' },
+    en: { who:'Smooth / short coats and black/dark coats.', when:'For a glossy finish.', how:'Stroke lightly along the lie of the coat.', points:'A traditional natural-bristle finisher.' }
+  },
+  pp_porcupine: {
+    ja: { who:'シルキー・ウェービー・スムース全般。', when:'静電気が気になる時、仕上げに。', how:'毛流れに沿って通す。', points:'獣毛＋ピンのコンビで静電気抑制と艶出しを両立。' },
+    en: { who:'Silky, wavy and smooth coats.', when:'When static is an issue and at finishing.', how:'Pass along the lie.', points:'Bristle + pin combo for anti-static and shine in one.' }
+  }
+};
+function pInfo(p) {
+  const entry = PRODUCT_INFO[p.id];
+  if (!entry) return null;
+  return (state.lang === 'en' && entry.en) ? entry.en : entry.ja;
+}
+/* 価格未定 (新製品で公開待ちなど) は null を許可し、安全に "—" 表示にフォールバック */
+function pPriceText(p) {
+  if (p && typeof p.price === 'number') return '¥' + p.price.toLocaleString();
+  return state.lang === 'en' ? '—' : '価格未定';
+}
 const CAT_LABEL = {
   shampoo:'Shampoo', conditioner:'Conditioner',
   finishing:'Finishing', brush:'Brush'
@@ -6070,6 +6346,7 @@ function setLang(lang) {
   });
   // 動的コンテンツの再描画(リンクのAU切替・内容反映)
   try { renderProductGuide(); } catch (e) {}
+  try { renderAllProductsCatalog(); } catch (e) {}
   try { renderSupplements((state.answers && state.answers.issues) ? state.answers : { issues: [], goal: 'daily', scores: {}, age: '' }); } catch (e) {}
   try { buildEduIndex(); } catch (e) {}
   const resultEl = document.getElementById('result');
@@ -6530,6 +6807,10 @@ function renderProducts(picks) {
     const matchHtml = reasons.length
       ? `<div class="pp-product__match">${reasons.map(r => `<span>${escapeHtml(r)}</span>`).join('')}</div>`
       : '';
+    // Link "もっと詳しく" to the in-page catalog card (#product-<id>), so the
+    // structured info / "誰に・いつ・使い方" panel is one tap away.
+    const detailsLink = `<a class="pp-product__details-link" href="#product-${p.id}" onclick="event.preventDefault();menuGo('products');setTimeout(()=>{location.hash='#product-${p.id}';openProductFromHash();},80);"><span data-lang-ja>製品の詳しい解説を見る</span><span data-lang-en>See the full product explainer</span></a>`;
+    card.id = 'recommend-' + p.id;
     card.innerHTML = `
       <div class="pp-product__rank">${i + 1}</div>
       ${imageHtml}
@@ -6537,8 +6818,9 @@ function renderProducts(picks) {
       <h4 class="pp-product__name">${pName(p)}</h4>
       ${matchHtml}
       <p class="pp-product__why">${pDesc(p)}</p>
-      <div class="pp-product__price">¥${p.price.toLocaleString()}<small>${p.size}</small></div>
+      <div class="pp-product__price">${pPriceText(p)}<small>${p.size}</small></div>
       <a href="${shopUrl(p.url)}" target="_blank" rel="noopener" class="pp-product__cta"><span data-lang-ja>今すぐ購入する</span><span data-lang-en>Buy now</span></a>
+      ${detailsLink}
     `;
     list.appendChild(card);
   });
@@ -7057,7 +7339,7 @@ function recHtml(key, scored) {
   let h = '<div class="pp-assessment__rec"><span class="pp-assessment__rec-label">' + (en ? 'Recommended' : '推奨') + '</span><div class="pp-assessment__rec-list">';
   prods.forEach(p => {
     h += '<a class="pp-rec-chip" href="' + shopUrl(p.url) + '" target="_blank" rel="noopener">' +
-      escapeHtml(pName(p)) + '<small>' + (CAT_LABEL[p.cat] || '') + (en ? '' : ' ¥' + p.price.toLocaleString()) + '</small></a>';
+      escapeHtml(pName(p)) + '<small>' + (CAT_LABEL[p.cat] || '') + (en || typeof p.price !== 'number' ? '' : ' ¥' + p.price.toLocaleString()) + '</small></a>';
   });
   if (supp) {
     h += '<a class="pp-rec-chip pp-rec-chip--supp" href="' + supp.url + '" target="_blank" rel="noopener">' +
@@ -7589,7 +7871,7 @@ function renderProductGuide() {
       const type = productTypeTag(p);
       html += '<div class="pp-guide__item">' +
         '<div class="pp-guide__item-name">' + escapeHtml(pName(p)) + '</div>' +
-        '<div class="pp-guide__item-meta">' + (p.size ? escapeHtml(p.size) + (en ? '' : '・') : '') + (en ? '' : '¥' + p.price.toLocaleString()) + '</div>' +
+        '<div class="pp-guide__item-meta">' + (p.size ? escapeHtml(p.size) + (en ? '' : '・') : '') + (en || typeof p.price !== 'number' ? '' : '¥' + p.price.toLocaleString()) + '</div>' +
         '<div class="pp-guide__tags">' +
           (type ? '<span class="pp-guide__tag pp-guide__tag--type">' + type + '</span>' : '') +
           coatRatingChips(p.coats) +
@@ -7634,6 +7916,7 @@ function renderAllProductsCatalog() {
 function renderAllProductsCard(p) {
   const name = escapeHtml(pName(p));
   const fallbackLabel = escapeHtml(CAT_LABEL[p.cat] || '');
+  const en = state.lang === 'en';
   const imgHtml = p.image
     ? '<div class="pp-allp-card__image-wrap">' +
         '<img class="pp-allp-card__image" src="' + p.image + '" alt="' + name + '" loading="lazy" ' +
@@ -7641,17 +7924,142 @@ function renderAllProductsCard(p) {
       '</div>'
     : '<div class="pp-allp-card__image-wrap is-fallback"><span>' + fallbackLabel + '</span></div>';
   const sizeHtml = p.size ? '<small>' + escapeHtml(p.size) + '</small>' : '';
+  const newBadge = p.isNew
+    ? '<span class="pp-allp-card__badge"><span data-lang-ja>新製品</span><span data-lang-en>NEW</span></span>'
+    : '';
+  // Per-product "もっと詳しく" expander built from PRODUCT_INFO (falls back to desc)
+  const info = pInfo(p);
+  let infoHtml = '';
+  if (info) {
+    const L = en
+      ? { who:'Who it suits', when:'When to use', how:'How to use', points:'Key points' }
+      : { who:'向く子', when:'使うとき', how:'使い方', points:'ポイント' };
+    let dl = '<dl class="pp-allp-card__info">';
+    if (info.who) dl += '<dt>' + L.who + '</dt><dd>' + escapeHtml(info.who) + '</dd>';
+    if (info.when) dl += '<dt>' + L.when + '</dt><dd>' + escapeHtml(info.when) + '</dd>';
+    if (info.how) dl += '<dt>' + L.how + '</dt><dd>' + escapeHtml(info.how) + '</dd>';
+    if (info.points) dl += '<dt>' + L.points + '</dt><dd>' + escapeHtml(info.points) + '</dd>';
+    dl += '</dl>';
+    infoHtml = dl;
+  } else {
+    infoHtml = '<p class="pp-allp-card__info">' + escapeHtml(pDesc(p) || '') + '</p>';
+  }
+  const summaryLabel = '<span data-lang-ja>もっと詳しく</span><span data-lang-en>Learn more</span>';
+  const buyLabel = '<span data-lang-ja>購入する</span><span data-lang-en>Buy now</span>';
+  const copyLabel = '<span data-lang-ja>リンクをコピー</span><span data-lang-en>Copy link</span>';
   return '' +
-    '<a class="pp-allp-card" href="' + shopUrl(p.url) + '" target="_blank" rel="noopener" aria-label="' + name + ' を購入する">' +
+    '<article class="pp-allp-card" id="product-' + escapeHtml(p.id) + '" data-product-id="' + escapeHtml(p.id) + '">' +
+      newBadge +
       imgHtml +
       '<h4 class="pp-allp-card__name">' + name + '</h4>' +
-      '<div class="pp-allp-card__price">¥' + (p.price || 0).toLocaleString() + sizeHtml + '</div>' +
-      '<span class="pp-allp-card__cta">' +
-        '<span data-lang-ja>購入する</span><span data-lang-en>Buy now</span>' +
-      '</span>' +
-    '</a>';
+      '<div class="pp-allp-card__price">' + pPriceText(p) + sizeHtml + '</div>' +
+      '<a class="pp-allp-card__cta" href="' + shopUrl(p.url) + '" target="_blank" rel="noopener" aria-label="' + name + (en ? ' — buy' : ' を購入する') + '">' +
+        buyLabel +
+      '</a>' +
+      '<details class="pp-allp-card__details">' +
+        '<summary>' + summaryLabel + '</summary>' +
+        infoHtml +
+        '<div class="pp-allp-card__share">' +
+          '<button type="button" class="pp-allp-card__sharebtn" data-share-product="' + escapeHtml(p.id) + '">' + copyLabel + '</button>' +
+        '</div>' +
+      '</details>' +
+    '</article>';
+}
+
+/* Click-to-copy on per-product "リンクをコピー" buttons (one delegated listener). */
+function wireProductShareButtons() {
+  const container = document.getElementById('allProductsCatalog');
+  if (!container || container._shareWired) return;
+  container._shareWired = true;
+  container.addEventListener('click', e => {
+    const btn = e.target.closest && e.target.closest('.pp-allp-card__sharebtn');
+    if (!btn) return;
+    e.preventDefault();
+    const id = btn.getAttribute('data-share-product');
+    if (!id) return;
+    let base;
+    try {
+      base = (window.top && window.top.location && window.top.location.href) || location.href;
+    } catch (err) { base = location.href; }
+    const url = base.split('#')[0] + '#product-' + id;
+    const done = () => {
+      btn.classList.add('is-copied');
+      const original = btn.innerHTML;
+      btn.textContent = state.lang === 'en' ? 'Copied!' : 'コピーしました';
+      setTimeout(() => { btn.classList.remove('is-copied'); btn.innerHTML = original; }, 1800);
+    };
+    try {
+      navigator.clipboard.writeText(url).then(done, () => fallbackCopy(url, done));
+    } catch (err) { fallbackCopy(url, done); }
+  });
+}
+
+/* Deep-link: open product card by URL hash (#product-<id>) and scroll into view. */
+function openProductFromHash() {
+  const id = (location.hash || '').replace(/^#/, '');
+  if (!id || id.indexOf('product-') !== 0) return false;
+  const el = document.getElementById(id);
+  if (!el) return false;
+  // Make sure the catalog panel is visible even before a diagnosis has run
+  const result = document.getElementById('result');
+  if (result && !result.classList.contains('is-shown')) result.classList.add('is-resources');
+  // Auto-open the "もっと詳しく" so deep-linked visitors see the explanation right away
+  const det = el.querySelector('.pp-allp-card__details');
+  if (det) det.open = true;
+  setTimeout(() => {
+    try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { el.scrollIntoView(); }
+    notifyHeight();
+  }, 60);
+  return true;
+}
+
+/* SEO: emit Product JSON-LD for every product so search engines can index each one. */
+function buildProductsStructuredData() {
+  try {
+    if (!Array.isArray(PRODUCTS) || !PRODUCTS.length) return;
+    const canonical = (document.querySelector('link[rel="canonical"]') || {}).href
+      || location.href.split('#')[0];
+    const pageBase = canonical.split('#')[0];
+    const items = PRODUCTS.map(p => {
+      const offers = (typeof p.price === 'number') ? {
+        '@type': 'Offer',
+        priceCurrency: 'JPY',
+        price: p.price,
+        url: p.url,
+        availability: 'https://schema.org/InStock'
+      } : undefined;
+      const obj = {
+        '@type': 'Product',
+        '@id': pageBase + '#product-' + p.id,
+        name: (p.name || '') + (p.en ? ' / ' + p.en : ''),
+        category: CAT_LABEL[p.cat] || p.cat,
+        description: (PRODUCT_DESC_EN[p.id] || p.desc || '').slice(0, 400),
+        brand: { '@type': 'Brand', name: 'Plush Puppy' },
+        url: p.url
+      };
+      if (p.image) obj.image = p.image;
+      if (offers) obj.offers = offers;
+      return obj;
+    });
+    const data = {
+      '@context': 'https://schema.org',
+      '@graph': items
+    };
+    const old = document.getElementById('productsStructuredData');
+    if (old) old.remove();
+    const tag = document.createElement('script');
+    tag.type = 'application/ld+json';
+    tag.id = 'productsStructuredData';
+    tag.textContent = JSON.stringify(data);
+    document.head.appendChild(tag);
+  } catch (e) {}
 }
 try { renderAllProductsCatalog(); } catch (e) {}
+try { wireProductShareButtons(); } catch (e) {}
+try { buildProductsStructuredData(); } catch (e) {}
+window.addEventListener('hashchange', openProductFromHash);
+// Open the deep-linked product card once initial render is in place
+setTimeout(() => { try { openProductFromHash(); } catch (e) {} }, 80);
 
 /* 学びの場: 目次(クイックアクセス)を生成し、タップで該当項目を開いてスクロール。
    各項目は独立に開閉(非排他)。他項目を閉じないため、上の項目が畳まれて
