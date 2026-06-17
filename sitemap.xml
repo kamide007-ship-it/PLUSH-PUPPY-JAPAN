@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemaps-image/1.1">
+  <url>
+    <loc>https://plush-puppy-coat-clinic.onrender.com/</loc>
+    <lastmod>2026-06-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://plush-puppy-coat-clinic.onrender.com/?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://plush-puppy-coat-clinic.onrender.com/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://plush-puppy-coat-clinic.onrender.com/"/>
+    <image:image>
+      <image:loc>https://plush-puppy-coat-clinic.onrender.com/assets/icons/icon-512.png</image:loc>
+      <image:title>Plush Puppy Japan — 被毛診断 ＆ コートの科学</image:title>
+    </image:image>
+  </url>
+</urlset>

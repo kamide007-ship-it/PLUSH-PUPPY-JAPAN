@@ -1,0 +1,20 @@
+# Plush Puppy Japan — Coat Diagnosis & Coat Science
+# Allow all well-behaved crawlers; expose sitemap.
+
+User-agent: *
+Allow: /
+
+# Disallow nothing — this is a public, single-page educational site.
+
+# Block known scrapers that don't honour rate limits and don't drive useful
+# traffic. (Add or remove as you see fit.)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+Sitemap: https://plush-puppy-coat-clinic.onrender.com/sitemap.xml
