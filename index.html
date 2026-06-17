@@ -6,7 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="description" content="プラッシュパピー 被毛診断 - 愛犬の毛質と現在のコンディションから、最適なシャンプー・コンディショナー・フィニッシング剤をご提案。獣医師監修「コートの科学」では、毛玉の予防・正しいシャンプー/乾かし方・犬種別ケア（プードル等）をエビデンス付きで解説します。">
 <meta name="keywords" content="被毛診断,犬 シャンプー,トリミング,毛玉 予防,プードル ケア,コートの科学,Plush Puppy,グルーミング,ドッグショー,被毛 ケア">
+<meta name="author" content="Dr. Kentaro Kamide, DVM — 獣医師 上手 健太郎">
 <link rel="canonical" href="https://plush-puppy-coat-clinic.onrender.com/">
+<link rel="alternate" hreflang="ja" href="https://plush-puppy-coat-clinic.onrender.com/?lang=ja">
+<link rel="alternate" hreflang="en" href="https://plush-puppy-coat-clinic.onrender.com/?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://plush-puppy-coat-clinic.onrender.com/">
 <meta name="theme-color" content="#43569f">
 <meta name="format-detection" content="telephone=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,7 +18,8 @@
 <meta name="apple-mobile-web-app-title" content="Coat Diagnosis">
 <meta name="application-name" content="Coat Diagnosis">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large">
 
 <!-- ホーム画面アイコン (Plush Puppy ロゴ) -->
 <link rel="apple-touch-icon" href="assets/icons/icon-180.png">
@@ -31,9 +36,136 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://plush-puppy-coat-clinic.onrender.com/">
 <meta property="og:site_name" content="PLUSH PUPPY JAPAN GROOMING PRODUCTS">
-<meta name="twitter:card" content="summary">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://plush-puppy-coat-clinic.onrender.com/assets/icons/icon-512.png">
+<meta property="og:image:secure_url" content="https://plush-puppy-coat-clinic.onrender.com/assets/icons/icon-512.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="512">
+<meta property="og:image:height" content="512">
+<meta property="og:image:alt" content="Plush Puppy Japan — 被毛診断 ＆ コートの科学">
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="被毛診断 ＆ コートの科学 | Plush Puppy Japan">
+<meta name="twitter:description" content="愛犬の毛質に最適なケア製品をAI診断＋獣医師監修「コートの科学」で学べる、Plush Puppy Japan 公式の被毛診断サイト。">
+<meta name="twitter:image" content="https://plush-puppy-coat-clinic.onrender.com/assets/icons/icon-512.png">
+<meta name="twitter:image:alt" content="Plush Puppy Japan — 被毛診断 ＆ コートの科学">
 
-<title>被毛診断 | PLUSH PUPPY JAPAN GROOMING PRODUCTS</title>
+<title>被毛診断 ＆ コートの科学（獣医師監修） | PLUSH PUPPY JAPAN GROOMING PRODUCTS</title>
+
+<!-- ============================================
+     Static structured data (JSON-LD)
+     —— site-wide entities that don't depend on
+     the SPA's runtime state. Per-product Product
+     schema and per-article Article schema are
+     emitted by JS later in the page.
+     ============================================ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://plush-puppy-coat-clinic.onrender.com/#organization",
+      "name": "Plush Puppy Japan",
+      "alternateName": "プラッシュパピー ジャパン",
+      "url": "https://www.plushpuppyjapan.com/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://plush-puppy-coat-clinic.onrender.com/assets/icons/icon-512.png",
+        "width": 512,
+        "height": 512
+      },
+      "sameAs": [
+        "https://www.plushpuppyjapan.com/"
+      ],
+      "description": "オーストラリア発のショードッグ・グルーミングブランド Plush Puppy の日本正規代理店。シャンプー・コンディショナー・仕上げ剤などプロ仕様の被毛ケア製品を提供。"
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://plush-puppy-coat-clinic.onrender.com/#website",
+      "url": "https://plush-puppy-coat-clinic.onrender.com/",
+      "name": "被毛診断 ＆ コートの科学 | Plush Puppy Japan",
+      "description": "愛犬の毛質と現在のコンディションから、最適なシャンプー・コンディショナー・フィニッシング剤をご提案。獣医師監修「コートの科学」も併設。",
+      "inLanguage": ["ja", "en"],
+      "publisher": { "@id": "https://plush-puppy-coat-clinic.onrender.com/#organization" },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://plush-puppy-coat-clinic.onrender.com/?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "Person",
+      "@id": "https://plush-puppy-coat-clinic.onrender.com/#author-kamide",
+      "name": "Dr. Kentaro Kamide, DVM",
+      "alternateName": "獣医師 上手 健太郎",
+      "jobTitle": "Veterinarian / 獣医師",
+      "description": "獣医師。Plush Puppy Japan「コートの科学」学術監修。",
+      "knowsAbout": [
+        "犬の皮膚科学",
+        "被毛・コートケア",
+        "veterinary dermatology",
+        "canine coat science"
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://plush-puppy-coat-clinic.onrender.com/#webpage",
+      "url": "https://plush-puppy-coat-clinic.onrender.com/",
+      "name": "被毛診断 ＆ コートの科学（獣医師監修） | Plush Puppy Japan",
+      "isPartOf": { "@id": "https://plush-puppy-coat-clinic.onrender.com/#website" },
+      "about": { "@id": "https://plush-puppy-coat-clinic.onrender.com/#organization" },
+      "inLanguage": "ja",
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://plush-puppy-coat-clinic.onrender.com/assets/icons/icon-512.png"
+      },
+      "breadcrumb": { "@id": "https://plush-puppy-coat-clinic.onrender.com/#breadcrumb" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://plush-puppy-coat-clinic.onrender.com/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Plush Puppy Japan",
+          "item": "https://www.plushpuppyjapan.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "被毛診断 ＆ コートの科学",
+          "item": "https://plush-puppy-coat-clinic.onrender.com/"
+        }
+      ]
+    },
+    {
+      "@type": "MedicalWebPage",
+      "@id": "https://plush-puppy-coat-clinic.onrender.com/#medicalwebpage",
+      "url": "https://plush-puppy-coat-clinic.onrender.com/#coat-science",
+      "name": "コートの科学 — 学びの場（獣医師監修） / Coat Science (vet-supervised)",
+      "description": "獣医師監修によるエビデンスベースの犬の皮膚・被毛・グルーミング学習ハブ。毛玉予防、正しいシャンプー/乾燥/ブラッシング、犬種別ケア、毛周期、皮膚バリアと栄養などを解説。",
+      "inLanguage": "ja",
+      "audience": {
+        "@type": "Audience",
+        "audienceType": "Pet owners, groomers, breeders, show-dog handlers"
+      },
+      "reviewedBy": { "@id": "https://plush-puppy-coat-clinic.onrender.com/#author-kamide" },
+      "lastReviewed": "2026-06-17",
+      "isPartOf": { "@id": "https://plush-puppy-coat-clinic.onrender.com/#website" },
+      "specialty": [
+        "https://schema.org/Dermatology",
+        "https://schema.org/PrimaryCare"
+      ]
+    }
+  ]
+}
+</script>
 
 <!-- Fonts (plushpuppyjapan.com準拠) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -6325,6 +6457,16 @@ const CAT_LABEL = {
 
 let state = { answers: {}, lang: 'ja', coat: 'all', picks: [] };
 
+/* Honour ?lang=ja|en (matches the hreflang alternates and lets us share
+   language-specific URLs to social/search engines). Falls back to JA. */
+(function initLangFromUrl() {
+  try {
+    const sp = new URLSearchParams(location.search);
+    const q = (sp.get('lang') || '').toLowerCase();
+    if (q === 'en' || q === 'ja') state.lang = q;
+  } catch (e) {}
+})();
+
 /* ============================================
    言語切替 (EN / JP)。英語版のショップ系リンクはオーストラリア本社へ
    ============================================ */
@@ -8037,20 +8179,24 @@ function openProductFromHash() {
   return true;
 }
 
-/* SEO: emit Product JSON-LD for every product so search engines can index each one. */
+/* SEO: emit Product JSON-LD for every product so search engines can index each one.
+   Includes an ItemList wrapper, brand cross-link, and isPartOf the main WebPage. */
 function buildProductsStructuredData() {
   try {
     if (!Array.isArray(PRODUCTS) || !PRODUCTS.length) return;
     const canonical = (document.querySelector('link[rel="canonical"]') || {}).href
       || location.href.split('#')[0];
     const pageBase = canonical.split('#')[0];
+    const orgRef = { '@id': pageBase + '#organization' };
+    const pageRef = { '@id': pageBase + '#webpage' };
     const items = PRODUCTS.map(p => {
       const offers = (typeof p.price === 'number') ? {
         '@type': 'Offer',
         priceCurrency: 'JPY',
         price: p.price,
         url: p.url,
-        availability: 'https://schema.org/InStock'
+        availability: 'https://schema.org/InStock',
+        seller: orgRef
       } : undefined;
       const obj = {
         '@type': 'Product',
@@ -8059,15 +8205,32 @@ function buildProductsStructuredData() {
         category: CAT_LABEL[p.cat] || p.cat,
         description: (PRODUCT_DESC_EN[p.id] || p.desc || '').slice(0, 400),
         brand: { '@type': 'Brand', name: 'Plush Puppy' },
-        url: p.url
+        manufacturer: { '@type': 'Organization', name: 'Plush Puppy', url: 'https://www.plushpuppy.com.au/' },
+        url: p.url,
+        isPartOf: pageRef
       };
       if (p.image) obj.image = p.image;
+      if (p.size) obj.size = p.size;
       if (offers) obj.offers = offers;
       return obj;
     });
+    // Wrap in an ItemList so the product catalogue itself is a discoverable entity.
+    const itemList = {
+      '@type': 'ItemList',
+      '@id': pageBase + '#product-catalog',
+      name: '全製品カタログ / Product Catalog',
+      description: 'Plush Puppy Japan の全製品（シャンプー・コンディショナー・仕上げ剤・ブラシ等）。',
+      numberOfItems: items.length,
+      itemListElement: items.map((p, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        url: p['@id'],
+        name: p.name
+      }))
+    };
     const data = {
       '@context': 'https://schema.org',
-      '@graph': items
+      '@graph': [itemList].concat(items)
     };
     const old = document.getElementById('productsStructuredData');
     if (old) old.remove();
@@ -8254,17 +8417,13 @@ function buildEduStructuredData() {
       || location.href.split('#')[0];
     const pageBase = canonical.split('#')[0];
     // Shared author / publisher so every article carries the same E-E-A-T signal.
-    const author = {
-      '@type': 'Person',
-      name: 'Dr. Kentaro Kamide, DVM',
-      jobTitle: 'Veterinarian',
-      description: '獣医師 上手 健太郎 / Veterinary supervisor'
-    };
-    const publisher = {
-      '@type': 'Organization',
-      name: 'Plush Puppy Japan',
-      url: 'https://www.plushpuppyjapan.com/'
-    };
+    // Reference the Person/Organization defined in the static head JSON-LD by @id
+    // so search engines can join the graphs.
+    const author = { '@id': pageBase + '#author-kamide' };
+    const publisher = { '@id': pageBase + '#organization' };
+    // Stable publication / last-reviewed dates. Update when the article set changes.
+    const datePublished = '2025-05-24';
+    const dateModified = '2026-06-17';
     // Pull a short, clean description from each article's body for richer indexing.
     const extractDesc = (it) => {
       const body = it.querySelector('.pp-edu__simple [data-lang-ja]')
@@ -8298,18 +8457,29 @@ function buildEduStructuredData() {
         inLanguage: 'ja',
         url: url,
         mainEntityOfPage: { '@type': 'WebPage', '@id': url },
-        isPartOf: { '@type': 'CollectionPage', '@id': pageBase + '#coat-science' },
+        isPartOf: { '@id': pageBase + '#coat-science' },
+        about: { '@id': pageBase + '#medicalwebpage' },
         author: author,
-        publisher: publisher
+        reviewedBy: author,
+        publisher: publisher,
+        image: pageBase + 'assets/icons/icon-512.png',
+        datePublished: datePublished,
+        dateModified: dateModified
       });
     });
     const itemList = {
-      '@type': 'ItemList',
+      '@type': 'CollectionPage',
       '@id': pageBase + '#coat-science',
       name: 'コートの科学 — 学びの場 / Coat Science',
       description: '獣医師監修の被毛・皮膚ケアの学習ハブ。各項目は個別URLで直接リンクできます。',
-      numberOfItems: elements.length,
-      itemListElement: elements
+      url: pageBase + '#coat-science',
+      inLanguage: 'ja',
+      isPartOf: { '@id': pageBase + '#website' },
+      mainEntity: {
+        '@type': 'ItemList',
+        numberOfItems: elements.length,
+        itemListElement: elements
+      }
     };
     const data = {
       '@context': 'https://schema.org',
