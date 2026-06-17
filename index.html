@@ -1281,6 +1281,8 @@
     padding: 7px 13px;
     border-radius: var(--radius-pill);
     cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
     transition: background 0.15s, color 0.15s, border-color 0.15s;
   }
   .pp-edu__indexchip:hover,
@@ -1289,6 +1291,28 @@
     color: #ffffff;
     border-color: var(--pp-navy);
   }
+  /* Per-article visible permalink (#) on each heading — a real, crawlable
+     anchor link to that article, for sharing and SEO internal linking. */
+  .pp-edu__permalink {
+    flex-shrink: 0;
+    margin-left: auto;
+    color: var(--pp-navy-light);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 1;
+    padding: 2px 6px;
+    border-radius: 6px;
+    opacity: 0.55;
+    transition: opacity 0.15s, background 0.15s, color 0.15s;
+  }
+  .pp-edu__permalink:hover,
+  .pp-edu__permalink:focus-visible {
+    opacity: 1;
+    color: var(--pp-orange);
+    background: var(--pp-navy-soft);
+  }
+  .pp-edu__permalink.is-copied { color: #ffffff; background: var(--pp-navy); opacity: 1; }
   .pp-edu__fig {
     margin: 4px 0 14px;
     padding: 12px;
@@ -8078,13 +8102,17 @@ function buildEduIndex() {
       const sp = sum.querySelector(state.lang === 'en' ? '[data-lang-en]' : '[data-lang-ja]');
       label = (sp ? sp.textContent : sum.textContent).trim();
     }
-    const chip = document.createElement('button');
-    chip.type = 'button';
+    // Real, crawlable anchor link (not a button) so search engines follow each
+    // article as an internal link; JS still smooth-opens + scrolls on click.
+    const chip = document.createElement('a');
     chip.className = 'pp-edu__indexchip';
+    chip.href = '#' + it.id;
     chip.textContent = label;
-    chip.addEventListener('click', () => openEduArticle(it, true));
+    chip.addEventListener('click', (e) => { e.preventDefault(); openEduArticle(it, true); });
     idx.appendChild(chip);
 
+    // Visible per-heading permalink (#) — a real anchor link to this item.
+    injectEduPermalink(it);
     // Per-article "copy link" share bar (deep link to this article)
     injectEduShareBar(it);
     // Keep the URL hash in sync when an article is opened, so it is shareable
@@ -8133,6 +8161,32 @@ function injectEduShareBar(it) {
   // Re-label on language switch
   btn._setLabel = setLabel;
   body.insertBefore(bar, body.firstChild);
+}
+
+function injectEduPermalink(it) {
+  const sum = it.querySelector(':scope > summary');
+  if (!sum || sum.querySelector(':scope > .pp-edu__permalink')) return;
+  const a = document.createElement('a');
+  a.className = 'pp-edu__permalink';
+  a.href = '#' + it.id;
+  a.textContent = '#';
+  a.setAttribute('aria-label', 'この項目へのリンク / Link to this item');
+  a.title = 'リンクをコピー / Copy link';
+  a.addEventListener('click', (e) => {
+    // Don't toggle the <details>; copy the deep link and scroll into view.
+    e.preventDefault();
+    e.stopPropagation();
+    const url = eduArticleUrl(it.id);
+    openEduArticle(it, true);
+    const done = () => {
+      a.classList.add('is-copied');
+      setTimeout(() => a.classList.remove('is-copied'), 1200);
+    };
+    try {
+      navigator.clipboard.writeText(url).then(done, () => fallbackCopy(url, done));
+    } catch (err) { fallbackCopy(url, done); }
+  });
+  sum.appendChild(a);
 }
 
 function eduArticleUrl(id) {
@@ -8198,24 +8252,68 @@ function buildEduStructuredData() {
     if (!items.length) return;
     const canonical = (document.querySelector('link[rel="canonical"]') || {}).href
       || location.href.split('#')[0];
-    const elements = items.map((it, i) => {
+    const pageBase = canonical.split('#')[0];
+    // Shared author / publisher so every article carries the same E-E-A-T signal.
+    const author = {
+      '@type': 'Person',
+      name: 'Dr. Kentaro Kamide, DVM',
+      jobTitle: 'Veterinarian',
+      description: '獣医師 上手 健太郎 / Veterinary supervisor'
+    };
+    const publisher = {
+      '@type': 'Organization',
+      name: 'Plush Puppy Japan',
+      url: 'https://www.plushpuppyjapan.com/'
+    };
+    // Pull a short, clean description from each article's body for richer indexing.
+    const extractDesc = (it) => {
+      const body = it.querySelector('.pp-edu__simple [data-lang-ja]')
+        || it.querySelector('.pp-edu__body [data-lang-ja]')
+        || it.querySelector('.pp-edu__body');
+      let txt = body ? (body.textContent || '') : '';
+      txt = txt.replace(/\s+/g, ' ').trim();
+      return txt.slice(0, 300);
+    };
+    const elements = [];
+    const articles = [];
+    items.forEach((it, i) => {
       const sum = it.querySelector('summary');
       const ja = sum && sum.querySelector('[data-lang-ja]');
-      const name = (ja ? ja.textContent : (sum ? sum.textContent : '')).trim();
-      return {
+      const en = sum && sum.querySelector('[data-lang-en]');
+      const nameJa = (ja ? ja.textContent : (sum ? sum.textContent : '')).trim();
+      const nameEn = en ? en.textContent.trim() : '';
+      const url = pageBase + '#' + it.id;
+      elements.push({
         '@type': 'ListItem',
         position: i + 1,
-        name: name,
-        url: canonical.split('#')[0] + '#' + it.id
-      };
+        name: nameJa,
+        url: url
+      });
+      articles.push({
+        '@type': 'Article',
+        '@id': url,
+        headline: nameJa + (nameEn ? ' / ' + nameEn : ''),
+        name: nameJa,
+        description: extractDesc(it),
+        inLanguage: 'ja',
+        url: url,
+        mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+        isPartOf: { '@type': 'CollectionPage', '@id': pageBase + '#coat-science' },
+        author: author,
+        publisher: publisher
+      });
     });
-    const data = {
-      '@context': 'https://schema.org',
+    const itemList = {
       '@type': 'ItemList',
+      '@id': pageBase + '#coat-science',
       name: 'コートの科学 — 学びの場 / Coat Science',
       description: '獣医師監修の被毛・皮膚ケアの学習ハブ。各項目は個別URLで直接リンクできます。',
       numberOfItems: elements.length,
       itemListElement: elements
+    };
+    const data = {
+      '@context': 'https://schema.org',
+      '@graph': [itemList].concat(articles)
     };
     const tag = document.createElement('script');
     tag.type = 'application/ld+json';
