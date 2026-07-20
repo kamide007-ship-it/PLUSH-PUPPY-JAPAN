@@ -1427,13 +1427,18 @@
      anchor link to that article, for sharing and SEO internal linking. */
   .pp-edu__permalink {
     flex-shrink: 0;
-    margin-left: auto;
+    /* 44px 相当のタップ領域を確保しつつ、負マージンで見出しの高さは変えない */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    min-height: 40px;
+    margin: -10px -10px -10px auto;
     color: var(--pp-navy-light);
     text-decoration: none;
     font-weight: 700;
     font-size: 13px;
     line-height: 1;
-    padding: 2px 6px;
     border-radius: 6px;
     opacity: 0.55;
     transition: opacity 0.15s, background 0.15s, color 0.15s;
@@ -1445,6 +1450,11 @@
     background: var(--pp-navy-soft);
   }
   .pp-edu__permalink.is-copied { color: #ffffff; background: var(--pp-navy); opacity: 1; }
+  /* タッチデバイス: 小さめの共有ボタン類のタップ領域を拡大 (44px 目安) */
+  @media (pointer: coarse) {
+    .pp-edu__sharelink { padding: 9px 16px; }
+    .pp-edu__permalink { min-width: 44px; min-height: 44px; margin: -12px -12px -12px auto; }
+  }
   .pp-edu__fig {
     margin: 4px 0 14px;
     padding: 12px;
@@ -2897,6 +2907,10 @@
   .pp-allp-card__sharebtn:hover { background: var(--pp-navy-soft); border-color: var(--pp-navy-light); }
   .pp-allp-card__sharebtn.is-copied { background: var(--pp-navy); color: #ffffff; border-color: var(--pp-navy); }
   .pp-allp-card__sharebtn.is-copied::before { content: '✓'; }
+  /* タッチデバイス: タップ領域拡大 (基底定義の後に置き、確実に適用する) */
+  @media (pointer: coarse) {
+    .pp-allp-card__sharebtn { padding: 8px 14px; }
+  }
   /* The card itself becomes an <article> with id="product-..." for SEO/anchor.
      Allow nested click targets (Buy link, details summary, copy-link button). */
   .pp-allp-card { position: relative; scroll-margin-top: 16px; }
@@ -8497,6 +8511,10 @@ function buildEduStructuredData() {
 
 buildEduIndex();
 buildEduStructuredData();
+/* Apply ?lang=en at boot: initLangFromUrl() only sets state.lang (it runs
+   before the render functions exist), so the actual UI switch happens here,
+   after everything is defined. Default (ja) needs no re-render. */
+if (state.lang !== 'ja') { try { setLang(state.lang); } catch (e) {} }
 openEduFromHash();
 window.addEventListener('hashchange', openEduFromHash);
 </script>
