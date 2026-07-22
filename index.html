@@ -2911,6 +2911,101 @@
   @media (pointer: coarse) {
     .pp-allp-card__sharebtn { padding: 8px 14px; }
   }
+
+  /* ============================================
+     製品検索 (競合の比較サイト/ECに合わせた即時絞り込み)
+     ============================================ */
+  .pp-allp-search {
+    position: relative;
+    margin: 0 0 18px;
+  }
+  .pp-allp-search__ico {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 15px;
+    pointer-events: none;
+    opacity: 0.6;
+  }
+  .pp-allp-search input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px 18px 13px 44px;
+    border: 1.5px solid var(--pp-border-light);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-jp);
+    font-size: 16px; /* 16px 未満だと iOS がフォーカス時に自動ズームする */
+    color: var(--pp-text);
+    background: #ffffff;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .pp-allp-search input:focus {
+    outline: none;
+    border-color: var(--pp-navy);
+    box-shadow: 0 0 0 3px var(--pp-navy-soft);
+  }
+  .pp-allp-search__empty {
+    text-align: center;
+    color: var(--pp-text-muted);
+    font-size: 13px;
+    padding: 24px 12px;
+    background: var(--pp-bg-soft);
+    border-radius: var(--radius-sm);
+    margin-bottom: 14px;
+  }
+
+  /* ============================================
+     モバイル固定ボトムナビ (スタンドアロン表示時のみ)
+     縦長ページの主要導線 — 競合アプリの標準パターン
+     埋め込み(iframe)時は親サイトのUIを尊重して出さない
+     ============================================ */
+  .pp-bottomnav { display: none; }
+  @media (max-width: 768px) {
+    body.pp-standalone .pp-bottomnav {
+      display: flex;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 90;
+      background: rgba(255, 255, 255, 0.96);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      border-top: 1px solid var(--pp-border-light);
+      padding: 4px 4px calc(4px + env(safe-area-inset-bottom, 0px));
+      justify-content: space-around;
+      box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06);
+    }
+    body.pp-standalone { padding-bottom: 68px; }
+    .pp-bottomnav button {
+      appearance: none;
+      -webkit-appearance: none;
+      flex: 1;
+      max-width: 88px;
+      background: none;
+      border: none;
+      font-family: var(--font-jp);
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--pp-text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      padding: 6px 2px;
+      min-height: 52px;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: color 0.15s ease, background 0.15s ease;
+    }
+    .pp-bottomnav button .pp-bottomnav__ico { font-size: 19px; line-height: 1; }
+    .pp-bottomnav button.is-active {
+      color: var(--pp-navy);
+      background: var(--pp-navy-soft);
+    }
+  }
   /* The card itself becomes an <article> with id="product-..." for SEO/anchor.
      Allow nested click targets (Buy link, details summary, copy-link button). */
   .pp-allp-card { position: relative; scroll-margin-top: 16px; }
@@ -6472,12 +6567,16 @@ const CAT_LABEL = {
 let state = { answers: {}, lang: 'ja', coat: 'all', picks: [] };
 
 /* Honour ?lang=ja|en (matches the hreflang alternates and lets us share
-   language-specific URLs to social/search engines). Falls back to JA. */
+   language-specific URLs to social/search engines). Falls back to JA.
+   ?q=<keyword> は製品検索 (head の SearchAction と対応) として保持し、
+   カタログ描画時に適用する。 */
 (function initLangFromUrl() {
   try {
     const sp = new URLSearchParams(location.search);
     const q = (sp.get('lang') || '').toLowerCase();
     if (q === 'en' || q === 'ja') state.lang = q;
+    const pq = sp.get('q');
+    if (pq) state.productQuery = pq;
   } catch (e) {}
 })();
 
@@ -6792,15 +6891,56 @@ function runDiagnosis() {
 
 /* クロスブラウザ対応のスムーズスクロール
    iOS Safari 15.3 以下で behavior:'smooth' が動かない問題への対応 */
+/* 長距離はスムーズだと1秒以上かかり「白い画面が流れる」体験になるため、
+   競合アプリの画面切替に合わせて一定距離を超えたら即時ジャンプする */
+const JUMP_THRESHOLD_PX = 2500;
+function scrollBehaviorFor(distancePx) {
+  return Math.abs(distancePx) > JUMP_THRESHOLD_PX ? 'auto' : 'smooth';
+}
+/* 要素へ移動。長距離は即時ジャンプ (競合アプリの画面切替と同等の体感)。
+   CSS の html{scroll-behavior:smooth} があると behavior:'auto' は smooth に
+   解決されるため、一時的にインラインで上書きして確実に即時化する。
+   ジャンプ後は遅延読み込みでのレイアウトずれを補正パスで吸収。 */
+function instantScrollIntoView(el) {
+  const root = document.documentElement;
+  const prev = root.style.scrollBehavior;
+  root.style.scrollBehavior = 'auto';
+  try { el.scrollIntoView({ behavior: 'instant', block: 'start' }); }
+  catch (e) { try { el.scrollIntoView({ behavior: 'auto', block: 'start' }); } catch (e2) { el.scrollIntoView(); } }
+  root.style.scrollBehavior = prev;
+}
+function jumpTo(el) {
+  if (!el) return;
+  let far = false;
+  try { far = Math.abs(el.getBoundingClientRect().top) > JUMP_THRESHOLD_PX; } catch (e) {}
+  if (!far) {
+    try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { el.scrollIntoView(); }
+    return;
+  }
+  instantScrollIntoView(el);
+  [250, 700].forEach(ms => setTimeout(() => {
+    try {
+      if (Math.abs(el.getBoundingClientRect().top) > 40) instantScrollIntoView(el);
+    } catch (e) {}
+  }, ms));
+}
 function smoothScrollTo(target) {
   if (!target) return;
   try {
     // モダンブラウザ
     if ('scrollBehavior' in document.documentElement.style) {
       if (target === 'top' || target === window) {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (window.scrollY > JUMP_THRESHOLD_PX) {
+          const root = document.documentElement;
+          const prev = root.style.scrollBehavior;
+          root.style.scrollBehavior = 'auto';
+          window.scrollTo({ top: 0, behavior: 'instant' });
+          root.style.scrollBehavior = prev;
+        } else {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
       } else {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        jumpTo(target);
       }
       return;
     }
@@ -7888,7 +8028,7 @@ function menuGo(target, opts) {
   if (result && !result.classList.contains('is-shown')) result.classList.add('is-resources');
   const el = document.getElementById(NAV_PANEL_ID[target]);
   setTimeout(() => {
-    if (el) { try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { el.scrollIntoView(); } }
+    if (el) { jumpTo(el); }
     notifyHeight();
   }, 70);
 }
@@ -8078,7 +8218,17 @@ function renderAllProductsCatalog() {
   if (!container) return;
   const lead = container.querySelector('.pp-allp-catalog__lead');
   const leadHtml = lead ? lead.outerHTML : '';
+  const en = state.lang === 'en';
+  const searchPh = en ? 'Search products (e.g. shampoo, TLC)' : '製品名で検索（例: シャンプー、TLC）';
   let h = leadHtml;
+  h += '<div class="pp-allp-search">' +
+    '<span class="pp-allp-search__ico" aria-hidden="true">🔍</span>' +
+    '<input id="allpSearchInput" type="search" placeholder="' + searchPh + '" aria-label="' + (en ? 'Product search' : '製品検索') + '" autocomplete="off">' +
+    '</div>' +
+    '<div class="pp-allp-search__empty" id="allpSearchEmpty" hidden>' +
+    '<span data-lang-ja>該当する製品が見つかりませんでした。別のキーワードをお試しください。</span>' +
+    '<span data-lang-en>No products matched. Try a different keyword.</span>' +
+    '</div>';
   ALLP_GROUPS.forEach(g => {
     const items = PRODUCTS.filter(p => p.cat === g.key);
     if (!items.length) return;
@@ -8092,6 +8242,47 @@ function renderAllProductsCatalog() {
     h += '</div></div>';
   });
   container.innerHTML = h;
+  // 検索の配線 (コンテナへの委譲リスナーは innerHTML 差し替え後も生きる)
+  if (!container._searchWired) {
+    container._searchWired = true;
+    container.addEventListener('input', e => {
+      if (e.target && e.target.id === 'allpSearchInput') applyProductSearch(e.target.value);
+    });
+  }
+  // 言語切替などの再描画後も検索状態を復元
+  if (state.productQuery) {
+    const inp = document.getElementById('allpSearchInput');
+    if (inp) inp.value = state.productQuery;
+    applyProductSearch(state.productQuery);
+  }
+}
+
+/* ひらがな→カタカナ正規化 + 小文字化。「しゃんぷー」でもシャンプー製品に当たるように */
+function kanaNorm(s) {
+  return String(s || '')
+    .toLowerCase()
+    .replace(/[ぁ-ゖ]/g, ch => String.fromCharCode(ch.charCodeAt(0) + 0x60));
+}
+
+/* 製品カタログの即時絞り込み。空クエリで全件表示に戻す */
+function applyProductSearch(q) {
+  state.productQuery = q || '';
+  const norm = kanaNorm(state.productQuery.trim());
+  const container = document.getElementById('allProductsCatalog');
+  if (!container) return;
+  let visible = 0;
+  container.querySelectorAll('.pp-allp-card').forEach(c => {
+    const hit = !norm || (c.getAttribute('data-search') || '').indexOf(norm) >= 0;
+    c.style.display = hit ? '' : 'none';
+    if (hit) visible++;
+  });
+  container.querySelectorAll('.pp-allp-group').forEach(g => {
+    const any = Array.from(g.querySelectorAll('.pp-allp-card')).some(c => c.style.display !== 'none');
+    g.style.display = any ? '' : 'none';
+  });
+  const empty = document.getElementById('allpSearchEmpty');
+  if (empty) empty.hidden = visible > 0;
+  try { notifyHeight(); } catch (e) {}
 }
 function renderAllProductsCard(p) {
   const name = escapeHtml(pName(p));
@@ -8127,8 +8318,11 @@ function renderAllProductsCard(p) {
   const summaryLabel = '<span data-lang-ja>もっと詳しく</span><span data-lang-en>Learn more</span>';
   const buyLabel = '<span data-lang-ja>購入する</span><span data-lang-en>Buy now</span>';
   const copyLabel = '<span data-lang-ja>リンクをコピー</span><span data-lang-en>Copy link</span>';
+  const searchKey = escapeHtml(kanaNorm(
+    (p.name || '') + ' ' + (p.en || '') + ' ' + (CAT_LABEL[p.cat] || '') + ' ' + p.id.replace(/^pp_/, '').replace(/_/g, ' ')
+  ));
   return '' +
-    '<article class="pp-allp-card" id="product-' + escapeHtml(p.id) + '" data-product-id="' + escapeHtml(p.id) + '">' +
+    '<article class="pp-allp-card" id="product-' + escapeHtml(p.id) + '" data-product-id="' + escapeHtml(p.id) + '" data-search="' + searchKey + '">' +
       newBadge +
       imgHtml +
       '<h4 class="pp-allp-card__name">' + name + '</h4>' +
@@ -8187,7 +8381,7 @@ function openProductFromHash() {
   const det = el.querySelector('.pp-allp-card__details');
   if (det) det.open = true;
   setTimeout(() => {
-    try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { el.scrollIntoView(); }
+    jumpTo(el);
     notifyHeight();
   }, 60);
   return true;
@@ -8401,7 +8595,7 @@ function openEduArticle(it, scroll) {
   if (it.id) { try { history.replaceState(null, '', '#' + it.id); } catch (e) {} }
   if (scroll !== false) {
     setTimeout(() => {
-      try { it.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { it.scrollIntoView(); }
+      jumpTo(it);
       notifyHeight();
     }, 60);
   }
@@ -8517,6 +8711,67 @@ buildEduStructuredData();
 if (state.lang !== 'ja') { try { setLang(state.lang); } catch (e) {} }
 openEduFromHash();
 window.addEventListener('hashchange', openEduFromHash);
+
+/* ============================================
+   モバイル固定ボトムナビ (スタンドアロン時のみ)
+   競合の診断/ファインダー系アプリの標準導線。
+   iframe 埋め込み時は親サイトのナビを尊重して出さない。
+   ============================================ */
+function initBottomNav() {
+  let embedded = true;
+  try { embedded = (window.parent !== window); } catch (e) { embedded = true; }
+  if (embedded) return;
+  document.body.classList.add('pp-standalone');
+  const items = [
+    { t: 'top',         ico: '🩺', ja: '診断',   en: 'Check' },
+    { t: 'learn',       ico: '📖', ja: '学び',   en: 'Learn' },
+    { t: 'products',    ico: '🧴', ja: '製品',   en: 'Items' },
+    { t: 'supplements', ico: '💊', ja: 'サプリ', en: 'Supps' },
+    { t: '_search',     ico: '🔍', ja: '検索',   en: 'Search' }
+  ];
+  const nav = document.createElement('nav');
+  nav.className = 'pp-bottomnav';
+  nav.setAttribute('aria-label', 'クイックナビゲーション / Quick navigation');
+  items.forEach(it => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.dataset.bnTarget = it.t;
+    b.innerHTML = '<span class="pp-bottomnav__ico" aria-hidden="true">' + it.ico + '</span>' +
+      '<span data-lang-ja>' + it.ja + '</span><span data-lang-en>' + it.en + '</span>';
+    b.addEventListener('click', () => {
+      nav.querySelectorAll('button').forEach(x => x.classList.toggle('is-active', x === b));
+      if (it.t === '_search') {
+        // 検索ボックスそのものへジャンプしてフォーカス (パネル先頭だと画面外になる)
+        const result = document.getElementById('result');
+        if (result && !result.classList.contains('is-shown')) result.classList.add('is-resources');
+        setTimeout(() => {
+          const inp = document.getElementById('allpSearchInput');
+          if (!inp) { menuGo('products'); return; }
+          jumpTo(inp.closest('.pp-allp-search') || inp);
+          setTimeout(() => { try { inp.focus({ preventScroll: true }); } catch (e) { inp.focus(); } }, 350);
+        }, 80);
+      } else {
+        menuGo(it.t);
+      }
+    });
+    nav.appendChild(b);
+  });
+  document.body.appendChild(nav);
+}
+try { initBottomNav(); } catch (e) {}
+
+/* ?q=<keyword>: head の SearchAction に対応する着地動作。
+   カタログを開いて検索を適用済みの状態で表示する。 */
+if (state.productQuery) {
+  setTimeout(() => {
+    try {
+      menuGo('products');
+      const inp = document.getElementById('allpSearchInput');
+      if (inp) inp.value = state.productQuery;
+      applyProductSearch(state.productQuery);
+    } catch (e) {}
+  }, 150);
+}
 </script>
 </body>
 </html>
