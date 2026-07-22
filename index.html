@@ -38,17 +38,17 @@
 <meta property="og:site_name" content="PLUSH PUPPY JAPAN GROOMING PRODUCTS">
 <meta property="og:locale" content="ja_JP">
 <meta property="og:locale:alternate" content="en_US">
-<meta property="og:image" content="https://plush-puppy-coat-clinic.onrender.com/assets/icons/icon-512.png">
-<meta property="og:image:secure_url" content="https://plush-puppy-coat-clinic.onrender.com/assets/icons/icon-512.png">
+<meta property="og:image" content="https://plush-puppy-coat-clinic.onrender.com/assets/og-image.png">
+<meta property="og:image:secure_url" content="https://plush-puppy-coat-clinic.onrender.com/assets/og-image.png">
 <meta property="og:image:type" content="image/png">
-<meta property="og:image:width" content="512">
-<meta property="og:image:height" content="512">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Plush Puppy Japan — 被毛診断 ＆ コートの科学">
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="被毛診断 ＆ コートの科学 | Plush Puppy Japan">
 <meta name="twitter:description" content="愛犬の毛質に最適なケア製品をAI診断＋獣医師監修「コートの科学」で学べる、Plush Puppy Japan 公式の被毛診断サイト。">
-<meta name="twitter:image" content="https://plush-puppy-coat-clinic.onrender.com/assets/icons/icon-512.png">
+<meta name="twitter:image" content="https://plush-puppy-coat-clinic.onrender.com/assets/og-image.png">
 <meta name="twitter:image:alt" content="Plush Puppy Japan — 被毛診断 ＆ コートの科学">
 
 <title>被毛診断 ＆ コートの科学（獣医師監修） | PLUSH PUPPY JAPAN GROOMING PRODUCTS</title>
@@ -122,7 +122,9 @@
       "inLanguage": "ja",
       "primaryImageOfPage": {
         "@type": "ImageObject",
-        "url": "https://plush-puppy-coat-clinic.onrender.com/assets/icons/icon-512.png"
+        "url": "https://plush-puppy-coat-clinic.onrender.com/assets/og-image.png",
+        "width": 1200,
+        "height": 630
       },
       "breadcrumb": { "@id": "https://plush-puppy-coat-clinic.onrender.com/#breadcrumb" }
     },
@@ -2958,6 +2960,12 @@
     border-color: var(--pp-navy);
     box-shadow: 0 0 0 3px var(--pp-navy-soft);
   }
+  .pp-allp-search__count {
+    font-size: 12px;
+    color: var(--pp-text-muted);
+    margin: 8px 4px 0;
+  }
+  .pp-allp-search__count b { color: var(--pp-navy); font-size: 14px; }
   .pp-allp-search__empty {
     text-align: center;
     color: var(--pp-text-muted);
@@ -3047,6 +3055,57 @@
     color: #ffffff;
   }
   .pp-wizard-nav__next:active { background: var(--pp-navy-dark); }
+
+  /* ============================================
+     診断結果の共有ボタン (URLに回答を埋め込んで再現)
+     ============================================ */
+  .pp-share {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin: 18px 0 4px;
+    padding: 14px;
+    background: var(--pp-bg-soft);
+    border: 1px solid var(--pp-border-light);
+    border-radius: var(--radius-sm);
+  }
+  .pp-share__btn {
+    appearance: none;
+    -webkit-appearance: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--font-jp);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 11px 18px;
+    min-height: 44px;
+    border-radius: var(--radius-pill);
+    border: 1.5px solid var(--pp-navy);
+    background: #ffffff;
+    color: var(--pp-navy);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .pp-share__btn--primary {
+    background: var(--pp-navy);
+    color: #ffffff;
+  }
+  .pp-share__btn--primary:active { background: var(--pp-navy-dark); }
+  .pp-share__btn:not(.pp-share__btn--primary):hover { background: var(--pp-navy-soft); }
+  .pp-share__btn.is-copied {
+    background: var(--pp-orange);
+    border-color: var(--pp-orange);
+    color: #ffffff;
+  }
+  .pp-share__note {
+    flex-basis: 100%;
+    margin: 2px 0 0;
+    font-size: 11px;
+    color: var(--pp-text-muted);
+    line-height: 1.6;
+  }
 
   /* タップ遅延・ダブルタップズームの抑止 (モバイル全般の操作感向上) */
   button, a, label, select, input, summary { touch-action: manipulation; }
@@ -3574,6 +3633,22 @@
       </div>
 
       <div class="pp-tags" id="resultTags"></div>
+
+      <!-- 診断結果の共有: 回答をURLに埋め込み、家族・トリマーと共有できる -->
+      <div class="pp-share" id="resultShare">
+        <button type="button" class="pp-share__btn pp-share__btn--primary" id="shareNativeBtn">
+          <span aria-hidden="true">📤</span>
+          <span data-lang-ja>結果を共有</span><span data-lang-en>Share result</span>
+        </button>
+        <button type="button" class="pp-share__btn" id="shareCopyBtn">
+          <span aria-hidden="true">🔗</span>
+          <span data-lang-ja>共有リンクをコピー</span><span data-lang-en>Copy share link</span>
+        </button>
+        <p class="pp-share__note">
+          <span data-lang-ja>リンクを開くと同じ回答で診断結果が再現されます（家族やトリマーさんへの共有に）</span>
+          <span data-lang-en>Opening the link reproduces this result — share it with family or your groomer.</span>
+        </p>
+      </div>
 
       <div class="pp-assessment" id="resultAssessment"></div>
     </div>
@@ -8324,6 +8399,7 @@ function renderAllProductsCatalog() {
   h += '<div class="pp-allp-search">' +
     '<span class="pp-allp-search__ico" aria-hidden="true">🔍</span>' +
     '<input id="allpSearchInput" type="search" placeholder="' + searchPh + '" aria-label="' + (en ? 'Product search' : '製品検索') + '" autocomplete="off">' +
+    '<div class="pp-allp-search__count" id="allpSearchCount" hidden aria-live="polite"></div>' +
     '</div>' +
     '<div class="pp-allp-search__empty" id="allpSearchEmpty" hidden>' +
     '<span data-lang-ja>該当する製品が見つかりませんでした。別のキーワードをお試しください。</span>' +
@@ -8382,6 +8458,25 @@ function applyProductSearch(q) {
   });
   const empty = document.getElementById('allpSearchEmpty');
   if (empty) empty.hidden = visible > 0;
+  // ヒット件数の動的表示: 検索中は「n件中 m件を表示」、各カテゴリの点数も可視数に更新
+  const total = container.querySelectorAll('.pp-allp-card').length;
+  const countEl = document.getElementById('allpSearchCount');
+  if (countEl) {
+    if (norm) {
+      countEl.hidden = false;
+      countEl.innerHTML = state.lang === 'en'
+        ? 'Showing <b>' + visible + '</b> of ' + total + ' products'
+        : total + '製品中 <b>' + visible + '</b>件を表示中';
+    } else {
+      countEl.hidden = true;
+    }
+  }
+  container.querySelectorAll('.pp-allp-group').forEach(g => {
+    const cnt = g.querySelector('.pp-allp-group__count');
+    if (!cnt) return;
+    const vis = Array.from(g.querySelectorAll('.pp-allp-card')).filter(c => c.style.display !== 'none').length;
+    cnt.innerHTML = '<span data-lang-ja>' + vis + '点</span><span data-lang-en>' + vis + ' items</span>';
+  });
   try { notifyHeight(); } catch (e) {}
 }
 function renderAllProductsCard(p) {
@@ -8770,7 +8865,7 @@ function buildEduStructuredData() {
         author: author,
         reviewedBy: author,
         publisher: publisher,
-        image: pageBase + 'assets/icons/icon-512.png',
+        image: pageBase + 'assets/og-image.png',
         datePublished: datePublished,
         dateModified: dateModified
       });
@@ -8931,6 +9026,106 @@ function initMobileWizard() {
   catch (e) { try { mq.addListener(e2 => apply(e2.matches)); } catch (e3) {} }
 }
 try { initMobileWizard(); } catch (e) {}
+
+/* ============================================
+   診断結果の共有URL
+   回答を短いクエリに直列化し、リンクを開くと同じ結果を再現する。
+   例: ?r=1&b=maltese&a=adult&i=matting.oily&s=shine2.density3&g=daily
+   ============================================ */
+function buildShareUrl() {
+  const a = (state.answers && state.answers.scores) ? state.answers : collectAnswers();
+  const sp = new URLSearchParams();
+  sp.set('r', '1');
+  if (a.name && a.name !== '愛犬') sp.set('n', a.name);
+  if (a.breed) sp.set('b', a.breed);
+  if (a.age) sp.set('a', a.age);
+  if (a.color) sp.set('c', a.color);
+  if (a.goal && a.goal !== 'daily') sp.set('g', a.goal);
+  if (a.issues && a.issues.length) sp.set('i', a.issues.join('.'));
+  const sc = Object.keys(a.scores || {})
+    .filter(k => a.scores[k] !== 3) // 既定値(普通=3)は省略して短く
+    .map(k => k + a.scores[k]).join('.');
+  if (sc) sp.set('s', sc);
+  if (a.showDate) sp.set('sd', a.showDate);
+  if (state.lang === 'en') sp.set('lang', 'en');
+  let base;
+  try { base = (window.top && window.top.location && window.top.location.href) || location.href; }
+  catch (e) { base = location.href; }
+  return base.split('#')[0].split('?')[0] + '?' + sp.toString();
+}
+
+/* 共有URLの回答をフォームへ復元 */
+function applySharedAnswers(sp) {
+  const setVal = (id, v) => { const el = document.getElementById(id); if (el && v) el.value = v; };
+  setVal('dogName', sp.get('n'));
+  setVal('breed', sp.get('b'));
+  setVal('age', sp.get('a'));
+  setVal('color', sp.get('c'));
+  setVal('showDate', sp.get('sd'));
+  const goal = sp.get('g');
+  if (goal) {
+    const r = document.querySelector('input[name="goal"][value="' + goal.replace(/[^a-z_]/g, '') + '"]');
+    if (r) r.checked = true;
+  }
+  (sp.get('i') || '').split('.').filter(Boolean).forEach(key => {
+    const cb = document.querySelector('#conditionGroup input[data-issue="' + key.replace(/[^a-z_]/g, '') + '"]');
+    if (cb) cb.checked = true;
+  });
+  (sp.get('s') || '').split('.').filter(Boolean).forEach(pair => {
+    const m = pair.match(/^([a-z_]+)([1-5])$/);
+    if (!m) return;
+    const el = document.querySelector('[data-score="' + m[1] + '"]');
+    if (el) el.value = m[2];
+  });
+}
+
+function initResultShare() {
+  const nativeBtn = document.getElementById('shareNativeBtn');
+  const copyBtn = document.getElementById('shareCopyBtn');
+  if (nativeBtn) {
+    if (navigator.share) {
+      nativeBtn.addEventListener('click', () => {
+        const a = state.answers || {};
+        navigator.share({
+          title: '被毛診断結果 | Plush Puppy Japan',
+          text: (a.name || '愛犬') + (state.lang === 'en' ? "'s coat diagnosis result" : 'の被毛診断結果です'),
+          url: buildShareUrl()
+        }).catch(() => {});
+      });
+    } else {
+      nativeBtn.style.display = 'none'; // Web Share API 非対応 (主にPC) はコピーのみ
+    }
+  }
+  if (copyBtn) {
+    copyBtn.addEventListener('click', () => {
+      const url = buildShareUrl();
+      const done = () => {
+        copyBtn.classList.add('is-copied');
+        const orig = copyBtn.innerHTML;
+        copyBtn.textContent = state.lang === 'en' ? 'Copied!' : 'コピーしました';
+        setTimeout(() => { copyBtn.classList.remove('is-copied'); copyBtn.innerHTML = orig; }, 1800);
+      };
+      try { navigator.clipboard.writeText(url).then(done, () => fallbackCopy(url, done)); }
+      catch (e) { fallbackCopy(url, done); }
+    });
+  }
+}
+try { initResultShare(); } catch (e) {}
+
+/* 共有URLで開いた場合: 回答を復元して自動診断し、結果へスクロール */
+(function initSharedResult() {
+  try {
+    const sp = new URLSearchParams(location.search);
+    if (sp.get('r') !== '1') return;
+    applySharedAnswers(sp);
+    setTimeout(() => {
+      try {
+        runDiagnosis();
+        setTimeout(() => { try { jumpTo(document.getElementById('result')); } catch (e) {} }, 400);
+      } catch (e) {}
+    }, 250);
+  } catch (e) {}
+})();
 
 /* キーボード表示検知: 入力フォーカス中は body.pp-kb-open を付与
    (ボトムナビを隠して誤タップ・画面圧迫を防ぐ) */
