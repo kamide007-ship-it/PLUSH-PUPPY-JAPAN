@@ -175,28 +175,41 @@
 <!-- Chart.js (CDN多段フォールバック対応)
      優先順位: jsdelivr → unpkg → ローカル(assets/vendor/) -->
 <script>
-  (function loadChartJS() {
-    var sources = [
-      'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js',
-      'https://unpkg.com/chart.js@4.4.0/dist/chart.umd.min.js',
-      'assets/vendor/chart.umd.min.js'
-    ];
-    var idx = 0;
-    function tryLoad() {
-      if (idx >= sources.length) {
-        console.warn('Chart.js could not be loaded from any source. Radar chart will be unavailable.');
-        return;
-      }
-      var s = document.createElement('script');
-      s.src = sources[idx++];
-      s.async = false;
-      s.onerror = function () {
-        console.warn('Chart.js load failed:', s.src);
+  /* Chart.js はレーダーチャート(診断結果)でのみ必要なため、初回診断時に
+     オンデマンドで読み込む。モバイル回線での初期表示を軽くする。
+     ensureChartJS() は何度呼んでも1回だけロードする Promise を返す。 */
+  window.ensureChartJS = (function () {
+    var promise = null;
+    return function ensureChartJS() {
+      if (window.Chart) return Promise.resolve();
+      if (promise) return promise;
+      promise = new Promise(function (resolve) {
+        var sources = [
+          'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js',
+          'https://unpkg.com/chart.js@4.4.0/dist/chart.umd.min.js',
+          'assets/vendor/chart.umd.min.js'
+        ];
+        var idx = 0;
+        function tryLoad() {
+          if (idx >= sources.length) {
+            console.warn('Chart.js could not be loaded from any source. Radar chart will be unavailable.');
+            resolve(); // 解決して呼び出し側のフォールバック表示に任せる
+            return;
+          }
+          var s = document.createElement('script');
+          s.src = sources[idx++];
+          s.async = false;
+          s.onload = function () { resolve(); };
+          s.onerror = function () {
+            console.warn('Chart.js load failed:', s.src);
+            tryLoad();
+          };
+          document.head.appendChild(s);
+        }
         tryLoad();
-      };
-      document.head.appendChild(s);
-    }
-    tryLoad();
+      });
+      return promise;
+    };
   })();
 </script>
 
@@ -2956,6 +2969,92 @@
   }
 
   /* ============================================
+     診断フォームのモバイル・ステップウィザード
+     競合ファインダー(Royal Canin等)の1画面1ステップUXに合わせ、
+     モバイルでは 01→02→03 を順に表示。入力値は非表示中も保持される。
+     .pp-wizard クラスは JS がモバイル幅でのみ付与する。
+     ============================================ */
+  .pp-wizard-progress, .pp-wizard-nav { display: none; }
+  .pp-wizard .pp-wizard-progress {
+    display: block;
+    margin: 0 0 20px;
+  }
+  .pp-wizard-progress__label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--pp-navy);
+    margin-bottom: 8px;
+  }
+  .pp-wizard-progress__label small {
+    font-weight: 500;
+    color: var(--pp-text-muted);
+  }
+  .pp-wizard-progress__track {
+    height: 6px;
+    background: var(--pp-border-light);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .pp-wizard-progress__fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--pp-navy), var(--pp-orange));
+    border-radius: 999px;
+    transition: width 0.3s ease;
+  }
+  .pp-wizard .pp-section { display: none; }
+  .pp-wizard .pp-section.is-step-active {
+    display: block;
+    animation: ppWizardIn 0.25s ease;
+  }
+  @keyframes ppWizardIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+  .pp-wizard .pp-submit { display: none; }
+  .pp-wizard.is-last-step .pp-submit { display: block; }
+  .pp-wizard .pp-wizard-nav {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .pp-wizard.is-last-step .pp-wizard-nav .pp-wizard-nav__next { display: none; }
+  .pp-wizard-nav button {
+    appearance: none;
+    -webkit-appearance: none;
+    font-family: var(--font-jp);
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: var(--radius-pill);
+    padding: 14px 18px;
+    cursor: pointer;
+    min-height: 48px;
+    transition: background 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+  }
+  .pp-wizard-nav__back {
+    flex: 1;
+    background: #ffffff;
+    border: 1.5px solid var(--pp-border);
+    color: var(--pp-navy);
+  }
+  .pp-wizard-nav__back:disabled { opacity: 0.35; cursor: default; }
+  .pp-wizard-nav__next {
+    flex: 2;
+    background: var(--pp-navy);
+    border: 1.5px solid var(--pp-navy);
+    color: #ffffff;
+  }
+  .pp-wizard-nav__next:active { background: var(--pp-navy-dark); }
+
+  /* タップ遅延・ダブルタップズームの抑止 (モバイル全般の操作感向上) */
+  button, a, label, select, input, summary { touch-action: manipulation; }
+
+  /* キーボード表示中(入力フォーカス中)はボトムナビを隠して誤タップと圧迫を防ぐ */
+  body.pp-kb-open .pp-bottomnav { display: none !important; }
+
+  /* ============================================
      モバイル固定ボトムナビ (スタンドアロン表示時のみ)
      縦長ページの主要導線 — 競合アプリの標準パターン
      埋め込み(iframe)時は親サイトのUIを尊重して出さない
@@ -3103,7 +3202,7 @@
   <!-- ============================================
        FORM (1ページ統合・任意入力対応)
        ============================================ -->
-  <section class="pp-panel">
+  <section class="pp-panel" id="diagnosisFormPanel">
     <p class="pp-form-note">
       <span data-lang-ja><strong>入力は任意です。</strong>
       わかる項目だけご入力ください。詳しいほどパーソナライズされた診断になりますが、
@@ -6851,7 +6950,8 @@ function runDiagnosis() {
   state.coat = coat;
   const radar = computeRadarScores(a);
   const prev = findPrevious(a.name);
-  drawRadar(radar, prev);
+  // Chart.js はオンデマンド読み込み (初回のみ取得。取得失敗時は drawRadar 内のフォールバック表示)
+  ensureChartJS().then(() => { try { drawRadar(radar, prev); notifyHeight(); } catch (e) {} });
   renderCompareNote(prev);
 
   renderAssessment(a, coat);
@@ -8759,6 +8859,95 @@ function initBottomNav() {
   document.body.appendChild(nav);
 }
 try { initBottomNav(); } catch (e) {}
+
+/* ============================================
+   診断フォームのモバイル・ステップウィザード
+   モバイル幅でのみ有効化。デスクトップは従来の一覧フォームのまま。
+   非表示セクションの入力値は保持されるため runDiagnosis() に影響なし。
+   ============================================ */
+function initMobileWizard() {
+  const panel = document.getElementById('diagnosisFormPanel');
+  if (!panel) return;
+  const sections = Array.from(panel.querySelectorAll(':scope > .pp-section'));
+  if (sections.length < 2) return;
+  const total = sections.length;
+  let step = 0;
+
+  // 進捗ヘッダー
+  const prog = document.createElement('div');
+  prog.className = 'pp-wizard-progress';
+  prog.innerHTML =
+    '<div class="pp-wizard-progress__label">' +
+      '<span><span data-lang-ja>ステップ <b class="pp-wizard-step-now">1</b> / ' + total + '</span>' +
+      '<span data-lang-en>Step <b class="pp-wizard-step-now-en">1</b> of ' + total + '</span></span>' +
+      '<small><span data-lang-ja>入力は任意・あとで戻れます</span><span data-lang-en>All optional — you can go back</span></small>' +
+    '</div>' +
+    '<div class="pp-wizard-progress__track"><div class="pp-wizard-progress__fill" style="width:' + (100 / total) + '%"></div></div>';
+  panel.insertBefore(prog, sections[0]);
+
+  // 戻る / 次へ ナビ
+  const nav = document.createElement('div');
+  nav.className = 'pp-wizard-nav';
+  nav.innerHTML =
+    '<button type="button" class="pp-wizard-nav__back" disabled>' +
+      '<span data-lang-ja>← 戻る</span><span data-lang-en>← Back</span></button>' +
+    '<button type="button" class="pp-wizard-nav__next">' +
+      '<span data-lang-ja>次へ →</span><span data-lang-en>Next →</span></button>';
+  const submit = panel.querySelector(':scope > .pp-submit');
+  panel.insertBefore(nav, submit || null);
+
+  const backBtn = nav.querySelector('.pp-wizard-nav__back');
+  const nextBtn = nav.querySelector('.pp-wizard-nav__next');
+  const fill = prog.querySelector('.pp-wizard-progress__fill');
+
+  function render() {
+    sections.forEach((s, i) => s.classList.toggle('is-step-active', i === step));
+    panel.classList.toggle('is-last-step', step === total - 1);
+    fill.style.width = (((step + 1) / total) * 100) + '%';
+    const nowJa = prog.querySelector('.pp-wizard-step-now');
+    const nowEn = prog.querySelector('.pp-wizard-step-now-en');
+    if (nowJa) nowJa.textContent = step + 1;
+    if (nowEn) nowEn.textContent = step + 1;
+    backBtn.disabled = step === 0;
+  }
+  function goTo(n) {
+    step = Math.max(0, Math.min(total - 1, n));
+    render();
+    // ステップ切替後はフォーム先頭へ (短距離なので smooth)
+    try { jumpTo(panel); } catch (e) {}
+    try { notifyHeight(); } catch (e) {}
+  }
+  nextBtn.addEventListener('click', () => goTo(step + 1));
+  backBtn.addEventListener('click', () => goTo(step - 1));
+
+  // モバイル幅でのみウィザード化 (回転・リサイズにも追従)
+  const mq = window.matchMedia('(max-width: 768px)');
+  function apply(active) {
+    panel.classList.toggle('pp-wizard', !!active);
+    if (active) render();
+  }
+  apply(mq.matches);
+  try { mq.addEventListener('change', e => apply(e.matches)); }
+  catch (e) { try { mq.addListener(e2 => apply(e2.matches)); } catch (e3) {} }
+}
+try { initMobileWizard(); } catch (e) {}
+
+/* キーボード表示検知: 入力フォーカス中は body.pp-kb-open を付与
+   (ボトムナビを隠して誤タップ・画面圧迫を防ぐ) */
+document.addEventListener('focusin', e => {
+  const t = e.target;
+  if (t && t.matches && t.matches('input, select, textarea')) {
+    document.body.classList.add('pp-kb-open');
+  }
+});
+document.addEventListener('focusout', () => {
+  setTimeout(() => {
+    const a = document.activeElement;
+    if (!a || !a.matches || !a.matches('input, select, textarea')) {
+      document.body.classList.remove('pp-kb-open');
+    }
+  }, 60);
+});
 
 /* ?q=<keyword>: head の SearchAction に対応する着地動作。
    カタログを開いて検索を適用済みの状態で表示する。 */
