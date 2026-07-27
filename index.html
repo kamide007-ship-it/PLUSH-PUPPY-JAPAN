@@ -230,11 +230,16 @@
     /* Accent - Plush Puppy Orange */
     --pp-orange: #ef9a11;
     --pp-orange-dark: #d68910;
+    /* 小さい文字にオレンジを使う場合の代替色。ブランドの #ef9a11 は
+       白背景で 2.26:1 しかなく本文サイズでは読めないため、文字色には
+       こちらを使う (白背景で 5.28:1)。背景・罫線は --pp-orange のまま。 */
+    --pp-orange-text: #96600a;
 
     /* Neutrals */
     --pp-text: #333333;
     --pp-text-light: #666666;
-    --pp-text-muted: #999999;
+    /* 4.54:1 (旧 #999999 は 2.85:1 で WCAG AA 未達) */
+    --pp-text-muted: #767676;
     --pp-white: #ffffff;
     --pp-bg-soft: #f8f9fb;
     --pp-border: #e5e7eb;
@@ -304,11 +309,70 @@
     background: none;
     border: none;
   }
-  button:focus,
-  input:focus,
-  select:focus {
-    outline: 2px solid transparent;
+  /* キーボード操作時のみフォーカスリングを表示する。
+     以前は全要素の outline を透明にしていたため、キーボード利用者が
+     現在どこを操作しているか一切わからない状態だった (WCAG 2.4.7)。 */
+  :where(button, input, select, textarea, a, summary, [tabindex]):focus-visible {
+    outline: 3px solid var(--pp-navy);
     outline-offset: 2px;
+    border-radius: 4px;
+    /* 多くの要素が transition:all を持つため、指定しないと outline まで
+       アニメーションし、フォーカスリングが 0.2〜0.3 秒かけて現れる。
+       フォーカス位置は即座に分かる必要があるので待ち時間をなくす。 */
+    transition-property: background-color, color, border-color, box-shadow, transform;
+  }
+  /* チェックボックス/ラジオは本体が opacity:0 のため、見た目のカードに反映する */
+  .pp-check input:focus-visible + .pp-check__body {
+    outline: 3px solid var(--pp-navy);
+    outline-offset: 2px;
+  }
+  /* 濃色背景の上ではリングを白にして視認性を確保 */
+  .pp-bottomnav button:focus-visible,
+  .pp-btn--primary:focus-visible,
+  .pp-share__btn--primary:focus-visible,
+  .pp-wizard-nav__next:focus-visible {
+    outline-color: var(--pp-orange);
+  }
+
+  /* 動きを減らす設定を尊重する (前庭障害・乗り物酔い対策 / WCAG 2.3.3) */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* キーボード利用者が長大なコンテンツを飛ばせるようにする */
+  .pp-skip {
+    position: absolute;
+    left: 12px;
+    top: -60px;
+    z-index: 200;
+    background: var(--pp-navy);
+    color: #ffffff;
+    font-family: var(--font-jp);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 12px 18px;
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    text-decoration: none;
+    transition: top 0.15s ease;
+  }
+  .pp-skip:focus { top: 0; }
+
+  /* スクリーンリーダー専用 (視覚的には隠すが読み上げ対象に残す) */
+  .pp-sr-only {
+    position: absolute !important;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
   }
   /* select の矢印を全ブラウザで統一表示 */
   select.pp-select {
@@ -909,7 +973,9 @@
     border-radius: var(--radius-pill);
     border: none;
     cursor: pointer;
-    transition: all 0.2s;
+    /* transition:all は outline も対象になり、フォーカスリングが
+       遅れて現れてしまうため、animate する対象を明示する */
+    transition: background 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s;
     letter-spacing: 0.05em;
     line-height: 1.4;
     display: inline-flex;
@@ -2982,11 +3048,32 @@
      モバイルでは 01→02→03 を順に表示。入力値は非表示中も保持される。
      .pp-wizard クラスは JS がモバイル幅でのみ付与する。
      ============================================ */
-  .pp-wizard-progress, .pp-wizard-nav { display: none; }
-  .pp-wizard .pp-wizard-progress {
+  /* 所要時間・ステップ数の事前提示 */
+  .pp-form-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 14px;
+  }
+  .pp-form-meta__chip {
+    display: inline-flex;
+    align-items: center;
+    background: var(--pp-navy-soft);
+    color: var(--pp-navy);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: var(--radius-pill);
+  }
+
+  .pp-wizard-nav { display: none; }
+  /* 進捗表示はデスクトップでも出す。以前はモバイル限定で、PC では
+     全項目が1画面に並ぶだけで「あとどれくらいか」の手がかりがなかった。 */
+  .pp-wizard-progress {
     display: block;
     margin: 0 0 20px;
   }
+  .pp-wizard .pp-wizard-progress { margin: 0 0 20px; }
   .pp-wizard-progress__label {
     display: flex;
     justify-content: space-between;
@@ -3219,6 +3306,9 @@
 </head>
 
 <body data-lang="ja">
+<a class="pp-skip" href="#diagnosisFormPanel"><span data-lang-ja>診断フォームへスキップ</span><span data-lang-en>Skip to the diagnosis form</span></a>
+<!-- 動的な変化 (診断完了・検索結果など) を支援技術へ伝える共通ライブリージョン -->
+<div id="ppLiveRegion" class="pp-sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
 
 <!-- JavaScript無効時のフォールバック -->
 <noscript>
@@ -3251,8 +3341,10 @@
       <small><span data-lang-ja>被毛診断</span><span data-lang-en>Coat Diagnosis</span></small>
     </div>
     <div class="pp-lang" role="group" aria-label="Language">
-      <button type="button" data-set-lang="ja" class="is-active" onclick="setLang('ja')">日本語</button>
-      <button type="button" data-set-lang="en" onclick="setLang('en')">EN</button>
+      <!-- aria-pressed の初期値を書いておく。既定の日本語では setLang() が
+           起動時に走らないため、JS 側だけでは初期状態が設定されない。 -->
+      <button type="button" data-set-lang="ja" class="is-active" aria-pressed="true" onclick="setLang('ja')" lang="ja">日本語</button>
+      <button type="button" data-set-lang="en" aria-pressed="false" onclick="setLang('en')" lang="en">EN</button>
     </div>
     <div class="pp-menu">
       <button type="button" class="pp-menu__btn" id="menuBtn" aria-label="メニュー" aria-haspopup="true" aria-expanded="false" onclick="toggleMenu()">
@@ -3295,13 +3387,24 @@
        FORM (1ページ統合・任意入力対応)
        ============================================ -->
   <section class="pp-panel" id="diagnosisFormPanel">
+    <!-- 所要時間・問数の事前提示。日本の診断コンテンツの慣例で、
+         「どれくらいかかるか」が分かると離脱が減る。 -->
+    <p class="pp-form-meta">
+      <span class="pp-form-meta__chip"><span data-lang-ja>全3ステップ</span><span data-lang-en>3 steps</span></span>
+      <span class="pp-form-meta__chip"><span data-lang-ja>約2分</span><span data-lang-en>about 2 min</span></span>
+      <span class="pp-form-meta__chip"><span data-lang-ja>入力は任意</span><span data-lang-en>all optional</span></span>
+    </p>
     <p class="pp-form-note">
       <span data-lang-ja><strong>入力は任意です。</strong>
       わかる項目だけご入力ください。詳しいほどパーソナライズされた診断になりますが、
-      何も選ばなくても基本的な推奨を表示します。</span>
+      何も選ばなくても基本的な推奨を表示します。<br>
+      <strong>迷ったら「わからない / 選ばない」のままで大丈夫です。</strong>
+      入力内容はこの端末に自動保存され、次に開いたときに復元されます。</span>
       <span data-lang-en><strong>All fields are optional.</strong>
       Fill in only what you know. The more detail you provide, the more personalised the result —
-      but even with nothing selected we'll show general recommendations.</span>
+      but even with nothing selected we'll show general recommendations.<br>
+      <strong>If you're unsure, just leave "Not sure / skip" selected.</strong>
+      Your answers are saved on this device and restored next time.</span>
     </p>
 
     <!-- セクション 01 プロフィール -->
@@ -3434,12 +3537,12 @@
       <div class="pp-section-head">
         <span class="pp-section-num">02</span>
         <div>
-          <h2 class="pp-section-h"><span data-lang-ja>現在のコート状態</span><span data-lang-en>Current Coat Condition</span></h2>
+          <h2 class="pp-section-h" id="conditionGroupLabel"><span data-lang-ja>現在のコート状態</span><span data-lang-en>Current Coat Condition</span></h2>
           <p class="pp-section-sub"><span data-lang-ja>Coat Condition (複数選択可)</span><span data-lang-en>Coat Condition (select all that apply)</span></p>
         </div>
       </div>
 
-      <div class="pp-check-group" id="conditionGroup">
+      <div class="pp-check-group" id="conditionGroup" role="group" aria-labelledby="conditionGroupLabel">
         <label class="pp-check">
           <input type="checkbox" data-issue="low_shine">
           <div class="pp-check__body">
@@ -3531,8 +3634,8 @@
 
       <div class="pp-grid-2">
         <div class="pp-field">
-          <label class="pp-field__label"><span data-lang-ja>艶 </span><span class="pp-field__label-en">Shine</span></label>
-          <select class="pp-select" data-score="shine">
+          <label class="pp-field__label" for="scoreShine"><span data-lang-ja>艶 </span><span class="pp-field__label-en">Shine</span></label>
+          <select class="pp-select" id="scoreShine" data-score="shine">
             <option value="2" data-en="Lacking">物足りない</option>
             <option value="3" selected data-en="Normal">普通</option>
             <option value="4" data-en="Good">良好</option>
@@ -3540,8 +3643,8 @@
           </select>
         </div>
         <div class="pp-field">
-          <label class="pp-field__label"><span data-lang-ja>密度・毛量 </span><span class="pp-field__label-en">Density</span></label>
-          <select class="pp-select" data-score="density">
+          <label class="pp-field__label" for="scoreDensity"><span data-lang-ja>密度・毛量 </span><span class="pp-field__label-en">Density</span></label>
+          <select class="pp-select" id="scoreDensity" data-score="density">
             <option value="2" data-en="Sparse">少なめ</option>
             <option value="3" selected data-en="Normal">普通</option>
             <option value="4" data-en="Dense">多い</option>
@@ -3549,8 +3652,8 @@
           </select>
         </div>
         <div class="pp-field">
-          <label class="pp-field__label"><span data-lang-ja>水分・しっとり感 </span><span class="pp-field__label-en">Moisture</span></label>
-          <select class="pp-select" data-score="moisture">
+          <label class="pp-field__label" for="scoreMoisture"><span data-lang-ja>水分・しっとり感 </span><span class="pp-field__label-en">Moisture</span></label>
+          <select class="pp-select" id="scoreMoisture" data-score="moisture">
             <option value="2" data-en="Dry">乾燥気味</option>
             <option value="3" selected data-en="Normal">普通</option>
             <option value="4" data-en="Moist">しっとり</option>
@@ -3558,8 +3661,8 @@
           </select>
         </div>
         <div class="pp-field">
-          <label class="pp-field__label"><span data-lang-ja>ハリ・コシ </span><span class="pp-field__label-en">Elasticity</span></label>
-          <select class="pp-select" data-score="elasticity">
+          <label class="pp-field__label" for="scoreElasticity"><span data-lang-ja>ハリ・コシ </span><span class="pp-field__label-en">Elasticity</span></label>
+          <select class="pp-select" id="scoreElasticity" data-score="elasticity">
             <option value="2" data-en="Weak">弱め</option>
             <option value="3" selected data-en="Normal">普通</option>
             <option value="4" data-en="Firm">しっかり</option>
@@ -3574,12 +3677,12 @@
       <div class="pp-section-head">
         <span class="pp-section-num">03</span>
         <div>
-          <h2 class="pp-section-h"><span data-lang-ja>ケアの目的</span><span data-lang-en>Care Goal</span></h2>
+          <h2 class="pp-section-h" id="goalGroupLabel"><span data-lang-ja>ケアの目的</span><span data-lang-en>Care Goal</span></h2>
           <p class="pp-section-sub">Care Goal</p>
         </div>
       </div>
 
-      <div class="pp-check-group" id="goalGroup">
+      <div class="pp-check-group" id="goalGroup" role="group" aria-labelledby="goalGroupLabel">
         <label class="pp-check">
           <input type="radio" name="goal" value="daily" checked>
           <div class="pp-check__body">
@@ -3631,17 +3734,17 @@
   <!-- ============================================
        RESULT
        ============================================ -->
-  <section class="pp-result" id="result">
+  <section class="pp-result" id="result" tabindex="-1" aria-labelledby="resultHeading">
 
     <div class="pp-panel">
       <div class="pp-result__header">
-        <span class="pp-result__type" id="resultCoatType">SILKY COAT</span>
-        <h2 class="pp-result__title">Coat Diagnosis Result</h2>
+        <span class="pp-result__type" id="resultCoatType" lang="en">SILKY COAT</span>
+        <h2 class="pp-result__title" id="resultHeading" lang="en">Coat Diagnosis Result</h2>
         <p class="pp-result__date" id="resultDate"></p>
       </div>
 
       <div class="pp-chart-wrap">
-        <canvas id="radar"></canvas>
+        <canvas id="radar" role="img" aria-label="被毛コンディションのレーダーチャート"></canvas>
       </div>
       <p class="pp-chart-legend">Current Condition Assessment</p>
       <p class="pp-chart-compare" id="radarCompare" style="display:none;"></p>
@@ -3690,7 +3793,7 @@
     <div class="pp-panel">
       <div class="pp-section-title" style="margin-top:0;">
         <div class="pp-section-title__en">Recommended Products</div>
-        <div class="pp-section-title__jp">あなたの愛犬専用ケアプログラム</div>
+        <h2 class="pp-section-title__jp">あなたの愛犬専用ケアプログラム</h2>
       </div>
       <div id="programSummary"></div>
       <div class="pp-products" id="productList"></div>
@@ -3700,7 +3803,7 @@
     <div class="pp-panel" id="showScheduleSection" style="display:none;">
       <div class="pp-section-title" style="margin-top:0;">
         <div class="pp-section-title__en">Show Preparation Program</div>
-        <div class="pp-section-title__jp">ショー対策スケジュール</div>
+        <h2 class="pp-section-title__jp">ショー対策スケジュール</h2>
       </div>
       <div class="pp-schedule" id="showSchedule"></div>
     </div>
@@ -3709,7 +3812,7 @@
     <div class="pp-panel pp-panel--resource" id="supplementPanel">
       <div class="pp-section-title" style="margin-top:0;">
         <div class="pp-section-title__en">Inner Care Supplements</div>
-        <div class="pp-section-title__jp">内側からのケア・サプリメント</div>
+        <h2 class="pp-section-title__jp">内側からのケア・サプリメント</h2>
       </div>
 
       <div class="pp-supp-intro">
@@ -3778,7 +3881,7 @@
       </div>
 
       <!-- 補足成分 -->
-      <h5 class="pp-supp-sub-title"><span data-lang-ja>愛犬の状態に応じた追加サポート（CanineVet）</span><span data-lang-en>Targeted inner support by condition (CanineVet)</span></h5>
+      <h4 class="pp-supp-sub-title"><span data-lang-ja>愛犬の状態に応じた追加サポート（CanineVet）</span><span data-lang-en>Targeted inner support by condition (CanineVet)</span></h4>
       <div class="pp-supp-additional" id="supplementIngredients"></div>
 
       <!-- 大型バナー -->
@@ -3806,7 +3909,7 @@
     <div class="pp-panel pp-panel--resource" id="learnPanel">
       <div class="pp-section-title" style="margin-top:0;">
         <div class="pp-section-title__en">Reference &amp; Learning</div>
-        <div class="pp-section-title__jp">コートの科学 — 学びの場</div>
+        <h2 class="pp-section-title__jp">コートの科学 — 学びの場</h2>
       </div>
       <p class="pp-edu__lead">
         <span data-lang-ja>愛犬の被毛ケアを「なぜ」から理解するための、エビデンスに基づく基礎知識です。各項目をタップ／クリックすると読めます。</span>
@@ -5946,7 +6049,7 @@
     <div class="pp-panel pp-panel--resource" id="guidePanel">
       <div class="pp-section-title" style="margin-top:0;">
         <div class="pp-section-title__en">Product Guide</div>
-        <div class="pp-section-title__jp">製品 使い分けガイド（全製品）</div>
+        <h2 class="pp-section-title__jp">製品 使い分けガイド（全製品）</h2>
       </div>
       <p class="pp-guide__lead"><span data-lang-ja>シャンプー・コンディショナー／トリートメント・フィニッシング（スプレー／クリーム／パウダー）・ブラシまで、<strong>全製品</strong>を「用途」と「向くコートタイプ」で一覧化しました。迷ったときの早見表としてご活用ください。</span><span data-lang-en>From shampoo and conditioner/treatment to finishing (spray/cream/powder) and brushes — <strong>every product</strong>, listed by purpose and the coat types it suits. Use it as a quick reference.</span></p>
       <div id="productGuide"></div>
@@ -5956,7 +6059,7 @@
     <div class="pp-panel pp-panel--resource" id="allProductsPanel">
       <div class="pp-section-title" style="margin-top:0;">
         <div class="pp-section-title__en">Explore All Products</div>
-        <div class="pp-section-title__jp">全製品ラインナップ</div>
+        <h2 class="pp-section-title__jp">全製品ラインナップ</h2>
       </div>
       <p style="text-align:center; color:var(--pp-text-light); font-size:14px; max-width:560px; margin:0 auto 28px;">
         <span data-lang-ja>診断結果に表示されていない製品もあります。<br>
@@ -6797,7 +6900,9 @@ function setLang(lang) {
   document.body.setAttribute('data-lang', state.lang);
   try { document.documentElement.lang = state.lang; } catch (e) {}
   document.querySelectorAll('.pp-lang button').forEach(b => {
-    b.classList.toggle('is-active', b.getAttribute('data-set-lang') === state.lang);
+    const on = b.getAttribute('data-set-lang') === state.lang;
+    b.classList.toggle('is-active', on);
+    b.setAttribute('aria-pressed', String(on));
   });
   // <select> の option を data-en があれば切替
   document.querySelectorAll('select option').forEach(o => {
@@ -6841,6 +6946,13 @@ function setLang(lang) {
     try { renderProducts(state.picks); } catch (e) {}
     try { renderProgramSummary(state.picks); } catch (e) {}
     if (state.answers.goal === 'show_prep') { try { renderSchedule(state.answers.showDate, state.coat); } catch (e) {} }
+    // レーダーチャートの軸ラベル・凡例も言語に追従させる (以前は日本語のまま残っていた)
+    try {
+      const r = computeRadarScores(state.answers);
+      const prev = findPrevious(state.answers.name);
+      if (window.Chart) drawRadar(r, prev); else updateRadarAria(r);
+      renderCompareNote(prev);
+    } catch (e) {}
   }
   // 静的な Plush Puppy Japan リンクは英語版でオーストラリア本社へ
   document.querySelectorAll('a[href]').forEach(a => {
@@ -6854,11 +6966,18 @@ function setLang(lang) {
   setTimeout(notifyHeight, 60);
 }
 
-/* Show date field toggle (ショー準備選択時のみ表示) */
+/* Show date field toggle (ショー準備選択時のみ表示)
+   共有URL・下書き復元では .checked を代入するだけで change が発火しないため、
+   表示切替は関数に切り出して復元処理からも直接呼べるようにする。 */
+function syncShowDateField() {
+  const el = document.getElementById('showDateField');
+  if (!el) return;
+  const goal = document.querySelector('input[name="goal"]:checked');
+  el.style.display = (goal && goal.value === 'show_prep') ? 'block' : 'none';
+}
 document.querySelectorAll('input[name="goal"]').forEach(r => {
-  r.addEventListener('change', e => {
-    document.getElementById('showDateField').style.display =
-      e.target.value === 'show_prep' ? 'block' : 'none';
+  r.addEventListener('change', () => {
+    syncShowDateField();
     notifyHeight();
   });
 });
@@ -7093,8 +7212,38 @@ function runDiagnosis() {
   renderSupplements(a);
 
   // 結果セクションへスクロール (Safari古い版対応)
-  setTimeout(() => { smoothScrollTo(resultEl); }, 100);
+  setTimeout(() => {
+    smoothScrollTo(resultEl);
+    // 視覚的なスクロールだけでは、スクリーンリーダー利用者に「診断が
+    // 終わって結果が出た」ことが一切伝わらない。フォーカスを結果へ移し、
+    // ライブリージョンでも結果の要点を読み上げる。
+    try { resultEl.focus({ preventScroll: true }); } catch (e) {}
+    announceResult(a, coat);
+  }, 100);
   setTimeout(notifyHeight, 800);
+}
+
+/* 支援技術向けの結果アナウンス */
+function announceResult(a, coat) {
+  const live = document.getElementById('ppLiveRegion');
+  if (!live) return;
+  const n = a && a.name ? a.name : '';
+  live.textContent = state.lang === 'en'
+    ? 'Diagnosis complete. ' + (n ? n + ': ' : '') + coatLabel(coat) + '. Recommended products are shown below.'
+    : '診断が完了しました。' + (n ? n + 'の' : '') + 'コートタイプは' + coatLabel(coat) + 'です。おすすめ製品を下に表示しています。';
+}
+
+/* レーダーチャートは canvas なので読み上げできない。同じ数値を
+   aria-label に反映し、代替テキストとして提供する。 */
+function updateRadarAria(r) {
+  const c = document.getElementById('radar');
+  if (!c || !r) return;
+  const en = state.lang === 'en';
+  const axes = en
+    ? [['Shine', r.shine], ['Density', r.density], ['Moisture', r.moisture], ['Elasticity', r.elasticity], ['Volume', r.volume], ['Low damage', r.durability]]
+    : [['艶', r.shine], ['密度', r.density], ['水分', r.moisture], ['ハリ', r.elasticity], ['毛量', r.volume], ['ダメージの少なさ', r.durability]];
+  const body = axes.map(x => x[0] + ' ' + x[1] + '/5').join('、');
+  c.setAttribute('aria-label', (en ? 'Coat condition radar chart: ' : '被毛コンディションのレーダーチャート: ') + body);
 }
 
 /* クロスブラウザ対応のスムーズスクロール
@@ -7238,8 +7387,9 @@ function drawRadar(r, prev) {
         '<div style="display:flex;align-items:center;justify-content:center;' +
         'height:100%;min-height:300px;padding:30px;color:#666;text-align:center;' +
         'border:1px dashed #e5e7eb;border-radius:8px;font-size:13px;">' +
-        'チャートを表示できません。<br>' +
-        'インターネット接続をご確認のうえ、ページを再読み込みしてください。' +
+        (state.lang === 'en'
+          ? 'The chart could not be displayed.<br>Check your connection and reload the page.'
+          : 'チャートを表示できません。<br>インターネット接続をご確認のうえ、ページを再読み込みしてください。') +
         '</div>';
     }
     return;
@@ -7249,8 +7399,10 @@ function drawRadar(r, prev) {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (radarChart) radarChart.destroy();
+    const en = state.lang === 'en';
+    updateRadarAria(r);
     const datasets = [{
-      label: '今回',
+      label: en ? 'This time' : '今回',
       data: [r.shine, r.density, r.moisture, r.elasticity, r.volume, r.durability],
       backgroundColor: 'rgba(67, 86, 159, 0.15)',
       borderColor: '#43569f',
@@ -7264,7 +7416,7 @@ function drawRadar(r, prev) {
     if (prev && prev.radar) {
       const pr = prev.radar;
       datasets.push({
-        label: '前回',
+        label: en ? 'Previous' : '前回',
         data: [pr.shine, pr.density, pr.moisture, pr.elasticity, pr.volume, pr.durability],
         backgroundColor: 'transparent',
         borderColor: '#b8bcc9',
@@ -7280,7 +7432,9 @@ function drawRadar(r, prev) {
     radarChart = new Chart(ctx, {
       type: 'radar',
       data: {
-        labels: ['艶 Shine', '密度 Density', '水分 Moisture', 'ハリ Elasticity', '毛量 Volume', 'ダメージ少 Durability'],
+        labels: en
+          ? ['Shine', 'Density', 'Moisture', 'Elasticity', 'Volume', 'Durability']
+          : ['艶', '密度', '水分', 'ハリ', '毛量', 'ダメージ少'],
         datasets: datasets
       },
       options: {
@@ -7424,6 +7578,7 @@ function applyDraft(d) {
   if (d.goal) {
     const r = document.querySelector('input[name="goal"][value="' + String(d.goal).replace(/[^a-z_]/g, '') + '"]');
     if (r) r.checked = true;
+    try { syncShowDateField(); } catch (e) {}
   }
   (d.issues || []).forEach(k => {
     const cb = document.querySelector('#conditionGroup input[data-issue="' + String(k).replace(/[^a-z_]/g, '') + '"]');
@@ -7488,8 +7643,13 @@ function initDraftPersistence() {
 /* 経過トラッキング: localStorage に診断履歴を保存し、前回レーダーを重ねる */
 const HISTORY_KEY = 'ppCoatClinicHistoryV1';
 function loadHistory() {
-  try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; }
-  catch (e) { return []; }
+  // JSON として妥当でも配列とは限らない (別スクリプト・旧スキーマの残骸)。
+  // 配列でなければ捨てる。そうしないと saveHistory の push が毎回失敗し、
+  // 履歴が永久に保存されなくなる。
+  try {
+    const h = JSON.parse(localStorage.getItem(HISTORY_KEY));
+    return Array.isArray(h) ? h.filter(r => r && typeof r === 'object') : [];
+  } catch (e) { return []; }
 }
 function saveHistory(rec) {
   try {
@@ -7502,7 +7662,10 @@ function saveHistory(rec) {
 function findPrevious(name) {
   const h = loadHistory();
   for (let i = h.length - 1; i >= 0; i--) {
-    if (!name || name === '愛犬' || h[i].name === name) return h[i];
+    // 名前未入力(=「愛犬」)のときに他の子の履歴を「前回」として
+    // 重ねてしまわないよう、無名同士でのみ照合する
+    const unnamed = !name || name === '愛犬';
+    if (unnamed ? (!h[i].name || h[i].name === '愛犬') : h[i].name === name) return h[i];
   }
   return null;
 }
@@ -7511,7 +7674,9 @@ function renderCompareNote(prev) {
   if (!el) return;
   if (prev && prev.date) {
     el.style.display = 'block';
-    el.textContent = '前回（' + prev.date + '）の結果を点線で重ねて表示しています';
+    el.textContent = state.lang === 'en'
+      ? 'The dotted line shows your previous result (' + prev.date + ')'
+      : '前回（' + prev.date + '）の結果を点線で重ねて表示しています';
   } else {
     el.style.display = 'none';
     el.textContent = '';
@@ -7541,7 +7706,11 @@ function renderSchedule(showDateStr, coat) {
   const wrap = document.getElementById('showSchedule');
   let daysLeft = null;
   if (showDateStr) {
-    const showDate = new Date(showDateStr);
+    // "YYYY-MM-DD" は仕様上 UTC 深夜として解釈されるため、そのまま
+    // ローカル深夜の today と引き算すると JST では 1 日ずれる。
+    // 数値から現地時間の Date を組み立てて比較する。
+    const parts = String(showDateStr).split('-').map(Number);
+    const showDate = new Date(parts[0], parts[1] - 1, parts[2]);
     const today = new Date(); today.setHours(0,0,0,0);
     daysLeft = Math.ceil((showDate - today) / 86400000);
   }
@@ -8277,15 +8446,11 @@ function renderSupplements(a) {
 
 function resetDiagnosis() {
   document.getElementById('result').classList.remove('is-shown', 'is-resources');
-  document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
-  document.querySelectorAll('input[type="radio"]').forEach((r, i) => r.checked = i === 0);
-  document.querySelectorAll('select').forEach(s => {
-    if (!s.dataset.score) s.selectedIndex = 0;
-    else s.selectedIndex = 1;
-  });
-  document.getElementById('dogName').value = '';
-  document.getElementById('showDate').value = '';
-  document.getElementById('showDateField').style.display = 'none';
+  // 以前は document 全体を対象にし、「最初のラジオだけ checked」という
+  // 実装だったため、ラジオグループが増えると静かに壊れる状態だった。
+  // フォーム内に限定した resetFormFields() に一本化する。
+  resetFormFields();
+  syncShowDateField();
   // 「もう一度診断する」= 明示的なやり直しなので保存済みの下書きも破棄する
   try { clearDraft(); } catch (e) {}
   const notice = document.getElementById('draftNotice');
@@ -8298,13 +8463,25 @@ function resetDiagnosis() {
 }
 
 /* iframe height notify */
+/* 埋め込み時に親へ高さを通知する。
+   ページ全体を監視する MutationObserver から呼ばれるため、以前は
+   innerHTML を書き換えるたびに scrollHeight を読み、強制同期レイアウトが
+   発生していた (検索の1打鍵で複数回)。requestAnimationFrame で1フレームに
+   まとめ、高さが変わっていなければ送信もしない。 */
+let _hPending = false;
+let _lastHeight = -1;
 function notifyHeight() {
-  if (window.parent !== window) {
-    window.parent.postMessage({
-      type: 'plushpuppy-coat-clinic-height',
-      height: document.body.scrollHeight
-    }, '*');
-  }
+  if (window.parent === window || _hPending) return;
+  _hPending = true;
+  requestAnimationFrame(() => {
+    _hPending = false;
+    const h = document.body.scrollHeight;
+    if (h === _lastHeight) return;
+    _lastHeight = h;
+    try {
+      window.parent.postMessage({ type: 'plushpuppy-coat-clinic-height', height: h }, '*');
+    } catch (e) {}
+  });
 }
 /* 右上メニュー: 解析前でも 学びの場 / 製品 / サプリ へアクセス */
 function toggleMenu() {
@@ -8390,7 +8567,9 @@ function navBack() {
 }
 function updateSectionNavActive(target) {
   document.querySelectorAll('.pp-section-nav__items button[data-nav-target]').forEach(b => {
-    b.classList.toggle('is-active', b.dataset.navTarget === target);
+    const on = b.dataset.navTarget === target;
+    b.classList.toggle('is-active', on);
+    if (on) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
   });
   document.querySelectorAll('.pp-section-nav__back').forEach(b => {
     if (navHistory.length === 0) b.setAttribute('disabled', '');
@@ -8597,8 +8776,12 @@ function renderAllProductsCatalog() {
   // 検索の配線 (コンテナへの委譲リスナーは innerHTML 差し替え後も生きる)
   if (!container._searchWired) {
     container._searchWired = true;
+    let searchTimer = null;
     container.addEventListener('input', e => {
-      if (e.target && e.target.id === 'allpSearchInput') applyProductSearch(e.target.value);
+      if (!e.target || e.target.id !== 'allpSearchInput') return;
+      const v = e.target.value;
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => applyProductSearch(v), 110);
     });
   }
   // 言語切替などの再描画後も検索状態を復元
@@ -8632,10 +8815,10 @@ function applyProductSearch(q) {
     const any = Array.from(g.querySelectorAll('.pp-allp-card')).some(c => c.style.display !== 'none');
     g.style.display = any ? '' : 'none';
   });
+  const total = container.querySelectorAll('.pp-allp-card').length;
   const empty = document.getElementById('allpSearchEmpty');
   if (empty) empty.hidden = visible > 0;
   // ヒット件数の動的表示: 検索中は「n件中 m件を表示」、各カテゴリの点数も可視数に更新
-  const total = container.querySelectorAll('.pp-allp-card').length;
   const countEl = document.getElementById('allpSearchCount');
   if (countEl) {
     if (norm) {
@@ -8651,8 +8834,20 @@ function applyProductSearch(q) {
     const cnt = g.querySelector('.pp-allp-group__count');
     if (!cnt) return;
     const vis = Array.from(g.querySelectorAll('.pp-allp-card')).filter(c => c.style.display !== 'none').length;
+    // 値が変わっていなければ書き換えない (打鍵ごとに 5 回 innerHTML を
+    // 解析し、そのたびに高さ監視の MutationObserver を起こしていた)
+    if (cnt._vis === vis) return;
+    cnt._vis = vis;
     cnt.innerHTML = '<span data-lang-ja>' + vis + '点</span><span data-lang-en>' + vis + ' items</span>';
   });
+  // 絞り込み結果を支援技術へ通知する。件数表示は hidden 状態から
+  // 書き換わるため、それ自体をライブリージョンにすると読み上げが不安定になる。
+  const live = document.getElementById('ppLiveRegion');
+  if (live && norm) {
+    live.textContent = state.lang === 'en'
+      ? visible + ' of ' + total + ' products match "' + state.productQuery + '"'
+      : '「' + state.productQuery + '」に一致する製品 ' + visible + '件（全' + total + '件中）';
+  }
   try { notifyHeight(); } catch (e) {}
 }
 function renderAllProductsCard(p) {
@@ -8727,12 +8922,7 @@ function wireProductShareButtons() {
       base = (window.top && window.top.location && window.top.location.href) || location.href;
     } catch (err) { base = location.href; }
     const url = base.split('#')[0] + '#product-' + id;
-    const done = () => {
-      btn.classList.add('is-copied');
-      const original = btn.innerHTML;
-      btn.textContent = state.lang === 'en' ? 'Copied!' : 'コピーしました';
-      setTimeout(() => { btn.classList.remove('is-copied'); btn.innerHTML = original; }, 1800);
-    };
+    const done = () => flashCopied(btn);
     try {
       navigator.clipboard.writeText(url).then(done, () => fallbackCopy(url, done));
     } catch (err) { fallbackCopy(url, done); }
@@ -8942,6 +9132,23 @@ function eduArticleUrl(id) {
   return base.split('#')[0] + '#' + id;
 }
 
+/* 「コピーしました」の一時表示。
+   元のラベルは初回に一度だけ保存する。以前は done() の中で毎回
+   innerHTML を控えていたため、1.8秒以内に2回押すと「コピーしました」
+   自体を"元のラベル"として保存してしまい、日英スパンごとラベルが
+   永久に壊れていた。連打時はタイマーを貼り直すだけにする。 */
+function flashCopied(btn) {
+  if (!btn) return;
+  if (btn._copyLabel === undefined) btn._copyLabel = btn.innerHTML;
+  clearTimeout(btn._copyTimer);
+  btn.classList.add('is-copied');
+  btn.textContent = state.lang === 'en' ? 'Copied!' : 'コピーしました';
+  btn._copyTimer = setTimeout(() => {
+    btn.classList.remove('is-copied');
+    btn.innerHTML = btn._copyLabel;
+  }, 1800);
+}
+
 function fallbackCopy(text, done) {
   try {
     const ta = document.createElement('textarea');
@@ -9110,7 +9317,11 @@ function initBottomNav() {
     b.innerHTML = '<span class="pp-bottomnav__ico" aria-hidden="true">' + it.ico + '</span>' +
       '<span data-lang-ja>' + it.ja + '</span><span data-lang-en>' + it.en + '</span>';
     b.addEventListener('click', () => {
-      nav.querySelectorAll('button').forEach(x => x.classList.toggle('is-active', x === b));
+      nav.querySelectorAll('button').forEach(x => {
+        const on = x === b;
+        x.classList.toggle('is-active', on);
+        if (on) x.setAttribute('aria-current', 'true'); else x.removeAttribute('aria-current');
+      });
       if (it.t === '_search') {
         // 検索ボックスそのものへジャンプしてフォーカス (パネル先頭だと画面外になる)
         const result = document.getElementById('result');
@@ -9149,12 +9360,39 @@ function initMobileWizard() {
   prog.className = 'pp-wizard-progress';
   prog.innerHTML =
     '<div class="pp-wizard-progress__label">' +
-      '<span><span data-lang-ja>ステップ <b class="pp-wizard-step-now">1</b> / ' + total + '</span>' +
-      '<span data-lang-en>Step <b class="pp-wizard-step-now-en">1</b> of ' + total + '</span></span>' +
+      '<span class="pp-wizard-progress__text"></span>' +
       '<small><span data-lang-ja>入力は任意・あとで戻れます</span><span data-lang-en>All optional — you can go back</span></small>' +
     '</div>' +
     '<div class="pp-wizard-progress__track"><div class="pp-wizard-progress__fill" style="width:' + (100 / total) + '%"></div></div>';
   panel.insertBefore(prog, sections[0]);
+
+  /* デスクトップでは全項目が同時に見えているため「ステップ n/3」は意味を
+     持たない。代わりに「入力済み n/3」という完了度を示す。 */
+  function sectionFilled(sec) {
+    const sel = sec.querySelectorAll('select:not([data-score])');
+    for (const el of sel) if (el.value) return true;
+    const txt = sec.querySelectorAll('input[type="text"], input[type="date"]');
+    for (const el of txt) if (el.value) return true;
+    if (sec.querySelector('#conditionGroup input:checked')) return true;
+    const scores = sec.querySelectorAll('[data-score]');
+    for (const el of scores) if (el.value !== '3') return true;
+    const goal = sec.querySelector('input[name="goal"]:checked');
+    if (goal && goal.value !== 'daily') return true;
+    return false;
+  }
+  function renderDesktopProgress() {
+    const done = sections.filter(sectionFilled).length;
+    const txt = prog.querySelector('.pp-wizard-progress__text');
+    if (txt) {
+      txt.innerHTML =
+        '<span data-lang-ja>入力済み <b>' + done + '</b> / ' + total + ' セクション</span>' +
+        '<span data-lang-en>Completed <b>' + done + '</b> of ' + total + ' sections</span>';
+    }
+    fillEl().style.width = ((done / total) * 100) + '%';
+  }
+  function fillEl() { return prog.querySelector('.pp-wizard-progress__fill'); }
+  panel.addEventListener('change', () => { if (!panel.classList.contains('pp-wizard')) renderDesktopProgress(); });
+  panel.addEventListener('input', () => { if (!panel.classList.contains('pp-wizard')) renderDesktopProgress(); });
 
   // 戻る / 次へ ナビ
   const nav = document.createElement('div');
@@ -9175,15 +9413,32 @@ function initMobileWizard() {
     sections.forEach((s, i) => s.classList.toggle('is-step-active', i === step));
     panel.classList.toggle('is-last-step', step === total - 1);
     fill.style.width = (((step + 1) / total) * 100) + '%';
-    const nowJa = prog.querySelector('.pp-wizard-step-now');
-    const nowEn = prog.querySelector('.pp-wizard-step-now-en');
-    if (nowJa) nowJa.textContent = step + 1;
-    if (nowEn) nowEn.textContent = step + 1;
+    const txt = prog.querySelector('.pp-wizard-progress__text');
+    if (txt) {
+      txt.innerHTML =
+        '<span data-lang-ja>ステップ <b>' + (step + 1) + '</b> / ' + total + '</span>' +
+        '<span data-lang-en>Step <b>' + (step + 1) + '</b> of ' + total + '</span>';
+    }
     backBtn.disabled = step === 0;
   }
   function goTo(n) {
     step = Math.max(0, Math.min(total - 1, n));
     render();
+    // 「次へ」は最終ステップで display:none、「戻る」は先頭で disabled になる。
+    // フォーカスが乗ったまま消えると body へ落ちてタブ順が先頭に戻ってしまうため、
+    // 新しいステップの見出しへ明示的に移す (ステップ変更の読み上げも兼ねる)。
+    const head = sections[step].querySelector('.pp-section-h');
+    if (head) {
+      head.setAttribute('tabindex', '-1');
+      try { head.focus({ preventScroll: true }); } catch (e) {}
+    }
+    const live = document.getElementById('ppLiveRegion');
+    if (live) {
+      const t = head ? head.textContent.trim() : '';
+      live.textContent = state.lang === 'en'
+        ? 'Step ' + (step + 1) + ' of ' + total + '. ' + t
+        : 'ステップ ' + (step + 1) + ' / ' + total + '。' + t;
+    }
     // ステップ切替後はフォーム先頭へ (短距離なので smooth)
     try { jumpTo(panel); } catch (e) {}
     try { notifyHeight(); } catch (e) {}
@@ -9197,7 +9452,7 @@ function initMobileWizard() {
   const mq = window.matchMedia('(max-width: 768px)');
   function apply(active) {
     panel.classList.toggle('pp-wizard', !!active);
-    if (active) render();
+    if (active) render(); else renderDesktopProgress();
   }
   apply(mq.matches);
   try { mq.addEventListener('change', e => apply(e.matches)); }
@@ -9245,6 +9500,7 @@ function applySharedAnswers(sp) {
   if (goal) {
     const r = document.querySelector('input[name="goal"][value="' + goal.replace(/[^a-z_]/g, '') + '"]');
     if (r) r.checked = true;
+    try { syncShowDateField(); } catch (e) {}
   }
   (sp.get('i') || '').split('.').filter(Boolean).forEach(key => {
     const cb = document.querySelector('#conditionGroup input[data-issue="' + key.replace(/[^a-z_]/g, '') + '"]');
@@ -9278,12 +9534,7 @@ function initResultShare() {
   if (copyBtn) {
     copyBtn.addEventListener('click', () => {
       const url = buildShareUrl();
-      const done = () => {
-        copyBtn.classList.add('is-copied');
-        const orig = copyBtn.innerHTML;
-        copyBtn.textContent = state.lang === 'en' ? 'Copied!' : 'コピーしました';
-        setTimeout(() => { copyBtn.classList.remove('is-copied'); copyBtn.innerHTML = orig; }, 1800);
-      };
+      const done = () => flashCopied(copyBtn);
       try { navigator.clipboard.writeText(url).then(done, () => fallbackCopy(url, done)); }
       catch (e) { fallbackCopy(url, done); }
     });
@@ -9310,14 +9561,17 @@ try { initResultShare(); } catch (e) {}
    (ボトムナビを隠して誤タップ・画面圧迫を防ぐ) */
 document.addEventListener('focusin', e => {
   const t = e.target;
-  if (t && t.matches && t.matches('input, select, textarea')) {
+  // チェックボックス/ラジオ/セレクトはキーボードを出さない。opacity:0 の
+  // チェックボックスを含むため、これらを除外しないとカードをタップした
+  // だけでボトムナビが消えてしまう。
+  if (t && t.matches && t.matches('input[type="text"], input[type="search"], input[type="date"], input[type="number"], input[type="email"], input[type="tel"], textarea')) {
     document.body.classList.add('pp-kb-open');
   }
 });
 document.addEventListener('focusout', () => {
   setTimeout(() => {
     const a = document.activeElement;
-    if (!a || !a.matches || !a.matches('input, select, textarea')) {
+    if (!a || !a.matches || !a.matches('input[type="text"], input[type="search"], input[type="date"], input[type="number"], input[type="email"], input[type="tel"], textarea')) {
       document.body.classList.remove('pp-kb-open');
     }
   }, 60);
