@@ -38,9 +38,9 @@
 <meta property="og:site_name" content="PLUSH PUPPY JAPAN GROOMING PRODUCTS">
 <meta property="og:locale" content="ja_JP">
 <meta property="og:locale:alternate" content="en_US">
-<meta property="og:image" content="https://plush-puppy-coat-clinic.onrender.com/assets/og-image.png">
-<meta property="og:image:secure_url" content="https://plush-puppy-coat-clinic.onrender.com/assets/og-image.png">
-<meta property="og:image:type" content="image/png">
+<meta property="og:image" content="https://plush-puppy-coat-clinic.onrender.com/assets/og-image.jpg">
+<meta property="og:image:secure_url" content="https://plush-puppy-coat-clinic.onrender.com/assets/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Plush Puppy Japan — 被毛診断 ＆ コートの科学">
@@ -48,7 +48,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="被毛診断 ＆ コートの科学 | Plush Puppy Japan">
 <meta name="twitter:description" content="愛犬の毛質に最適なケア製品をAI診断＋獣医師監修「コートの科学」で学べる、Plush Puppy Japan 公式の被毛診断サイト。">
-<meta name="twitter:image" content="https://plush-puppy-coat-clinic.onrender.com/assets/og-image.png">
+<meta name="twitter:image" content="https://plush-puppy-coat-clinic.onrender.com/assets/og-image.jpg">
 <meta name="twitter:image:alt" content="Plush Puppy Japan — 被毛診断 ＆ コートの科学">
 
 <title>被毛診断 ＆ コートの科学（獣医師監修） | PLUSH PUPPY JAPAN GROOMING PRODUCTS</title>
@@ -122,7 +122,7 @@
       "inLanguage": "ja",
       "primaryImageOfPage": {
         "@type": "ImageObject",
-        "url": "https://plush-puppy-coat-clinic.onrender.com/assets/og-image.png",
+        "url": "https://plush-puppy-coat-clinic.onrender.com/assets/og-image.jpg",
         "width": 1200,
         "height": 630
       },
@@ -3106,6 +3106,39 @@
     color: var(--pp-text-muted);
     line-height: 1.6;
   }
+
+  /* 入力の自動復元を知らせる通知 (取り消し可能) */
+  .pp-draft-notice {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 0 0 18px;
+    padding: 11px 14px;
+    background: var(--pp-navy-soft);
+    border: 1px solid var(--pp-navy-light);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    color: var(--pp-navy);
+    line-height: 1.6;
+  }
+  .pp-draft-notice button {
+    appearance: none;
+    -webkit-appearance: none;
+    background: #ffffff;
+    border: 1px solid var(--pp-navy-light);
+    color: var(--pp-navy);
+    font-family: var(--font-jp);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 8px 14px;
+    min-height: 40px;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .pp-draft-notice button:hover { background: var(--pp-navy); color: #ffffff; }
 
   /* タップ遅延・ダブルタップズームの抑止 (モバイル全般の操作感向上) */
   button, a, label, select, input, summary { touch-action: manipulation; }
@@ -7341,6 +7374,117 @@ function renderProgramSummary(picks) {
     '</div>';
 }
 
+/* ============================================
+   入力内容の自動保存 (下書き)
+   モバイルではタブが裏に回ると破棄されやすく、リロードや誤操作で
+   入力が消えると診断をやり直すことになる。入力を localStorage に
+   保存し、次回アクセス時に復元する (共有URLで開いた場合は除く)。
+   ============================================ */
+const DRAFT_KEY = 'ppCoatClinicDraftV1';
+let draftTimer = null;
+
+function collectDraft() {
+  const scores = {};
+  document.querySelectorAll('[data-score]').forEach(el => { scores[el.dataset.score] = el.value; });
+  const goalEl = document.querySelector('input[name="goal"]:checked');
+  const get = id => { const el = document.getElementById(id); return el ? el.value : ''; };
+  return {
+    v: 1,
+    name: get('dogName'), breed: get('breed'), age: get('age'),
+    color: get('color'), showDate: get('showDate'),
+    goal: goalEl ? goalEl.value : 'daily',
+    issues: Array.from(document.querySelectorAll('#conditionGroup input:checked')).map(i => i.dataset.issue),
+    scores: scores
+  };
+}
+function isDraftEmpty(d) {
+  return !d.name && !d.breed && !d.age && !d.color && !d.showDate &&
+    d.goal === 'daily' && (!d.issues || !d.issues.length) &&
+    Object.keys(d.scores || {}).every(k => d.scores[k] === '3');
+}
+function saveDraft() {
+  try {
+    const d = collectDraft();
+    if (isDraftEmpty(d)) { localStorage.removeItem(DRAFT_KEY); return; }
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
+  } catch (e) { /* Safari プライベートモード等では保存しない */ }
+}
+function scheduleDraftSave() {
+  clearTimeout(draftTimer);
+  draftTimer = setTimeout(saveDraft, 400);
+}
+function clearDraft() {
+  try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+}
+function applyDraft(d) {
+  if (!d || d.v !== 1) return false;
+  const set = (id, v) => { const el = document.getElementById(id); if (el && typeof v === 'string' && v) el.value = v; };
+  set('dogName', d.name); set('breed', d.breed); set('age', d.age);
+  set('color', d.color); set('showDate', d.showDate);
+  if (d.goal) {
+    const r = document.querySelector('input[name="goal"][value="' + String(d.goal).replace(/[^a-z_]/g, '') + '"]');
+    if (r) r.checked = true;
+  }
+  (d.issues || []).forEach(k => {
+    const cb = document.querySelector('#conditionGroup input[data-issue="' + String(k).replace(/[^a-z_]/g, '') + '"]');
+    if (cb) cb.checked = true;
+  });
+  Object.keys(d.scores || {}).forEach(k => {
+    const el = document.querySelector('[data-score="' + String(k).replace(/[^a-z_]/g, '') + '"]');
+    if (el && /^[1-5]$/.test(String(d.scores[k]))) el.value = d.scores[k];
+  });
+  return true;
+}
+/* 復元したことを黙って行わず、取り消せる形で知らせる */
+function showDraftRestoredNotice() {
+  const panel = document.getElementById('diagnosisFormPanel');
+  if (!panel || document.getElementById('draftNotice')) return;
+  const el = document.createElement('div');
+  el.className = 'pp-draft-notice';
+  el.id = 'draftNotice';
+  el.setAttribute('role', 'status');
+  el.innerHTML =
+    '<span><span data-lang-ja>前回の入力内容を復元しました。</span>' +
+    '<span data-lang-en>Restored your previous answers.</span></span>' +
+    '<button type="button" id="draftClearBtn">' +
+    '<span data-lang-ja>入力をクリア</span><span data-lang-en>Clear</span></button>';
+  const anchor = panel.querySelector('.pp-form-note');
+  if (anchor && anchor.nextSibling) panel.insertBefore(el, anchor.nextSibling);
+  else panel.insertBefore(el, panel.firstChild);
+  el.querySelector('#draftClearBtn').addEventListener('click', () => {
+    clearDraft();
+    resetFormFields();
+    el.remove();
+    try { notifyHeight(); } catch (e) {}
+  });
+}
+function resetFormFields() {
+  ['dogName', 'breed', 'age', 'color', 'showDate'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  document.querySelectorAll('#conditionGroup input:checked').forEach(cb => { cb.checked = false; });
+  document.querySelectorAll('[data-score]').forEach(el => { el.value = '3'; });
+  const daily = document.querySelector('input[name="goal"][value="daily"]');
+  if (daily) daily.checked = true;
+}
+function initDraftPersistence() {
+  const panel = document.getElementById('diagnosisFormPanel');
+  if (!panel) return;
+  // 共有URL(?r=1)で開いた場合はそちらの回答を優先し、下書きは触らない
+  let shared = false;
+  try { shared = new URLSearchParams(location.search).get('r') === '1'; } catch (e) {}
+  if (!shared) {
+    let d = null;
+    try { d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); } catch (e) { d = null; }
+    if (d && applyDraft(d) && !isDraftEmpty(collectDraft())) showDraftRestoredNotice();
+  }
+  panel.addEventListener('input', scheduleDraftSave);
+  panel.addEventListener('change', scheduleDraftSave);
+  // タブが裏に回る・離脱する直前は確実に書き出す
+  window.addEventListener('pagehide', saveDraft);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) saveDraft(); });
+}
+
 /* 経過トラッキング: localStorage に診断履歴を保存し、前回レーダーを重ねる */
 const HISTORY_KEY = 'ppCoatClinicHistoryV1';
 function loadHistory() {
@@ -8142,6 +8286,12 @@ function resetDiagnosis() {
   document.getElementById('dogName').value = '';
   document.getElementById('showDate').value = '';
   document.getElementById('showDateField').style.display = 'none';
+  // 「もう一度診断する」= 明示的なやり直しなので保存済みの下書きも破棄する
+  try { clearDraft(); } catch (e) {}
+  const notice = document.getElementById('draftNotice');
+  if (notice) notice.remove();
+  // ウィザードはステップ1に戻す (モバイル)
+  if (typeof ppWizardReset === 'function') { try { ppWizardReset(); } catch (e) {} }
   // フォームの先頭へスクロール (Safari古い版対応)
   smoothScrollTo('top');
   notifyHeight();
@@ -8191,10 +8341,33 @@ const NAV_LABELS = {
 const navHistory = [];
 let currentNav = 'top';
 
+/* ブラウザの戻る (Android のバックキー・iOS のスワイプバックを含む) で
+   直前のセクションへ戻れるようにする。セクション移動は同一ページ内のスクロール
+   なので、履歴を積まないと「戻る」でサイトから離脱してしまう。
+   iframe 埋め込み時は親ページの戻る操作を奪うことになるため無効化する
+   (ボトムナビと同じ判定)。 */
+const NAV_HISTORY_ENABLED = (function () {
+  try { return window.parent === window; } catch (e) { return false; }
+})();
+function pushNavState(target) {
+  if (!NAV_HISTORY_ENABLED) return;
+  try {
+    if (history.state && history.state.ppNav === target) return;
+    history.pushState({ ppNav: target }, '', location.href);
+  } catch (e) {}
+}
+window.addEventListener('popstate', function (e) {
+  if (!NAV_HISTORY_ENABLED) return;
+  const target = (e.state && e.state.ppNav) ? e.state.ppNav : 'top';
+  navHistory.pop(); // 画面内「戻る」ボタンの活性状態と同期
+  menuGo(target, { fromBack: true, fromPop: true });
+});
+
 function menuGo(target, opts) {
   opts = opts || {};
   closeMenu();
   if (!opts.fromBack && currentNav && currentNav !== target) navHistory.push(currentNav);
+  if (!opts.fromPop) pushNavState(target);
   currentNav = target;
   updateSectionNavActive(target);
   if (target === 'top') { smoothScrollTo('top'); return; }
@@ -8208,6 +8381,9 @@ function menuGo(target, opts) {
   }, 70);
 }
 function navBack() {
+  // スタンドアロン時はブラウザ履歴を唯一の情報源にし、画面内「戻る」と
+  // ブラウザの戻るで挙動がずれないようにする (popstate 経由で移動)
+  if (NAV_HISTORY_ENABLED && history.state && history.state.ppNav) { history.back(); return; }
   if (navHistory.length === 0) { menuGo('top', { fromBack: true }); return; }
   const prev = navHistory.pop();
   menuGo(prev, { fromBack: true });
@@ -8687,7 +8863,7 @@ function buildEduIndex() {
       it._hashSync = true;
       it.addEventListener('toggle', () => {
         if (it.open && it.id) {
-          try { history.replaceState(null, '', '#' + it.id); } catch (e) {}
+          try { history.replaceState(history.state, '', '#' + it.id); } catch (e) {}
         }
       });
     }
@@ -8787,7 +8963,7 @@ function openEduArticle(it, scroll) {
   const result = document.getElementById('result');
   if (result && !result.classList.contains('is-shown')) result.classList.add('is-resources');
   it.open = true;
-  if (it.id) { try { history.replaceState(null, '', '#' + it.id); } catch (e) {} }
+  if (it.id) { try { history.replaceState(history.state, '', '#' + it.id); } catch (e) {} }
   if (scroll !== false) {
     setTimeout(() => {
       jumpTo(it);
@@ -8865,7 +9041,7 @@ function buildEduStructuredData() {
         author: author,
         reviewedBy: author,
         publisher: publisher,
-        image: pageBase + 'assets/og-image.png',
+        image: pageBase + 'assets/og-image.jpg',
         datePublished: datePublished,
         dateModified: dateModified
       });
@@ -9014,6 +9190,8 @@ function initMobileWizard() {
   }
   nextBtn.addEventListener('click', () => goTo(step + 1));
   backBtn.addEventListener('click', () => goTo(step - 1));
+  // 「もう一度診断する」からステップ1へ戻せるように公開する
+  window.ppWizardReset = function () { step = 0; render(); };
 
   // モバイル幅でのみウィザード化 (回転・リサイズにも追従)
   const mq = window.matchMedia('(max-width: 768px)');
@@ -9026,6 +9204,7 @@ function initMobileWizard() {
   catch (e) { try { mq.addListener(e2 => apply(e2.matches)); } catch (e3) {} }
 }
 try { initMobileWizard(); } catch (e) {}
+try { initDraftPersistence(); } catch (e) {}
 
 /* ============================================
    診断結果の共有URL
