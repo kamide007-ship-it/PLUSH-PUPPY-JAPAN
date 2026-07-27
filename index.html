@@ -8139,22 +8139,22 @@ function drawRadar(r, prev) {
 const CARE_ROLE = {
   shampoo: {
     step: 1,
-    ja: { when: '入浴時 / 最初', role: '洗う', note: '汚れと酸化した皮脂を落とし、この後のケアが届く土台をつくります。' },
+    ja: { when: '入浴時 / 最初', role: '洗う', note: '汚れと古い皮脂を落とします。ここが済んでいないと、後から何を足しても届きません。' },
     en: { when: 'Bath time / first', role: 'Cleanse', note: 'Removes dirt and oxidised sebum so the later steps can reach the coat.' }
   },
   conditioner: {
     step: 2,
-    ja: { when: '入浴時 / すすぎの後', role: '補う', note: '洗浄で失われた水分と脂質を補い、バリアと毛表面を整えます。ここを省くと乾燥と毛切れにつながります。' },
+    ja: { when: '入浴時 / すすぎの後', role: '補う', note: '洗うと水分も脂質も一緒に落ちるので、その分を戻します。ここを飛ばすと乾燥と毛切れにつながります。' },
     en: { when: 'Bath time / after rinsing', role: 'Replenish', note: 'Puts back the water and lipids washing removes, restoring the barrier and the hair surface. Skipping this leads to dryness and breakage.' }
   },
   finishing: {
     step: 3,
-    ja: { when: '乾かす時 / 仕上げ', role: '仕上げる', note: '乾燥中〜乾燥後に使い、質感・毛流れ・ボリュームを決めます。' },
+    ja: { when: '乾かす時 / 仕上げ', role: '仕上げる', note: '乾かしながら、あるいは乾いた後に使います。手触りと毛流れ、そしてボリュームはここで決まります。' },
     en: { when: 'Drying / finishing', role: 'Finish', note: 'Used during and after drying to set texture, the lie of the coat and volume.' }
   },
   brush: {
     step: 4,
-    ja: { when: '毎日', role: 'ととのえる', note: '日々のブラッシングは抜け毛を除き、毛玉を未然に防ぎます。必ず保湿してから当ててください。' },
+    ja: { when: '毎日', role: 'ととのえる', note: '毎日のブラッシングで抜けた毛を取り除いておくと、毛玉はほとんどできません。乾いた毛にそのまま当てず、必ず保湿してからにしてください。' },
     en: { when: 'Daily', role: 'Maintain', note: 'Daily brushing lifts shed hair and prevents mats before they form. Always moisturise first.' }
   }
 };
@@ -8223,8 +8223,8 @@ function renderCareRoutine(picks) {
       }).join('') +
     '</ol>' +
     '<p class="pp-routine__note">' +
-      '<span data-lang-ja>とくに<strong>「補う」を省かない</strong>ことが大切です。洗ったまま乾かすと、' +
-      '水分と脂質が失われた状態で摩擦と熱が加わり、乾燥と毛切れの原因になります。</span>' +
+      '<span data-lang-ja>いちばん飛ばされやすいのが<strong>「補う」</strong>です。洗ったまま乾かすと、' +
+      '水分も脂質も失われた毛に、ブラシの摩擦とドライヤーの熱が直接かかります。乾燥と毛切れは、たいていここから始まります。</span>' +
       '<span data-lang-en>The step to protect is <strong>replenishing</strong>. Drying straight after washing exposes a coat stripped of water and lipids to friction and heat — the route to dryness and breakage.</span>' +
     '</p>';
 }
@@ -8333,19 +8333,19 @@ function renderStartTiers(picks) {
     {
       key: 'start',
       items: ordered.slice(0, 1),
-      ja: { name: 'まず1本から', why: '洗浄はすべての土台です。ここを愛犬に合うものへ替えるだけでも変化が出ます。' },
+      ja: { name: 'まず1本から', why: '洗うことがすべての土台になります。ここを愛犬に合うものへ替えるだけでも、手触りは変わります。' },
       en: { name: 'Start with one', why: 'Cleansing is the foundation. Switching just this to something suited to your dog already makes a difference.' }
     },
     {
       key: 'core',
       items: ordered.slice(0, 2),
-      ja: { name: 'コア2品', why: '「洗う」と「補う」はセットです。洗ったまま乾かさないことが、乾燥と毛切れを防ぐ最短の一手です。', recommended: true },
+      ja: { name: 'コア2品', why: '「洗う」と「補う」は本来ひと続きです。洗ったまま乾かさない。乾燥と毛切れを防ぐ手としては、これがいちばん確実です。', recommended: true },
       en: { name: 'The core two', why: 'Cleansing and replenishing belong together. Not drying a stripped coat is the shortest route to preventing dryness and breakage.', recommended: true }
     },
     {
       key: 'full',
       items: ordered,
-      ja: { name: 'フルプログラム', why: '仕上げと日々のブラッシングまで揃え、状態の維持と再発予防まで通してケアします。' },
+      ja: { name: 'フルプログラム', why: '仕上げと毎日のブラッシングまで揃います。整えた状態をそのまま保ち、同じことを繰り返さないための構成です。' },
       en: { name: 'Full programme', why: 'Adds finishing and daily brushing so the routine maintains the result and prevents recurrence.' }
     }
   ].filter(t => t.items.length);
@@ -8964,184 +8964,184 @@ function coatBaseKey(coat) {
 // 各テキストは tone 別 (detailed=くわしく / gentle=やさしく) の2版を持つ
 const COAT_ANATOMY = {
   silky: {
-    detailed: '上毛(ガードヘア)主体で伸び続ける、人の髪に比較的近いタイプ。キューティクルが整うほど絹のような光沢が出る一方、毛が細くアンダーコートが少ないため、乾燥・静電気・毛切れの影響を受けやすい繊細な被毛です。',
-    gentle: '細くしなやかで、人の髪に近いタイプ。整えると絹のような艶が出ますが、乾燥・静電気・毛先の傷みが出やすい繊細な毛質です。'
+    detailed: 'アンダーコートが少なく、上毛（ガードヘア）が伸び続けるため、扱い方は人の髪に近くなります。表面のキューティクルが整うと絹のような光沢が出ますが、毛の一本一本が細いので、乾くと静電気が起きたり途中で切れたりしやすくなります。',
+    gentle: '細くしなやかで、人の髪に近い毛質です。整えると絹のような艶が出ますが、乾くと静電気が起きたり、毛先が傷んだりしやすくなります。'
   },
   cotton: {
-    detailed: 'カールした単層被毛でアンダーコートが少なく、抜け毛が少ない代わりに伸び続けるタイプ。毛が密に絡みやすく、保湿が不足すると毛玉(マット)になりやすいのが特性で、ふんわりとしたボリュームが見栄えを左右します。',
-    gentle: 'ふわふわの巻き毛で、抜け毛が少ない代わりに伸び続けるタイプ。乾くと毛玉になりやすいので、保湿とブラッシングが大切です。'
+    detailed: '抜け毛が少ない代わりに毛が伸び続けるので、定期的なカットが前提になります。カールした毛は互いに触れ合う点が多く、乾いた状態が続くと絡みが進んで毛玉になります。仕上がりの印象を決めるのは、根元からふんわり立ち上がっているかどうかです。',
+    gentle: 'ふわふわの巻き毛で、抜け毛が少ない代わりに伸び続けます。乾いたままだと毛玉になりやすいので、保湿してからブラッシングしてあげてください。'
   },
   double: {
-    detailed: '上毛(ガードヘア)と密なアンダーコートからなる二層構造。1つの毛包から複数の毛が生える犬特有の複合毛包が発達し、季節ごとに換毛(シェディング)します。アンダーコートの蓄積や皮脂・汚れの停滞に注意が必要です。',
-    gentle: '硬い上毛とやわらかい下毛の二重構造で、季節ごとにたくさん抜け替わるタイプ。抜け毛をためないお手入れが大切です。'
+    detailed: '硬い上毛（ガードヘア）の下に、密なアンダーコートが層をつくっています。犬は1つの毛穴から複数の毛が生えるため（複合毛包）、この毛質ではとくに毛量が多くなります。季節の変わり目に下毛がまとまって抜けるので、抜けた毛を被毛の中に残さないことが手入れの中心になります。',
+    gentle: '硬い上毛とやわらかい下毛の二重構造で、季節ごとに下毛がたくさん抜け替わります。抜けた毛を中にためないことがいちばんのお手入れです。'
   },
   harsh: {
-    detailed: '硬く張りのある剛毛(ワイヤー)コート。本来のテクスチャと色は定期的なプラッキングで保たれ、柔軟剤で軟らかくしすぎると本来の硬さや防汚性が損なわれます。',
-    gentle: '硬くて張りのある剛毛タイプ。やわらかくしすぎると本来の質感が損なわれるので、洗い方に気をつけたい毛質です。'
+    detailed: '硬く張りのある毛が特徴で、この硬さは定期的なプラッキング（成熟した毛を抜いて入れ替える手入れ）によって保たれています。柔らかく仕上げる製品を使いすぎると、質感だけでなく、汚れをはじく性質まで失われていきます。',
+    gentle: '硬くて張りのある毛質です。やわらかく仕上げすぎると本来の手触りが失われるので、洗い方には少し気をつけてあげてください。'
   },
   wavy: {
-    detailed: '緩やかな波状の被毛で、ガードヘアに適度なアンダーコートを伴います。耳や脚の飾り毛(フェザリング)が絡みやすく、保湿と毛流れの管理が仕上がりを左右します。',
-    gentle: 'ゆるく波打つ毛で、耳や脚の飾り毛が絡みやすいタイプ。保湿と毛流れの整えで見た目が決まります。'
+    detailed: 'ゆるく波打つ毛に、ほどよい量のアンダーコートを伴います。とくに絡みやすいのは耳や脚の飾り毛（フェザリング）で、ここを保湿しながら毛流れに沿って整えられるかで、仕上がりがはっきり変わります。',
+    gentle: 'ゆるく波打つ毛で、耳や脚の飾り毛がとくに絡みやすい毛質です。保湿してから毛流れに沿って整えると、見た目がぐっと変わります。'
   },
   smooth: {
-    detailed: '短く密着した被毛で、皮脂が全体に行き渡りやすく自然な光沢が出やすいタイプ。被毛が短いぶん、皮膚のコンディションが表面に現れやすいのが特徴です。',
-    gentle: '短くてつやが出やすいタイプ。毛が短いぶん、肌の調子がそのまま表面に出やすい毛質です。'
+    detailed: '短い毛が体に密着しているため、皮脂が全体に行き渡りやすく、手をかけなくても自然な光沢が出ます。その一方で毛が皮膚を覆い隠さないので、肌の調子がそのまま見た目に表れます。',
+    gentle: '短くて自然につやが出やすい毛質です。毛が短いぶん、肌の調子がそのまま見た目に表れます。'
   },
   all: {
-    detailed: '犬種・毛色に応じた個体差の大きい被毛です。皮膚と被毛の状態を見ながら、保湿と洗浄のバランスを整えることが基本になります。',
-    gentle: '毛質には個体差があります。肌と毛の様子を見ながら、保湿と洗浄のバランスを整えるのが基本です。'
+    detailed: '犬種や毛色によって性質が大きく変わるため、これといった決まった正解はありません。皮膚と被毛の様子を見ながら、洗いすぎにも保湿不足にも寄らない加減を探っていきます。',
+    gentle: '毛質は一頭ずつ違います。肌と毛の様子を見ながら、洗いすぎず、乾かしすぎない加減を探していきましょう。'
   }
 };
 // 症状ごとの「考察(原因)」と「改善」。obs/fix はそれぞれ detailed / gentle を持つ
 const ISSUE_INSIGHT = {
   low_shine: {
     obs: {
-      detailed: '被毛の光沢は最外層のキューティクルが整い光を均一に反射することで生まれます。キューティクルの乱れや皮脂・水分バランスの低下で反射が散り、艶が失われています。',
-      gentle: 'つやは毛の表面が整って光を返すことで生まれます。表面が乱れたり、うるおいが足りないとくすんで見えます。'
+      detailed: '艶は、毛の表面をおおうキューティクルが整っていて、光をそろえて返すときに生まれます。今はその表面が乱れているか、うるおいと皮脂のバランスが崩れていて、光が散ってしまっている状態です。',
+      gentle: 'つやは、毛の表面が整っていて光をきれいに返すときに出ます。表面が乱れていたり、うるおいが足りなかったりすると、くすんで見えてしまいます。'
     },
     fix: {
-      gentle: 'シルクプロテイン入りのケアで表面を整え、栄養もプラスして毛そのものを元気にしてあげましょう。',
+      gentle: 'シルクプロテイン入りのケアで毛の表面を整えながら、栄養で毛そのものを内側から立て直していきます。',
       layers: {
-        topical: 'シルクプロテイン配合コンディショナーでキューティクルを補修・整え、光の反射を回復。仕上げに艶出し。',
-        internal: 'タンパク質(アミノ酸)・亜鉛・抗酸化で毛質と色冴えを底上げ。',
-        environment: 'ドライヤーの高温・紫外線・摩擦を避け、キューティクル損傷を防ぐ。'
+        topical: 'シルクプロテイン配合のコンディショナーで毛の表面を整え、光が返るようにします。最後に艶出しで仕上げます。',
+        internal: 'タンパク質（アミノ酸）・亜鉛・抗酸化を補い、毛質と色の冴えを底上げします。',
+        environment: 'ドライヤーの高温、紫外線、摩擦を避けて、毛の表面が削れるのを防ぎます。'
       }
     }
   },
   low_moisture: {
     obs: {
-      detailed: '犬の皮膚は人より角層が薄くバリアが繊細です。細胞間脂質・皮脂の不足やすすぎ残り、乾燥環境で水分が逃げ、被毛がパサつきます。',
-      gentle: '犬の肌は人より薄くデリケート。うるおいが逃げると毛がパサついてしまいます。'
+      detailed: '犬の皮膚は人より角層が薄く、水分を抱えておく力がもともと弱めです。そこへ細胞間脂質や皮脂の不足、すすぎ残り、乾いた空気が重なると水分が逃げ、毛までパサついてきます。',
+      gentle: '犬の肌は人より薄く、うるおいが逃げやすくできています。水分が足りなくなると、毛までパサついてきます。'
     },
     fix: {
-      gentle: '保湿コンディショナーと栄養補給で、水分と油分の両方をおぎなってあげましょう。',
+      gentle: '保湿コンディショナーで外から、栄養で内から。水分と油分の両方を足していきます。',
       layers: {
-        topical: '保湿系コンディショナー・リーブインで水分と角層脂質(セラミド等)を補い、経表皮水分蒸散(TEWL)を抑制。',
-        internal: '必須脂肪酸(オメガ3)・脂質・栄養でバリア脂質を内側から供給。',
-        environment: '低湿度・暖房・洗いすぎ(高頻度/熱湯)など乾燥要因を減らす。'
+        topical: '保湿系のコンディショナーやリーブインで水分と角層の脂質（セラミドなど）を補い、水分が逃げるのを抑えます。',
+        internal: '必須脂肪酸（オメガ3）と脂質・栄養で、バリアをつくる材料を内側から届けます。',
+        environment: '低湿度、暖房、洗いすぎ（回数の多さや熱いお湯）といった乾燥の原因を減らします。'
       }
     }
   },
   oily: {
     obs: {
       detailed: 'ベタつきは皮脂の過剰そのものより、皮膚バリア(角層の細胞間脂質)の破綻と常在菌バランスの乱れの「結果」として生じることが多い状態です。バリアが弱ると水分が逃げ、それを補おうと皮脂が代償性に過剰分泌され、酸化してにおい・かゆみにつながります(犬は全身性の発汗がなく皮脂が酸化しやすい)。',
-      gentle: 'ベタつきは皮脂が多いだけでなく、皮膚のバリアがゆらいでいるサインのことがあります。バリアが弱ると、それを補おうとして余計に皮脂が出てしまいます。'
+      gentle: 'ベタつきは、皮脂が多すぎるというより、皮膚のバリアがゆらいでいるサインのことがあります。バリアが弱って水分が逃げると、それを補おうとして皮脂がかえって増えてしまうためです。'
     },
     fix: {
-      gentle: 'すっきり洗いつつ、洗いすぎは禁物。最後は必ず保湿でバリアを守り、腸活や栄養で内側から整えるのが大切です。',
+      gentle: 'しっかり洗うことは必要ですが、洗いすぎるとかえって皮脂が増えます。洗ったあとは必ず保湿でバリアを守り、腸内環境と栄養で内側からも整えていきます。',
       layers: {
-        topical: 'ディープクレンジングで余分な皮脂・酸化物をやさしく除去 → その後は必ず保湿でバリアを補う(脱脂のしすぎは代償性の皮脂過剰を招くため厳禁)。',
-        internal: '腸内環境(乳酸菌)・必須脂肪酸でバリアと皮脂バランスを内側から是正。',
-        environment: '高頻度・強洗浄を避け、湿潤・高温やアレルゲンなど悪化要因を管理。'
+        topical: 'ディープクレンジングで余分な皮脂と酸化した汚れをやさしく落とし、そのあと必ず保湿でバリアを補います。脱脂しすぎると皮脂はかえって増えるので、そこは避けてください。',
+        internal: '腸内環境（乳酸菌）と必須脂肪酸で、バリアと皮脂のバランスを内側から整えます。',
+        environment: '洗う回数と洗浄力を抑え、蒸れや高温、アレルゲンなど悪化させる要因を減らします。'
       }
     }
   },
   breakage: {
     obs: {
-      detailed: '毛の主成分ケラチンとその結合が、摩擦・乾燥・紫外線で弱り途中で切れています。細い被毛ほど切れやすい傾向です。',
-      gentle: '毛が乾燥や摩擦で弱って、途中で切れています。細い毛ほど切れやすいです。'
+      detailed: '毛の主成分であるケラチンとその結合が、摩擦や乾燥、紫外線で弱ってきています。そこに力がかかると毛は途中で折れます。細い毛ほど、同じ力でも切れやすくなります。',
+      gentle: '毛が乾燥と摩擦で弱り、途中で切れてしまっています。細い毛ほど切れやすくなります。'
     },
     fix: {
-      gentle: '補修トリートメントで毛を強くし、ブラッシングは必ず保湿してからやさしく行いましょう。',
+      gentle: '補修トリートメントで毛を立て直しながら、ブラッシングは必ず保湿してから、力を入れずに行ってください。',
       layers: {
-        topical: 'プロテイン補修トリートメントで毛の強度を回復し、保湿してからブラッシング。毛先はオイル/バームで保護。',
-        internal: 'タンパク質・抗酸化を補給し、毛そのものを内側から強化。',
-        environment: '摩擦・乾燥ブラッシング・紫外線・高温ドライを避ける。'
+        topical: 'プロテイン補修トリートメントで毛の強さを取り戻し、必ず保湿してからブラッシングします。毛先はオイルやバームで守ります。',
+        internal: 'タンパク質と抗酸化を補い、毛そのものを内側から強くしていきます。',
+        environment: '摩擦、乾いたままのブラッシング、紫外線、高温での乾燥を避けます。'
       }
     }
   },
   matting: {
     obs: {
-      detailed: 'アンダーコートや細い被毛が絡み合い毛玉(マット)化しています。コットン系など伸び続ける被毛は特に絡みやすい特性です。',
-      gentle: '細い毛や下毛が絡んで毛玉になっています。巻き毛タイプは特に絡みやすいです。'
+      detailed: 'アンダーコートや細い毛どうしが絡み合って、毛玉になっています。とくにコットン系のように毛が伸び続ける毛質は、抜けた毛が外に落ちず被毛の中に残るため、絡みが進みやすくなります。',
+      gentle: '細い毛や下毛が絡み合って毛玉になっています。巻き毛の子はとくにできやすいところです。'
     },
     fix: {
-      gentle: 'ブラッシング前にスプレーで毛をすべりやすくして、毛先から少しずつほどきましょう。',
+      gentle: 'ブラッシングの前にスプレーで毛をすべりやすくしてから、毛先のほうから少しずつほどいていきます。',
       layers: {
-        topical: 'デタングルスプレーで滑りと保湿を与え、毛先から少しずつ解く(乾燥は摩擦を高め毛玉化を促進)。',
-        environment: '短毛種以外は日々のコーミングを習慣化し、濡れたまま放置しない。'
+        topical: 'デタングルスプレーで滑りとうるおいを与え、毛先から少しずつ解いていきます。乾いたままだと摩擦が増えて絡みが進みます。',
+        environment: '短毛の子以外は毎日のコーミングを習慣にして、濡れたまま放置しないようにします。'
       }
     }
   },
   low_volume: {
     obs: {
-      detailed: '毛量感は毛の太さ・密度・立ち上がりで決まります。栄養不足や毛周期の停滞、コシの低下でボリュームが出にくくなっています。',
-      gentle: '毛の太さや立ち上がりが足りず、ボリュームが出にくくなっています。'
+      detailed: 'ボリュームは、毛の太さと本数、そして根元からの立ち上がりで決まります。今はこのうちのどれかが足りず、同じ毛量でも厚みが出にくくなっています。',
+      gentle: '毛の太さや根元の立ち上がりが足りず、ふんわり見えにくくなっています。'
     },
     fix: {
-      gentle: 'ボリューム系のケアで立ち上がりを作り、栄養補給で毛にハリを出しましょう。',
+      gentle: 'ボリューム系のケアで根元を立ち上げつつ、栄養で毛そのものにハリを取り戻していきます。',
       layers: {
-        topical: 'ボリューム系シャンプー/仕上げ材で立ち上がりとハリを演出。',
-        internal: 'タンパク質・ペプチド補給で毛の充実(毛量・コシ)を内側から支援。',
-        environment: '重い仕上げ材の付けすぎを避け、根元を寝かせない。'
+        topical: 'ボリューム系のシャンプーや仕上げ材で、根元の立ち上がりとハリをつくります。',
+        internal: 'タンパク質やペプチドを補い、毛量とコシを内側から支えます。',
+        environment: '重い仕上げ材を付けすぎると根元が寝てしまうので、量は控えめにします。'
       }
     }
   },
   static: {
     obs: {
-      detailed: '乾燥でキューティクルが帯電し、毛が広がる・絡む状態です。細く長い被毛ほど起きやすくなります。',
-      gentle: '乾燥で静電気が起き、毛が広がったり絡んだりしています。'
+      detailed: '乾燥した毛は摩擦で電気を帯びやすく、同じ電気を持った毛どうしが反発して広がります。細くて長い毛ほど起きやすくなります。',
+      gentle: '乾燥で静電気が起きて、毛が広がったり絡んだりしています。'
     },
     fix: {
-      gentle: '保湿と静電気防止のスプレーで、表面をうるおして広がりを抑えましょう。',
+      gentle: '保湿と静電気防止のスプレーで表面をうるおすと、広がりは落ち着いてきます。',
       layers: {
-        topical: '保湿と帯電防止仕上げ材で表面の水分・コーティングを補い帯電を抑制。',
-        environment: '低湿度を避け加湿し、化繊との摩擦を減らす。'
+        topical: '保湿と帯電防止の仕上げ材で表面をうるおし、電気を帯びにくくします。',
+        environment: '室内を加湿し、化学繊維とこすれる機会を減らします。'
       }
     }
   },
   yellowing: {
     obs: {
-      detailed: '白〜淡色被毛のくすみは、酸化・涙やけ・環境汚れの蓄積が主因で、被毛表面への色素や汚れの沈着で起こります。',
-      gentle: '白い毛のくすみは、酸化や涙やけ、汚れの蓄積が原因です。'
+      detailed: '白や淡い色の毛のくすみは、皮脂の酸化、涙やけ、外からの汚れが毛の表面に積み重なって起こります。毛の内側の色が変わったわけではありません。',
+      gentle: '白い毛のくすみは、皮脂の酸化や涙やけ、汚れが表面にたまって起こります。'
     },
     fix: {
-      gentle: 'ホワイトニングケアで白さを引き出し、抗酸化の栄養でくすみ予防をしましょう。',
+      gentle: 'ホワイトニングケアで表面の着色を落としながら、抗酸化の栄養でくすみにくい状態をつくっていきます。',
       layers: {
-        topical: 'ホワイトニング系で色素・汚れの沈着を除き、色冴えを回復。',
-        internal: '抗酸化(アスタキサンチン・ビタミンE)で酸化によるくすみを抑制。',
-        environment: '涙やけ・よだれ・環境汚れの付着源を管理(目元・口周りの清拭)。'
+        topical: 'ホワイトニング系で表面に付いた色素と汚れを落とし、本来の白さを引き出します。',
+        internal: '抗酸化（アスタキサンチン・ビタミンE）で、酸化によるくすみを抑えます。',
+        environment: '涙やけやよだれ、外からの汚れが付く場所を減らします。目元と口周りはこまめに拭いてあげてください。'
       }
     }
   },
   sensitive_skin: {
     obs: {
-      detailed: '犬の皮膚はpHが人(弱酸性)より中性〜弱アルカリ寄りで角層が薄く、刺激に弱い構造です。バリア低下でかゆみ・赤みが出やすくなります。',
-      gentle: '犬の肌は人より薄くデリケートで、刺激に弱くかゆみや赤みが出やすい状態です。'
+      detailed: '犬の皮膚は人より角層が薄く、pHも人の弱酸性域とは異なる傾向が報告されています。そのぶん刺激を受けやすく、バリアが落ちるとかゆみや赤みとして表に出てきます。',
+      gentle: '犬の肌は人より薄く、刺激に弱くできています。今はかゆみや赤みが出やすい状態です。'
     },
     fix: {
-      gentle: '低刺激の犬用シャンプーでやさしく洗い、腸内環境や栄養で肌を内側から支えましょう。',
+      gentle: '低刺激の犬用シャンプーでやさしく洗い、腸内環境と栄養で肌を内側から支えていきます。',
       layers: {
-        topical: '低刺激・犬用pHのシャンプーでやさしく洗い、保湿でバリアを補強(人用は不可)。',
-        internal: '必須脂肪酸(オメガ3)・腸内環境でバリアと抗炎症を内側から支援。',
-        environment: 'アレルゲン・洗いすぎ・高温など刺激要因を減らす。'
+        topical: '犬の皮膚に合ったpHの低刺激シャンプーでやさしく洗い、保湿でバリアを補います。人用のシャンプーは使わないでください。',
+        internal: '必須脂肪酸（オメガ3）と腸内環境から、バリアと炎症の起きにくさを内側で支えます。',
+        environment: 'アレルゲン、洗いすぎ、高温といった刺激になるものを減らします。'
       }
     }
   },
   shedding: {
     obs: {
-      detailed: 'ダブルコートは毛周期に沿って季節性に大量換毛します。抜け落ちたアンダーコートが残ると皮膚トラブルの原因になります。',
-      gentle: '季節の変わり目で下毛がたくさん抜けています。抜け毛をためると肌トラブルのもとに。'
+      detailed: 'ダブルコートの子は、季節の変わり目に下毛がまとまって抜けます。抜けた毛が被毛の中に残ると、蒸れて皮膚の状態を悪くする原因になります。',
+      gentle: '季節の変わり目で、下毛がたくさん抜けている時期です。抜けた毛をためこむと、肌のトラブルにつながります。'
     },
     fix: {
-      gentle: 'すっきり洗うケアとブラッシングで抜け毛を取り除き、肌を清潔に保ちましょう。',
+      gentle: 'すっきり洗えるシャンプーとブラッシングで抜けた毛を取り除き、皮膚を清潔に保ちます。',
       layers: {
-        topical: 'ディープクレンジングと適切なブラッシングで死毛(アンダーコート)を除去。',
-        internal: '必須脂肪酸・栄養で皮膚と新生毛の健康を支える。',
-        environment: '換毛期は通気・清潔を保ち、抜け毛をためない。'
+        topical: 'ディープクレンジングとブラッシングで、抜けたアンダーコートを取り除きます。',
+        internal: '必須脂肪酸と栄養で、皮膚とこれから生えてくる毛を支えます。',
+        environment: '換毛期は風通しと清潔を保ち、抜けた毛をためこまないようにします。'
       }
     }
   },
   soft_coat: {
     obs: {
-      detailed: '本来硬いはずのワイヤー（剛毛）コートが軟化し、テクスチャと防汚性が低下しています。過度なコンディショニングが一因のこともあります。',
-      gentle: '本来硬いはずの毛がやわらかくなり、質感が落ちています。'
+      detailed: '本来硬いはずのワイヤーコートが柔らかくなり、手触りだけでなく汚れをはじく力も落ちてきています。柔軟に仕上げる製品を使いすぎたことが原因になっている場合もあります。',
+      gentle: '本来硬いはずの毛がやわらかくなって、手触りが変わってきています。'
     },
     fix: {
-      gentle: 'テクスチャ系シャンプーで本来の硬さを取り戻し、柔軟剤は控えめにしましょう。',
+      gentle: 'テクスチャ系のシャンプーで本来の硬さを戻しながら、柔らかく仕上げる製品は控えめにします。',
       layers: {
-        topical: 'テクスチャ系シャンプーで本来の硬さを取り戻し、柔軟剤の使用は控える。',
-        environment: '過度なコンディショニング/ソフナーを避け、必要に応じプラッキングで質感を維持。'
+        topical: 'テクスチャ系のシャンプーで本来の硬さを取り戻し、柔らかく仕上げる製品は控えます。',
+        environment: 'コンディショナーやソフナーの使いすぎを避け、必要に応じてプラッキングで質感を保ちます。'
       }
     }
   }
@@ -9219,7 +9219,7 @@ const ISSUE_DEEP = {
     articles: ['learn-hair-skin-anatomy', 'learn-coat-colour-quality', 'learn-how-to-dry'],
     cites: ['coatColour'],
     horizon: {
-      ja: '表面の補修は洗浄・保湿の見直しで数日〜2週間ほどで体感しやすい項目です。',
+      ja: '表面の傷みは、洗い方と保湿を見直すだけで数日から2週間ほどで手触りが変わってきます。',
       en: 'Surface repair usually becomes noticeable within a few days to two weeks of revised washing and moisturising.'
     }
   },
@@ -9231,7 +9231,7 @@ const ISSUE_DEEP = {
     articles: ['learn-skin-barrier-moisture', 'learn-how-to-bathe', 'learn-seasonal-care'],
     cites: ['santoro', 'taguchi'],
     horizon: {
-      ja: 'バリアの回復には通常2〜4週間程度を見込みます。洗浄頻度と保湿の見直しが最も効きます。',
+      ja: 'バリアが戻るまでには2〜4週間ほどかかります。洗う回数を見直して、そのあと必ず保湿する。これがいちばん効きます。',
       en: 'Barrier recovery typically takes two to four weeks; revising wash frequency and moisturising has the largest effect.'
     }
   },
@@ -9243,7 +9243,7 @@ const ISSUE_DEEP = {
     articles: ['learn-why-shampoo', 'learn-skin-barrier-moisture', 'learn-integrated-care'],
     cites: ['santoro', 'taguchi'],
     horizon: {
-      ja: '皮脂バランスの是正は数週間単位。洗いすぎを止めることが最初の一手です。',
+      ja: '皮脂の出方が落ち着くまでには数週間かかります。まずは洗いすぎをやめるところから始めてください。',
       en: 'Rebalancing sebum runs on a scale of weeks; stopping over-washing is the first move.'
     }
   },
@@ -9255,7 +9255,7 @@ const ISSUE_DEEP = {
     articles: ['learn-brushing-basics', 'learn-hair-skin-anatomy', 'learn-how-to-dry'],
     cites: ['schuldenfrei'],
     horizon: {
-      ja: '切れた毛そのものは修復されません。新しい毛への入れ替わりを待つため、見た目の回復には毛周期に沿って数か月かかります。今日からの予防が最短の近道です。',
+      ja: '一度切れた毛は元には戻りません。新しい毛に入れ替わるのを待つことになるので、見た目が戻るまでには数か月かかります。だからこそ、今日から切らさないようにすることがいちばんの近道です。',
       en: 'Broken hair does not repair. Visible recovery waits for replacement growth and therefore takes months, following the hair cycle — prevention from today is the fastest route.'
     }
   },
@@ -9267,7 +9267,7 @@ const ISSUE_DEEP = {
     articles: ['learn-why-mats-form', 'learn-mat-prevention-handling', 'learn-mat-proneness'],
     cites: ['muntener'],
     horizon: {
-      ja: '既存の毛玉は物理的に解く必要があります。予防は今日から効果が出ます。',
+      ja: 'すでにできた毛玉は、手で解くか切るしかありません。ただし新しく作らないようにする効果は、今日から出ます。',
       en: 'Existing mats must be physically removed; prevention starts working immediately.'
     }
   },
@@ -9279,7 +9279,7 @@ const ISSUE_DEEP = {
     articles: ['learn-coat-density', 'learn-why-nutrition', 'learn-tools-and-air'],
     cites: ['schuldenfrei', 'msm'],
     horizon: {
-      ja: '乾かし方の工夫は当日から差が出ます。毛幹の太さへの栄養の効果は、新しく生える毛に現れるため数か月単位です。',
+      ja: '乾かし方を変えれば、その日のうちに違いが出ます。一方で栄養が毛の太さに表れるのは新しく生える毛からなので、そちらは数か月かかります。',
       en: 'Better drying shows a difference the same day. Nutritional effects on shaft thickness appear in newly grown hair, so they run on a scale of months.'
     }
   },
@@ -9290,7 +9290,7 @@ const ISSUE_DEEP = {
     },
     articles: ['learn-seasonal-care', 'learn-choosing-sprays', 'learn-brushing-basics'],
     horizon: {
-      ja: '保湿と用具の見直しで、その日のうちに改善が見込めます。',
+      ja: '保湿とブラシを見直せば、その日のうちに落ち着いてきます。',
       en: 'Moisturising and a change of tools can improve this the same day.'
     }
   },
@@ -9301,7 +9301,7 @@ const ISSUE_DEEP = {
     },
     articles: ['learn-coat-colour-quality', 'learn-why-shampoo', 'learn-hard-soft-water'],
     horizon: {
-      ja: '付着した着色の除去は洗浄で段階的に。すでに着色した毛は完全には戻らないため、伸びた分のカットも併用します。',
+      ja: '付いた着色は、洗うたびに少しずつ薄くなっていきます。ただし一度染まった毛が元の白さに戻ることはないので、伸びた分を切りながら入れ替えていきます。',
       en: 'Deposited staining lifts gradually with washing; hair that is already stained will not fully revert, so trimming the grown-out length is used alongside.'
     }
   },
@@ -9313,7 +9313,7 @@ const ISSUE_DEEP = {
     articles: ['learn-skin-coat-basics', 'learn-skin-barrier-moisture', 'learn-hair-loss-conditions'],
     cites: ['santoro'],
     horizon: {
-      ja: '刺激要因を減らせば数週間で落ち着くことが多い一方、痒み・発赤が続く場合は皮膚疾患の可能性があるため獣医師の診察をおすすめします。',
+      ja: '刺激になっているものを減らせば、数週間で落ち着いてくることが多いです。ただし痒みや赤みが続くようなら皮膚の病気が隠れていることもあるので、一度獣医師に診てもらってください。',
       en: 'Removing irritants often settles things within weeks; if itch or redness persists, a skin disease may be involved and a veterinary examination is advised.'
     }
   },
@@ -9325,7 +9325,7 @@ const ISSUE_DEEP = {
     articles: ['learn-hair-cycle', 'learn-seasonal-care', 'learn-hair-loss-conditions'],
     cites: ['muntener', 'diazPhoto'],
     horizon: {
-      ja: '換毛期は通常数週間続きます。抜けた毛を計画的に除去することが最も効果的です。',
+      ja: '換毛期は数週間続きます。毎日少しずつでも抜けた毛を取り除いておくのが、いちばん確実です。',
       en: 'A moult usually runs for several weeks; systematically removing the loose hair is the most effective response.'
     }
   },
@@ -9337,7 +9337,7 @@ const ISSUE_DEEP = {
     articles: ['learn-coat-texture', 'learn-hair-cycle', 'learn-brushing-basics'],
     cites: ['muntener', 'diazRegrowth'],
     horizon: {
-      ja: '質感の回復は新しい毛の成長を伴うため、数か月単位の取り組みになります。',
+      ja: '質感が戻るのは新しい毛が生えそろってからなので、数か月かけて取り組むことになります。',
       en: 'Texture recovery depends on new growth, so it is a project measured in months.'
     }
   }
@@ -9395,68 +9395,68 @@ const BREED_NOTE = {
 // 年齢の傾向 — 加齢による皮膚変化と、抗酸化・栄養・外用の方針
 const AGE_NOTE = {
   puppy: {
-    detailed: 'パピー期は皮膚のバリアが未成熟でデリケートです。低刺激の犬用シャンプーでやさしく洗うことを基本にしてください。',
-    gentle: 'パピーは肌がデリケートなので、低刺激のシャンプーでやさしく洗ってあげましょう。'
+    detailed: '子犬のうちは皮膚のバリアがまだ育ちきっておらず、大人の犬より刺激を受けやすい時期です。洗浄力の強いシャンプーは避けて、低刺激のものでやさしく洗ってあげてください。',
+    gentle: '子犬のうちは肌がまだ弱いので、低刺激のシャンプーでやさしく洗ってあげてください。'
   },
   senior: {
-    detailed: '加齢に伴い皮膚のバリア機能・皮脂分泌・ターンオーバーが低下し、乾燥・艶の低下・酸化ストレスが進みやすい時期です。抗酸化(アスタキサンチン等)と栄養の内側ケアに加え、外用は低刺激・保湿重視のシャンプー選びが有効です。トイプードルなど巻き毛種でも加齢で乾燥が出ることがあります。',
-    gentle: '歳を重ねると肌が乾燥しやすく、ツヤも出にくくなります。抗酸化と栄養のサプリに加え、やさしく保湿できるシャンプー選びが大切です。'
+    detailed: '歳を重ねると、皮膚のバリア機能も皮脂の分泌も少しずつ落ちてきます。その結果、乾燥しやすくなり、艶も出にくくなります。外側は低刺激で保湿を重視したシャンプーに切り替え、内側は抗酸化（アスタキサンチンなど）と栄養で支えると変化が出やすくなります。もともと乾燥と縁の薄い巻き毛の子でも、この時期には乾きが出てくることがあります。',
+    gentle: '歳を重ねると肌が乾きやすくなり、ツヤも出にくくなります。やさしく保湿できるシャンプーに変えて、内側は抗酸化と栄養で支えてあげてください。'
   }
 };
 
 /* 各層の簡潔な根拠 (機序・用語)。ツールチップ＋注記でエビデンス性を可視化 */
 const CARE_EVIDENCE = {
   low_shine: {
-    topical: 'キューティクル整列＝光の反射',
-    internal: 'ケラチン合成（含硫アミノ酸・亜鉛）',
-    environment: '熱・紫外線・摩擦によるキューティクル損傷'
+    topical: 'キューティクルが整うほど光を一定方向に返すため',
+    internal: '毛の主成分ケラチンの材料が足りていることが前提になるため',
+    environment: '熱・紫外線・摩擦がキューティクルを削るため'
   },
   low_moisture: {
-    topical: '角層細胞間脂質＝セラミド／TEWL抑制',
-    internal: '必須脂肪酸→バリア脂質の供給',
-    environment: '低湿度・過洗浄でTEWL亢進'
+    topical: '角層の細胞間脂質が水分の逃げ道をふさぐため',
+    internal: '必須脂肪酸がバリアをつくる脂質の材料になるため',
+    environment: '低湿度と洗いすぎは、どちらも水分の蒸散を早めるため'
   },
   oily: {
-    topical: '過脱脂→代償性の皮脂過剰',
-    internal: '腸-皮膚軸／必須脂肪酸',
-    environment: 'マラセチア等の常在菌・高温多湿'
+    topical: '脱脂しすぎると、失った分を補おうとして皮脂がかえって増えるため',
+    internal: '腸内環境と必須脂肪酸が皮膚の状態に反映されるため',
+    environment: '皮脂はマラセチアなど常在菌の栄養になり、高温多湿で増えやすいため'
   },
   breakage: {
-    topical: '毛幹ケラチン／ジスルフィド結合の補修',
-    internal: 'タンパク質・抗酸化（酸化的損傷の抑制）',
-    environment: '機械的・紫外線・熱ストレス'
+    topical: '毛の内部構造を補い、途中で折れにくくするため',
+    internal: '新しく生える毛の材料を確保し、酸化による傷みを抑えるため',
+    environment: '引っぱり・紫外線・熱は、いずれも毛を弱らせるため'
   },
   matting: {
-    topical: '保湿で摩擦低減（乾燥は毛玉化を促進）',
-    environment: '定期コーミング／濡れ放置の回避'
+    topical: '滑りをよくすると毛どうしの摩擦が減り、絡みが進みにくくなるため',
+    environment: '絡む前にとかし、濡れたまま放置しないことが最大の予防になるため'
   },
   low_volume: {
-    topical: '毛の立ち上がり・コシの付与',
-    internal: '毛周期・毛幹の充実（タンパク質）',
-    environment: '重い被膜で根元が寝るのを回避'
+    topical: '根元から立ち上がるほど、同じ毛量でも厚みが出るため',
+    internal: '毛幹の太さは栄養状態を反映し、新しく生える毛に表れるため',
+    environment: '重い仕上げ材は根元を寝かせ、せっかくの立ち上がりを潰すため'
   },
   static: {
-    topical: '帯電防止（摩擦電気の抑制）',
-    environment: '低湿度で帯電が亢進'
+    topical: '摩擦でたまった電気を逃がし、毛が反発し合うのを防ぐため',
+    environment: '空気が乾くほど電気の逃げ道がなくなるため'
   },
   yellowing: {
-    topical: 'ポルフィリン・環境色素の除去',
-    internal: '抗酸化（酸化的な黄変の抑制）',
-    environment: '涙・唾液（ポルフィリン）由来の付着'
+    topical: '着色は毛の内部ではなく表面に付いているので、洗浄で落とせるため',
+    internal: '皮脂が酸化すると黄色みが出るため',
+    environment: '涙や唾液に含まれるポルフィリンが毛に付いて酸化するため'
   },
   sensitive_skin: {
-    topical: '犬の皮膚pH（中性〜弱アルカリ）・バリア保護',
-    internal: 'オメガ3（抗炎症）／腸-皮膚軸',
-    environment: 'アレルゲン・過洗浄・高温の回避'
+    topical: '犬の皮膚は人とpHが異なり、人用の製品では刺激が強すぎるため',
+    internal: 'オメガ3と腸内環境が、炎症の起きにくさに関わるため',
+    environment: 'アレルゲン・洗いすぎ・高温は、いずれもバリアを削るため'
   },
   shedding: {
-    topical: '毛周期（テロジェン）同期の死毛除去',
-    internal: '皮膚・新生毛への栄養',
-    environment: '通気・清潔の維持'
+    topical: '休止期に入った毛がまとまって抜けるので、先に取り除いておくため',
+    internal: '次に生えてくる毛の材料を切らさないため',
+    environment: '抜けた毛がこもると蒸れて皮膚の状態が悪くなるため'
   },
   soft_coat: {
-    topical: 'ワイヤー（剛毛）コート本来の質感維持',
-    environment: '過コンディショニング回避／プラッキング'
+    topical: '成熟した上毛を残すことでしか、本来の硬さは保てないため',
+    environment: '柔らかく仕上げすぎず、抜いて入れ替えることで質感が戻るため'
   }
 };
 
@@ -9615,18 +9615,18 @@ function renderRadarReading(r) {
   if (spread < 0.8) {
     shape = avg >= 4
       ? (en ? 'The profile is even and high across all six axes — a well-balanced coat with no single weak point.'
-            : '6軸がそろって高く、突出した弱点のない均整のとれたプロファイルです。')
+            : '6つの軸がそろって高く、どこかが足を引っ張っている様子はありません。')
       : avg <= 2.5
         ? (en ? 'The profile is uniformly low. Rather than one specific problem, this pattern usually points to the overall foundation — washing, moisturising and nutrition — needing review.'
-              : '6軸が全体的に低く出ています。特定の一点というより、洗浄・保湿・栄養という土台全体の見直しが効きやすいパターンです。')
+              : '6つの軸が全体に低く出ています。どこか一点というより、洗い方・保湿・栄養という土台をまとめて見直したほうが早く変わる出方です。')
         : (en ? 'The profile is even without a standout weakness — a steady baseline to build on.'
-              : '突出した弱点がなく平均的にまとまっています。土台が安定しているぶん、伸ばしたい軸を選んで重ねやすい状態です。');
+              : '大きく落ち込んでいる軸はなく、全体に平均的です。土台が安定しているので、伸ばしたいところを選んで手をかけやすい状態です。');
   } else {
     const lowNames = low.map(x => L[x.k]).join(en ? ' and ' : '・');
     const highNames = high.map(x => L[x.k]).join(en ? ' and ' : '・');
     shape = en
       ? 'The chart dips at <b>' + lowNames + '</b> while <b>' + highNames + '</b> hold up — an uneven profile, so targeting the low axes is more efficient than treating everything equally.'
-      : 'チャートは <b>' + lowNames + '</b> が凹み、<b>' + highNames + '</b> は保たれた形です。全体を一様にケアするより、凹んでいる軸に的を絞るほうが効率的です。';
+      : '<b>' + lowNames + '</b> が落ち込む一方で、<b>' + highNames + '</b> は保てています。全体に同じ手をかけるより、落ちている軸に絞ったほうが早く変わります。';
   }
 
   // 軸の組み合わせから読み取れる関連 (機序として説明できるものだけ)
@@ -9635,22 +9635,22 @@ function renderRadarReading(r) {
   if (v.moisture <= 2.5 && v.shine <= 2.5) {
     links.push(en
       ? 'Low moisture together with low shine is a common pair: when the barrier dries, the lipid film that smooths the hair surface thins as well, so light scatters.'
-      : '水分と艶がそろって低いのは典型的な組み合わせです。バリアが乾くと毛表面をならす脂質膜も薄くなり、光が乱反射するためです。');
+      : '水分と艶が一緒に落ちるのはよくある組み合わせです。皮膚が乾くと毛の表面をならしている脂質の膜も薄くなり、光がまとまって返らなくなります。');
   }
   if (v.moisture <= 2.5 && v.durability <= 2.5) {
     links.push(en
       ? 'Dryness with damage suggests mechanical stress on an already fragile shaft — brushing and drying method are worth reviewing first.'
-      : '乾燥とダメージが重なる場合、もろくなった毛に機械的な負荷が加わっている可能性があります。まずブラッシングと乾かし方の見直しが効きます。');
+      : '乾燥とダメージが重なっているときは、弱った毛に力がかかっていることが多いです。まずはブラッシングと乾かし方を見直してみてください。');
   }
   if (v.elasticity <= 2.5 && v.volume <= 2.5) {
     links.push(en
       ? 'Weak elasticity alongside low volume can reflect thinner shafts; hair is a protein structure, so this is one of the few axes where nutrition shows through — in newly grown hair.'
-      : 'ハリと毛量がともに低い場合、毛幹が細くなっている可能性があります。毛はタンパク質でできているため、この軸は栄養状態が現れやすく、効果は新しく生える毛に出ます。');
+      : 'ハリと毛量がどちらも低いときは、毛そのものが細くなっていることがあります。毛はタンパク質でできているので、この軸には食べているものが表れます。ただし変化が見えるのは新しく生えてくる毛からです。');
   }
   if (v.density >= 4 && v.durability <= 2.5) {
     links.push(en
       ? 'A dense coat with damage is a mat-prone combination: dense coats have more fibre-to-fibre contact, and damaged cuticles catch on each other.'
-      : '密度が高くダメージがある組み合わせは毛玉ができやすい状態です。密な被毛は毛どうしの接点が多く、傷んだキューティクルは互いに引っかかりやすいためです。');
+      : '毛量があってダメージもある、というのは毛玉ができやすい組み合わせです。毛が多いほど互いに触れ合う点が増え、傷んだ表面はそこで引っかかります。');
   }
 
   let html = '<div class="pp-assessment__radar">' +
@@ -9721,13 +9721,13 @@ function renderAssessment(a, coat) {
   // 総評リード
   let overall;
   if (realIssues.length === 0 && (avg === null || avg >= 4)) {
-    overall = en ? 'Overall in good condition, maintaining a beautiful coat.' : '総じて良好で、美しいコンディションを保てています。';
+    overall = en ? 'The coat is in good shape overall — this is a condition worth keeping.' : '全体によく整っていて、今のコンディションは維持していきたい状態です。';
   } else if (realIssues.length >= 3 || (avg !== null && avg < 2.5)) {
-    overall = en ? 'Several concerns overlap — focused care will be effective.' : 'いくつかの課題が重なっており、重点的なケアが効果的です。';
+    overall = en ? 'Several things overlap here, so it helps to fix them in order rather than all at once.' : '気になる点がいくつか重なっているので、まとめて手をつけるより、順番に整えていくほうが早く変わります。';
   } else if (realIssues.length <= 1 && (avg === null || avg >= 3.5)) {
-    overall = en ? 'Largely healthy, with a little room to improve.' : 'おおむね健やかですが、いくつか伸びしろがあります。';
+    overall = en ? 'Healthy on the whole, with one or two points that could be better.' : '全体としては健やかで、あと一歩よくできる点が一つ二つあります。';
   } else {
-    overall = en ? 'A mix of strong points and areas to improve.' : '良い部分と改善したい部分が混在する状態です。';
+    overall = en ? 'Some parts are holding up well while others need attention.' : 'よく保てている部分と、手を入れたい部分がはっきり分かれています。';
   }
 
   // 考察対象を構築 (症状 + 低スコア補完、重複排除)
@@ -9758,9 +9758,10 @@ function renderAssessment(a, coat) {
   /* 犬種別の描写を最優先し、未登録の場合のみコートタイプの汎用描写にフォールバック */
   const friendly = escapeHtml(breedFriendly(a.breed) || coatFriendly(coat));
   const technical = escapeHtml(coatLabel(coat));
+  // 体言止めで終わらないよう「〜です」で閉じる (分類名は補足として括弧に置く)
   let lead = en
     ? '<strong>' + escapeHtml(a.name) + '</strong>’s coat is a <strong>' + friendly + '</strong> <span class="pp-assessment__lead-tech">(' + technical + ')</span>. ' + overall + '<br>' + leadCoat
-    : '<strong>' + escapeHtml(a.name) + '</strong>の被毛は <strong>' + friendly + '</strong><span class="pp-assessment__lead-tech">（' + technical + '）</span>。' + overall + '<br>' + leadCoat;
+    : '<strong>' + escapeHtml(a.name) + '</strong>の被毛は、<strong>' + friendly + '</strong>です<span class="pp-assessment__lead-tech">（' + technical + '）</span>。' + overall + '<br>' + leadCoat;
   if (bNote) lead += '<br>' + bNote;
   if (aNote) lead += '<br>' + aNote;
   html += '<p class="pp-assessment__lead">' + lead + '</p>';
