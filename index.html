@@ -1398,6 +1398,102 @@
   .pp-rec-chip--supp { color: #2f9e7e; }
   .pp-rec-chip--supp:hover { border-color: #2f9e7e; }
   /* ============================================
+     結果ページ: はじめ方の段階提案
+     ============================================ */
+  .pp-tiers { margin: 0 0 24px; }
+  .pp-tiers__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--pp-navy);
+  }
+  .pp-tiers__head small {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--pp-text-muted);
+  }
+  .pp-tiers__grid {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+  .pp-tier {
+    position: relative;
+    background: #ffffff;
+    border: 1px solid var(--pp-border);
+    border-radius: var(--radius-sm);
+    padding: 16px 16px 14px;
+    display: flex;
+    flex-direction: column;
+  }
+  .pp-tier.is-recommended {
+    border-color: var(--pp-orange);
+    border-width: 2px;
+    padding: 15px 15px 13px;
+  }
+  .pp-tier__badge {
+    position: absolute;
+    top: -9px;
+    left: 14px;
+    background: var(--pp-orange);
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+  }
+  .pp-tier__name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--pp-navy);
+  }
+  .pp-tier__count {
+    font-size: 11px;
+    color: var(--pp-text-muted);
+    margin-top: 2px;
+  }
+  .pp-tier__price {
+    font-family: var(--font-en);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--pp-text);
+    margin: 6px 0 8px;
+  }
+  .pp-tier__items {
+    list-style: none;
+    margin: 0 0 10px;
+    padding: 0;
+    border-top: 1px solid var(--pp-border-light);
+    padding-top: 8px;
+  }
+  .pp-tier__items li {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--pp-text-light);
+    padding: 3px 0 3px 14px;
+    position: relative;
+  }
+  .pp-tier__items li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--pp-navy-light);
+    font-size: 10px;
+  }
+  .pp-tier__why {
+    margin: auto 0 0;
+    font-size: 11.5px;
+    line-height: 1.75;
+    color: var(--pp-text-light);
+  }
+
+  /* ============================================
      結果ページ: ケアルーティン (4点の流れ)
      ============================================ */
   .pp-routine {
@@ -1601,6 +1697,68 @@
     line-height: 1.9;
     color: var(--pp-text-light);
   }
+  /* 機序に添える出典 */
+  .pp-assessment__cites {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--pp-border-light);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+  .pp-assessment__cites > span {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--pp-text-muted);
+  }
+  .pp-assessment__cites a {
+    font-size: 11px;
+    color: var(--pp-navy);
+    text-decoration: underline;
+    text-decoration-color: var(--pp-navy-light);
+    text-underline-offset: 2px;
+    padding: 4px 2px;
+    min-height: 30px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .pp-assessment__cites a::after { content: '↗'; font-size: 9px; margin-left: 3px; opacity: 0.7; }
+  .pp-assessment__cites a:hover { color: var(--pp-orange-text); }
+
+  /* 記事の監修表示 */
+  .pp-edu__byline {
+    margin-top: 18px;
+    padding-top: 12px;
+    border-top: 1px solid var(--pp-border-light);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    font-size: 11px;
+    color: var(--pp-text-muted);
+  }
+  .pp-edu__byline-role {
+    background: var(--pp-navy-soft);
+    color: var(--pp-navy);
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: var(--radius-pill);
+  }
+  .pp-edu__byline-name {
+    font-weight: 700;
+    color: var(--pp-text);
+    font-size: 12px;
+  }
+  .pp-edu__byline-name small {
+    display: block;
+    font-weight: 500;
+    font-size: 11px;
+    color: var(--pp-text-muted);
+  }
+  .pp-edu__byline-date { margin-left: auto; }
+
   /* 改善の見通し */
   .pp-assessment__horizon {
     margin: 8px 0 0;
@@ -3569,6 +3727,85 @@
     line-height: 1.6;
   }
 
+  /* ============================================
+     送信前の入力確認
+     ============================================ */
+  .pp-review {
+    margin: 26px 0 0;
+    padding: 16px 18px;
+    background: var(--pp-bg-soft);
+    border: 1px solid var(--pp-border-light);
+    border-radius: var(--radius-sm);
+  }
+  .pp-review__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--pp-navy);
+    margin-bottom: 10px;
+  }
+  .pp-review__head small {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--pp-text-muted);
+  }
+  .pp-review__list { margin: 0; }
+  .pp-review__row {
+    display: grid;
+    grid-template-columns: 6.5em 1fr auto;
+    align-items: baseline;
+    gap: 4px 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--pp-border-light);
+  }
+  .pp-review__row:last-child { border-bottom: none; }
+  .pp-review__row dt {
+    font-size: 12px;
+    color: var(--pp-text-muted);
+    margin: 0;
+  }
+  .pp-review__row dd {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--pp-text);
+    word-break: break-word;
+  }
+  .pp-review__none { color: var(--pp-text-muted); font-size: 12px; }
+  .pp-review__edit {
+    appearance: none;
+    -webkit-appearance: none;
+    background: #ffffff;
+    border: 1px solid var(--pp-border);
+    color: var(--pp-navy);
+    font-family: var(--font-jp);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 12px;
+    min-height: 34px;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .pp-review__edit:hover { background: var(--pp-navy-soft); border-color: var(--pp-navy-light); }
+  .pp-review__note {
+    margin: 10px 0 0;
+    font-size: 11.5px;
+    line-height: 1.7;
+    color: var(--pp-text-muted);
+  }
+  @media (max-width: 420px) {
+    .pp-review__row { grid-template-columns: 1fr auto; }
+    .pp-review__row dt { grid-column: 1; }
+    .pp-review__row dd { grid-column: 1; }
+    .pp-review__edit { grid-column: 2; grid-row: 1 / span 2; align-self: center; }
+  }
+
 /* 入力の自動復元を知らせる通知 (取り消し可能) */
   .pp-draft-notice {
     display: flex;
@@ -4122,6 +4359,10 @@
     </div>
 
     <!-- 診断ボタン (1個だけ) -->
+    <!-- 送信前の入力確認。別画面にすると1タップ増えるため、
+         診断ボタンの直前に常設して手数を増やさずに見直せるようにする。 -->
+    <div class="pp-review" id="answerReview" hidden></div>
+
     <div class="pp-submit">
       <button class="pp-btn pp-btn--primary pp-btn--lg" onclick="runDiagnosis()">
         <span data-lang-ja>この内容で診断する</span><span data-lang-en>Run Diagnosis</span>
@@ -4195,6 +4436,8 @@
         <h2 class="pp-section-title__jp">あなたの愛犬専用ケアプログラム</h2>
       </div>
       <div id="programSummary"></div>
+      <!-- はじめ方の段階提案 (まず1本 / コア2品 / フル) -->
+      <div class="pp-tiers" id="startTiers" style="display:none;"></div>
       <!-- 4点をバラバラの商品ではなく「一連のケア」として示す -->
       <div class="pp-routine" id="careRoutine"></div>
       <div class="pp-products" id="productList"></div>
@@ -7347,6 +7590,7 @@ function setLang(lang) {
   try { renderSupplements((state.answers && state.answers.issues) ? state.answers : { issues: [], goal: 'daily', scores: {}, age: '' }); } catch (e) {}
   try { buildEduIndex(); } catch (e) {}
   try { repaintScoreCriteria(); } catch (e) {}
+  try { renderAnswerReview(); } catch (e) {}
   const resultEl = document.getElementById('result');
   if (resultEl && resultEl.classList.contains('is-shown') && state.answers && state.coat) {
     try { renderAssessment(state.answers, state.coat); } catch (e) {}
@@ -8062,6 +8306,81 @@ function renderProgramSummary(picks) {
       '</div>' +
       '<a class="pp-program__cta" href="' + shopUrl('https://www.plushpuppyjapan.com') + '" target="_blank" rel="noopener">' + (en ? 'Shop the program' : 'Plush Puppy で揃える') + '</a>' +
     '</div>';
+  try { renderStartTiers(picks); } catch (e) {}
+}
+
+/* ============================================
+   はじめ方の段階提案
+   4点まとめては金額も手間も大きい。「まず1本」「コア2品」
+   「フル」の3段階を示し、どこから始めても意味があることと、
+   その順番の根拠 (洗う→補う) を明示する。
+   ============================================ */
+function renderStartTiers(picks) {
+  const el = document.getElementById('startTiers');
+  if (!el) return;
+  const en = state.lang === 'en';
+  const priced = (picks || []).filter(p => p && typeof p.price === 'number');
+  if (priced.length < 2) { el.style.display = 'none'; el.innerHTML = ''; return; }
+
+  const byCat = c => priced.filter(p => p.cat === c);
+  const order = ['shampoo', 'conditioner', 'finishing', 'brush'];
+  // 「まず1本」はシャンプー、次に「補う」コンディショナー。
+  // ルーティンの土台から順に増やす構成にする。
+  const ordered = order.map(c => byCat(c)[0]).filter(Boolean);
+  if (ordered.length < 2) { el.style.display = 'none'; el.innerHTML = ''; return; }
+
+  const tiers = [
+    {
+      key: 'start',
+      items: ordered.slice(0, 1),
+      ja: { name: 'まず1本から', why: '洗浄はすべての土台です。ここを愛犬に合うものへ替えるだけでも変化が出ます。' },
+      en: { name: 'Start with one', why: 'Cleansing is the foundation. Switching just this to something suited to your dog already makes a difference.' }
+    },
+    {
+      key: 'core',
+      items: ordered.slice(0, 2),
+      ja: { name: 'コア2品', why: '「洗う」と「補う」はセットです。洗ったまま乾かさないことが、乾燥と毛切れを防ぐ最短の一手です。', recommended: true },
+      en: { name: 'The core two', why: 'Cleansing and replenishing belong together. Not drying a stripped coat is the shortest route to preventing dryness and breakage.', recommended: true }
+    },
+    {
+      key: 'full',
+      items: ordered,
+      ja: { name: 'フルプログラム', why: '仕上げと日々のブラッシングまで揃え、状態の維持と再発予防まで通してケアします。' },
+      en: { name: 'Full programme', why: 'Adds finishing and daily brushing so the routine maintains the result and prevents recurrence.' }
+    }
+  ].filter(t => t.items.length);
+
+  // 同じ点数のティアが並ぶ場合は重複を除く (製品が少ないとき)
+  const seenCounts = {};
+  const uniq = tiers.filter(t => {
+    if (seenCounts[t.items.length]) return false;
+    seenCounts[t.items.length] = 1;
+    return true;
+  });
+  if (uniq.length < 2) { el.style.display = 'none'; el.innerHTML = ''; return; }
+
+  el.style.display = 'block';
+  el.innerHTML =
+    '<div class="pp-tiers__head">' +
+      '<span>' + (en ? 'Where to start' : 'どこから始めますか') + '</span>' +
+      '<small>' + (en ? 'All three are valid starting points.' : 'どれから始めても意味があります') + '</small>' +
+    '</div>' +
+    '<div class="pp-tiers__grid">' +
+      uniq.map(t => {
+        const c = t[en ? 'en' : 'ja'];
+        const sum = t.items.reduce((s, p) => s + p.price, 0);
+        return '<div class="pp-tier' + (c.recommended ? ' is-recommended' : '') + '">' +
+          (c.recommended ? '<span class="pp-tier__badge">' + (en ? 'Recommended' : 'おすすめ') + '</span>' : '') +
+          '<div class="pp-tier__name">' + escapeHtml(c.name) + '</div>' +
+          '<div class="pp-tier__count">' + (en ? t.items.length + (t.items.length > 1 ? ' items' : ' item') : t.items.length + '点') + '</div>' +
+          '<div class="pp-tier__price">¥' + sum.toLocaleString() + '</div>' +
+          '<ul class="pp-tier__items">' +
+            t.items.map(p => '<li>' + escapeHtml(pName(p)) + '</li>').join('') +
+          '</ul>' +
+          '<p class="pp-tier__why">' + escapeHtml(c.why) + '</p>' +
+          '</div>';
+      }).join('') +
+    '</div>';
 }
 
 /* ============================================
@@ -8318,6 +8637,120 @@ function initScoreCriteria() {
 }
 function repaintScoreCriteria() {
   document.querySelectorAll('.pp-criteria__btn').forEach(b => { if (b._repaint) b._repaint(); });
+}
+
+/* ============================================
+   送信前の入力確認
+   モバイルのウィザードでは前のステップが隠れるため、
+   何を答えたかを診断ボタンの手前で一覧できるようにする。
+   各項目には編集リンクを付け、該当ステップへ戻して
+   フォーカスまで移す (やり直し不要)。
+   ============================================ */
+function answerReviewRows() {
+  const en = state.lang === 'en';
+  const textOf = sel => {
+    if (!sel) return '';
+    if (sel.tagName === 'SELECT') {
+      const o = sel.selectedOptions && sel.selectedOptions[0];
+      return (o && o.value) ? o.textContent.trim() : '';
+    }
+    return sel.value.trim();
+  };
+  const rows = [];
+  const add = (labelJa, labelEn, value, targetId) => {
+    rows.push({ label: en ? labelEn : labelJa, value: value, target: targetId });
+  };
+  add('お名前', 'Name', textOf(document.getElementById('dogName')), 'dogName');
+  add('犬種', 'Breed', textOf(document.getElementById('breed')), 'breed');
+  add('年齢', 'Age', textOf(document.getElementById('age')), 'age');
+  add('体型', 'Body condition', textOf(document.getElementById('body')), 'body');
+  add('毛色', 'Colour', textOf(document.getElementById('color')), 'color');
+
+  const issues = Array.from(document.querySelectorAll('#conditionGroup input:checked'))
+    .map(i => issueLabel(i.dataset.issue));
+  add('気になること', 'Concerns', issues.join(en ? ', ' : '・'), 'conditionGroup');
+
+  const scoreBits = [];
+  Object.keys(SCORE_LABEL_JP).forEach(k => {
+    const sel = document.querySelector('[data-score="' + k + '"]');
+    if (!sel) return;
+    if (sel.value === '3') return; // 既定値は書かない (見直すべき点だけを目立たせる)
+    const lbl = en ? (SCORE_LABEL_EN[k] || k) : SCORE_LABEL_JP[k];
+    scoreBits.push(lbl + ' ' + textOf(sel));
+  });
+  add('コート評価', 'Coat ratings', scoreBits.join(en ? ', ' : '・'), 'scoreShine');
+
+  const goal = document.querySelector('input[name="goal"]:checked');
+  add('ケアの目的', 'Care goal', goal ? goalLabel(goal.value) : '', 'goalGroup');
+
+  const sd = document.getElementById('showDate');
+  if (goal && goal.value === 'show_prep') {
+    add('ショー日', 'Show date', sd ? sd.value : '', 'showDate');
+  }
+  return rows;
+}
+
+function renderAnswerReview() {
+  const el = document.getElementById('answerReview');
+  if (!el) return;
+  const en = state.lang === 'en';
+  const rows = answerReviewRows();
+  const filled = rows.filter(r => r.value).length;
+  el.hidden = false;
+  el.innerHTML =
+    '<div class="pp-review__head">' +
+      '<span>' + (en ? 'Check your answers' : '入力内容の確認') + '</span>' +
+      '<small>' + (en ? filled + ' of ' + rows.length + ' filled in' : rows.length + '項目中 ' + filled + '項目を入力') + '</small>' +
+    '</div>' +
+    '<dl class="pp-review__list">' +
+      rows.map(r =>
+        '<div class="pp-review__row' + (r.value ? '' : ' is-empty') + '">' +
+          '<dt>' + escapeHtml(r.label) + '</dt>' +
+          '<dd>' + (r.value ? escapeHtml(r.value) : '<span class="pp-review__none">' + (en ? 'not set' : '未選択') + '</span>') + '</dd>' +
+          '<button type="button" class="pp-review__edit" data-edit-target="' + r.target + '">' +
+            (en ? 'Edit' : '編集') +
+          '</button>' +
+        '</div>').join('') +
+    '</dl>' +
+    '<p class="pp-review__note">' +
+      (en ? 'Anything left unset is filled with general recommendations — you can run the diagnosis as it is.'
+          : '未選択の項目は一般的な推奨で補完されます。このままでも診断できます。') +
+    '</p>';
+}
+
+/* 編集リンク: モバイルではその項目を含むステップへ戻してからフォーカス */
+function focusAnswerField(id) {
+  const target = document.getElementById(id);
+  if (!target) return;
+  const panel = document.getElementById('diagnosisFormPanel');
+  if (panel && panel.classList.contains('pp-wizard')) {
+    const sections = Array.from(panel.querySelectorAll(':scope > .pp-section'));
+    const idx = sections.findIndex(s => s.contains(target));
+    if (idx >= 0 && typeof window.ppWizardGoTo === 'function') window.ppWizardGoTo(idx);
+  }
+  setTimeout(() => {
+    try { target.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) { target.scrollIntoView(); }
+    const focusable = (target.tagName === 'SELECT' || target.tagName === 'INPUT')
+      ? target
+      : target.querySelector('input, select');
+    if (focusable) { try { focusable.focus({ preventScroll: true }); } catch (e) { focusable.focus(); } }
+  }, 120);
+}
+
+function initAnswerReview() {
+  const panel = document.getElementById('diagnosisFormPanel');
+  const el = document.getElementById('answerReview');
+  if (!panel || !el) return;
+  renderAnswerReview();
+  let t = null;
+  const refresh = () => { clearTimeout(t); t = setTimeout(renderAnswerReview, 150); };
+  panel.addEventListener('input', refresh);
+  panel.addEventListener('change', refresh);
+  el.addEventListener('click', e => {
+    const btn = e.target.closest && e.target.closest('.pp-review__edit');
+    if (!btn) return;
+    focusAnswerField(btn.getAttribute('data-edit-target'));
+  });
 }
 
 function initDraftPersistence() {
@@ -8727,6 +9160,56 @@ const SCORE_INSIGHT = {
    ・horizon: 改善までの現実的な時間軸。毛は毛周期に沿って
      生え替わるため、表面の改善と構造の改善で速度が違う
    ============================================ */
+/* 考察に添える出典。すべて「コートの科学」で既に引用している文献に限る
+   (新たな主張を作らないため)。裏づけとなる文献が無い機序には付けない。 */
+const CITATIONS = {
+  santoro: {
+    label: 'Santoro D. Update on the skin barrier, cutaneous microbiome and host defence peptides in canine atopic dermatitis. Vet Dermatol.',
+    short: { ja: '皮膚バリアと常在菌叢（総説）', en: 'Skin barrier & cutaneous microbiome (review)' },
+    url: 'https://onlinelibrary.wiley.com/doi/10.1111/vde.13215'
+  },
+  taguchi: {
+    label: 'Taguchi M, et al. Preliminary evaluation of a commercial shampoo and fine bubble bathing in canine atopic dermatitis (randomised). Vet Dermatol.',
+    short: { ja: 'シャンプー・入浴の比較試験', en: 'Shampoo & bathing, randomised trial' },
+    url: 'https://onlinelibrary.wiley.com/doi/full/10.1111/vde.13245'
+  },
+  muntener: {
+    label: 'Müntener T, et al. The canine hair cycle — a guide for the assessment of morphological and immunohistochemical criteria.',
+    short: { ja: '犬の毛周期', en: 'The canine hair cycle' },
+    url: 'https://pubmed.ncbi.nlm.nih.gov/21401741/'
+  },
+  diazRegrowth: {
+    label: 'Diaz SF, et al. An analysis of canine hair re-growth after clipping for a surgical procedure. Vet Dermatol.',
+    short: { ja: 'クリッピング後の発毛', en: 'Hair re-growth after clipping' },
+    url: 'https://onlinelibrary.wiley.com/doi/10.1111/j.1365-3164.2004.00356.x'
+  },
+  diazPhoto: {
+    label: 'Diaz SF, et al. The impact of body site, topical melatonin and brushing on hair regrowth after clipping. Vet Dermatol.',
+    short: { ja: '部位・光周期と発毛', en: 'Body site, photoperiod and regrowth' },
+    url: 'https://onlinelibrary.wiley.com/doi/10.1111/j.1365-3164.2005.00497.x'
+  },
+  schuldenfrei: {
+    label: 'Schuldenfrei B, et al. Evaluation of hair follicle parameters using TrichoScale Pro in healthy dogs. Vet Dermatol.',
+    short: { ja: '毛包パラメータの計測', en: 'Hair follicle parameters' },
+    url: 'https://onlinelibrary.wiley.com/doi/10.1111/vde.12836'
+  },
+  msm: {
+    label: 'Dietary methylsulfonylmethane supplementation and growth performance, hair quality, faecal microbiota. Front Microbiol. 2022.',
+    short: { ja: '栄養と毛質（MSM）', en: 'Nutrition and hair quality (MSM)' },
+    url: 'https://www.frontiersin.org/journals/microbiology/articles/10.3389/fmicb.2022.838164/full'
+  },
+  coatColour: {
+    label: 'Coat colour genetics. J Hered. 100(suppl_1):S75.',
+    short: { ja: '被毛色の遺伝', en: 'Coat colour genetics' },
+    url: 'https://academic.oup.com/jhered/article/100/suppl_1/S75/886518'
+  },
+  alopecia: {
+    label: 'Alopecia in dogs (review). Vet Pathol. 2023.',
+    short: { ja: '犬の脱毛症（総説）', en: 'Canine alopecia (review)' },
+    url: 'https://journals.sagepub.com/doi/10.1177/03009858231170295'
+  }
+};
+
 const ISSUE_DEEP = {
   low_shine: {
     mechanism: {
@@ -8734,6 +9217,7 @@ const ISSUE_DEEP = {
       en: 'Shine arises when the cuticle — the overlapping outer scales of the hair shaft — lies flat and reflects light in a consistent direction. Friction, heat and UV lift or chip those scales, so light scatters instead and the coat reads as dull at the same light level. The thin sebum-derived lipid film also smooths the surface, so over-degreasing contributes as well. Melanin content does not change over short periods, so this is usually a surface-reflection problem rather than genuine fading.'
     },
     articles: ['learn-hair-skin-anatomy', 'learn-coat-colour-quality', 'learn-how-to-dry'],
+    cites: ['coatColour'],
     horizon: {
       ja: '表面の補修は洗浄・保湿の見直しで数日〜2週間ほどで体感しやすい項目です。',
       en: 'Surface repair usually becomes noticeable within a few days to two weeks of revised washing and moisturising.'
@@ -8745,6 +9229,7 @@ const ISSUE_DEEP = {
       en: 'How "moist" a coat feels depends less on water inside the hair than on whether the skin barrier — the intercellular lipids of the stratum corneum, ceramides among them — is holding water. A damaged barrier raises transepidermal water loss (TEWL): the skin dries and the lipid supply to the hair falls with it. Dogs have no body-wide eccrine sweat glands, so they cannot humidify the surface by sweating as humans do, which makes ambient humidity and topical care relatively more important. Frequent use of strongly stripping shampoo removes intercellular lipids and worsens the cycle.'
     },
     articles: ['learn-skin-barrier-moisture', 'learn-how-to-bathe', 'learn-seasonal-care'],
+    cites: ['santoro', 'taguchi'],
     horizon: {
       ja: 'バリアの回復には通常2〜4週間程度を見込みます。洗浄頻度と保湿の見直しが最も効きます。',
       en: 'Barrier recovery typically takes two to four weeks; revising wash frequency and moisturising has the largest effect.'
@@ -8756,6 +9241,7 @@ const ISSUE_DEEP = {
       en: 'Greasiness is not set by sebaceous activity alone: sebum output can rise as a compensatory response to a damaged skin barrier. As the barrier weakens and water is lost, lipid secretion increases to compensate; in dogs that sebum oxidises readily, and the oxidation products are irritating and contribute to odour and itch. Sebum also feeds lipid-dependent commensals such as Malassezia, and a skewed microbial balance further drives itch and inflammation. Stripping harder is therefore not reliably better — moisturising after washing is the pivot.'
     },
     articles: ['learn-why-shampoo', 'learn-skin-barrier-moisture', 'learn-integrated-care'],
+    cites: ['santoro', 'taguchi'],
     horizon: {
       ja: '皮脂バランスの是正は数週間単位。洗いすぎを止めることが最初の一手です。',
       en: 'Rebalancing sebum runs on a scale of weeks; stopping over-washing is the first move.'
@@ -8767,6 +9253,7 @@ const ISSUE_DEEP = {
       en: 'Strength comes from the cortex at the centre of the hair, protected by the surrounding cuticle. Where the cuticle is gone the cortex is exposed and mechanically weaker; brushing while wet or drying at high heat then snaps the shaft mid-length. Wet hair stretches more easily because keratin hydrogen bonds are temporarily loosened, but it also breaks more easily, so it needs more careful handling than dry hair. Finer hairs have a smaller cross-section and break under the same tension sooner.'
     },
     articles: ['learn-brushing-basics', 'learn-hair-skin-anatomy', 'learn-how-to-dry'],
+    cites: ['schuldenfrei'],
     horizon: {
       ja: '切れた毛そのものは修復されません。新しい毛への入れ替わりを待つため、見た目の回復には毛周期に沿って数か月かかります。今日からの予防が最短の近道です。',
       en: 'Broken hair does not repair. Visible recovery waits for replacement growth and therefore takes months, following the hair cycle — prevention from today is the fastest route.'
@@ -8778,6 +9265,7 @@ const ISSUE_DEEP = {
       en: 'Mats form when shed hairs leave the lie of the coat, tangle with neighbouring hairs, and are then packed tight by friction and static. Double coats, fine soft hair and wavy hair have many contact points between fibres, so tangles start readily. That is why mats appear first where friction concentrates: under collars and harnesses, in the armpits, the inner thighs and behind the ears. Once packed, a mat traps moisture against the skin and can worsen conditions there.'
     },
     articles: ['learn-why-mats-form', 'learn-mat-prevention-handling', 'learn-mat-proneness'],
+    cites: ['muntener'],
     horizon: {
       ja: '既存の毛玉は物理的に解く必要があります。予防は今日から効果が出ます。',
       en: 'Existing mats must be physically removed; prevention starts working immediately.'
@@ -8789,6 +9277,7 @@ const ISSUE_DEEP = {
       en: 'Volume is set by three things: the number of hairs (follicular density), the thickness of each shaft, and the angle at which hair lifts from the root. Follicular density is largely genetic, but shaft thickness responds to nutritional status, and lift depends heavily on how the coat is dried. Dogs have compound follicles — one opening carries a thick primary hair plus several fine secondary hairs — so the state of the undercoat drives how full the coat feels. Hair is built from keratin, a protein, so inadequate protein and essential amino acids can show up as thinner shafts.'
     },
     articles: ['learn-coat-density', 'learn-why-nutrition', 'learn-tools-and-air'],
+    cites: ['schuldenfrei', 'msm'],
     horizon: {
       ja: '乾かし方の工夫は当日から差が出ます。毛幹の太さへの栄養の効果は、新しく生える毛に現れるため数か月単位です。',
       en: 'Better drying shows a difference the same day. Nutritional effects on shaft thickness appear in newly grown hair, so they run on a scale of months.'
@@ -8822,6 +9311,7 @@ const ISSUE_DEEP = {
       en: 'A dog\'s stratum corneum is thinner than a human\'s, and skin pH is reported to differ from the human acidic range (with variation by site, breed and method). When barrier function drops, irritants and allergens penetrate more easily and present as itch and redness. The composition of the skin microbiome is increasingly shown to matter for skin health, so disrupting it with excessive washing is best avoided. Low-irritant cleansing followed by moisturising is the basic approach.'
     },
     articles: ['learn-skin-coat-basics', 'learn-skin-barrier-moisture', 'learn-hair-loss-conditions'],
+    cites: ['santoro'],
     horizon: {
       ja: '刺激要因を減らせば数週間で落ち着くことが多い一方、痒み・発赤が続く場合は皮膚疾患の可能性があるため獣医師の診察をおすすめします。',
       en: 'Removing irritants often settles things within weeks; if itch or redness persists, a skin disease may be involved and a veterinary examination is advised.'
@@ -8833,6 +9323,7 @@ const ISSUE_DEEP = {
       en: 'Hair follows a cycle — anagen (growth), catagen (regression), telogen (rest) — and telogen hairs are pushed out and shed. In many dogs changing day length triggers a synchronised shift into telogen, producing seasonal moulting. In double-coated breeds the undercoat sheds all at once, and loose hair retained in the coat causes mats and trapped humidity. Shedding itself is physiological, but symmetrical hair loss or exposed skin needs to be distinguished from pathological alopecia.'
     },
     articles: ['learn-hair-cycle', 'learn-seasonal-care', 'learn-hair-loss-conditions'],
+    cites: ['muntener', 'diazPhoto'],
     horizon: {
       ja: '換毛期は通常数週間続きます。抜けた毛を計画的に除去することが最も効果的です。',
       en: 'A moult usually runs for several weeks; systematically removing the loose hair is the most effective response.'
@@ -8844,6 +9335,7 @@ const ISSUE_DEEP = {
       en: 'The harshness of a wire coat depends on thick, hard primary hairs being allowed to mature. Clipping cuts hair mid-length, removing the hard tip; repeated over time the proportion of soft undercoat rises and the intended texture is lost. Hand-stripping removes mature primary hairs at the root to encourage new hard growth, and is used to maintain breed-standard texture. Heavy use of softening conditioners also works against harshness.'
     },
     articles: ['learn-coat-texture', 'learn-hair-cycle', 'learn-brushing-basics'],
+    cites: ['muntener', 'diazRegrowth'],
     horizon: {
       ja: '質感の回復は新しい毛の成長を伴うため、数か月単位の取り組みになります。',
       en: 'Texture recovery depends on new growth, so it is a project measured in months.'
@@ -9300,10 +9792,22 @@ function renderAssessment(a, coat) {
       const deep = ISSUE_DEEP[c.key];
       const lang = en ? 'en' : 'ja';
       // くわしくモードでは作用機序まで踏み込む
+      const citeHtml = (deep && deep.cites && deep.cites.length)
+        ? '<div class="pp-assessment__cites">' +
+            '<span>' + (en ? 'Sources' : '出典') + '</span>' +
+            deep.cites.map(id => {
+              const c = CITATIONS[id];
+              if (!c) return '';
+              return '<a href="' + c.url + '" target="_blank" rel="noopener" title="' + escapeHtml(c.label) + '">' +
+                escapeHtml(c.short[lang] || c.short.ja) + '</a>';
+            }).join('') +
+          '</div>'
+        : '';
       const mechHtml = (tone === 'detailed' && deep && deep.mechanism && deep.mechanism[lang])
         ? '<div class="pp-assessment__mech">' +
             '<b>' + (en ? 'Mechanism' : '背景・メカニズム') + '</b>' +
             '<p>' + deep.mechanism[lang] + '</p>' +
+            citeHtml +
           '</div>'
         : '';
       const horizonHtml = (deep && deep.horizon && deep.horizon[lang])
@@ -10024,6 +10528,8 @@ function buildEduIndex() {
     injectEduPermalink(it);
     // Per-article "copy link" share bar (deep link to this article)
     injectEduShareBar(it);
+    // 監修者・監修日を各記事末尾に明示 (参考文献記事を除く)
+    if (it.id !== 'learn-references') injectEduByline(it);
     // Keep the URL hash in sync when an article is opened, so it is shareable
     // (guard so re-running buildEduIndex on language switch doesn't stack listeners)
     if (!it._hashSync) {
@@ -10070,6 +10576,31 @@ function injectEduShareBar(it) {
   // Re-label on language switch
   btn._setLabel = setLabel;
   body.insertBefore(bar, body.firstChild);
+}
+
+/* ============================================
+   記事の監修表示 (YMYL領域の慣例)
+   誰が・いつ監修したのかを各記事の末尾に明示する。
+   日付は記事群の最終レビュー日 (head の JSON-LD と揃える)。
+   ============================================ */
+const EDU_REVIEWED_ON = '2026-06-17';
+function injectEduByline(it) {
+  const body = it.querySelector('.pp-edu__body');
+  if (!body || body.querySelector(':scope > .pp-edu__byline')) return;
+  const el = document.createElement('div');
+  el.className = 'pp-edu__byline';
+  el.innerHTML =
+    '<span class="pp-edu__byline-role" data-lang-ja>監修</span>' +
+    '<span class="pp-edu__byline-role" data-lang-en>Reviewed by</span>' +
+    '<span class="pp-edu__byline-name">Dr. Kentaro Kamide, DVM' +
+      '<small data-lang-ja>獣医師 上手 健太郎</small>' +
+      '<small data-lang-en>Veterinarian</small>' +
+    '</span>' +
+    '<time class="pp-edu__byline-date" datetime="' + EDU_REVIEWED_ON + '">' +
+      '<span data-lang-ja>最終監修 ' + EDU_REVIEWED_ON.replace(/-/g, '.') + '</span>' +
+      '<span data-lang-en>Last reviewed ' + EDU_REVIEWED_ON.replace(/-/g, '.') + '</span>' +
+    '</time>';
+  body.appendChild(el);
 }
 
 function injectEduPermalink(it) {
@@ -10424,6 +10955,8 @@ function initMobileWizard() {
   backBtn.addEventListener('click', () => goTo(step - 1));
   // 「もう一度診断する」からステップ1へ戻せるように公開する
   window.ppWizardReset = function () { step = 0; render(); };
+  // 入力確認の「編集」から該当ステップへ戻せるようにする
+  window.ppWizardGoTo = function (n) { goTo(n); };
 
   // モバイル幅でのみウィザード化 (回転・リサイズにも追従)
   const mq = window.matchMedia('(max-width: 768px)');
@@ -10438,6 +10971,7 @@ function initMobileWizard() {
 try { initMobileWizard(); } catch (e) {}
 try { initScoreCriteria(); } catch (e) {}
 try { showRecheckNoticeIfDue(); } catch (e) {}
+try { initAnswerReview(); } catch (e) {}
 try { initDraftPersistence(); } catch (e) {}
 
 /* ============================================
