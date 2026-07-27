@@ -1397,6 +1397,149 @@
   }
   .pp-rec-chip--supp { color: #2f9e7e; }
   .pp-rec-chip--supp:hover { border-color: #2f9e7e; }
+  /* ============================================
+     結果ページ: チャートの読み解き
+     ============================================ */
+  .pp-assessment__radar {
+    margin: 14px 0 18px;
+    padding: 16px 18px;
+    background: var(--pp-bg-soft);
+    border: 1px solid var(--pp-border-light);
+    border-radius: var(--radius-sm);
+  }
+  .pp-assessment__radar-head {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--pp-navy);
+    margin-bottom: 10px;
+  }
+  .pp-assessment__radar-shape {
+    margin: 0 0 12px;
+    font-size: 13px;
+    line-height: 1.85;
+    color: var(--pp-text);
+  }
+  .pp-assessment__radar-shape b { color: var(--pp-navy); }
+  .pp-assessment__radar-axes { list-style: none; margin: 0 0 12px; padding: 0; }
+  .pp-assessment__axis {
+    display: grid;
+    grid-template-columns: 6.2em 1fr 2.6em;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 0;
+    font-size: 12px;
+  }
+  .pp-assessment__axis-name { color: var(--pp-text-light); }
+  .pp-assessment__axis-bar {
+    height: 7px;
+    background: var(--pp-border-light);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .pp-assessment__axis-bar i {
+    display: block;
+    height: 100%;
+    background: var(--pp-navy-light);
+    border-radius: 999px;
+  }
+  .pp-assessment__axis-val { text-align: right; color: var(--pp-text-light); font-weight: 700; }
+  .pp-assessment__axis.is-low .pp-assessment__axis-bar i { background: var(--pp-orange); }
+  .pp-assessment__axis.is-low .pp-assessment__axis-name,
+  .pp-assessment__axis.is-low .pp-assessment__axis-val { color: var(--pp-orange-text); }
+  .pp-assessment__axis.is-high .pp-assessment__axis-bar i { background: var(--pp-navy); }
+  .pp-assessment__radar-links {
+    list-style: none;
+    margin: 0;
+    padding: 12px 0 0;
+    border-top: 1px dashed var(--pp-border-light);
+  }
+  .pp-assessment__radar-links li {
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--pp-text-light);
+    padding: 4px 0 4px 16px;
+    position: relative;
+  }
+  .pp-assessment__radar-links li::before {
+    content: '·';
+    position: absolute;
+    left: 4px;
+    color: var(--pp-orange);
+    font-weight: 700;
+  }
+
+  /* 背景・メカニズム (くわしくモード) */
+  .pp-assessment__mech {
+    margin: 10px 0 0;
+    padding: 12px 14px;
+    background: #ffffff;
+    border: 1px solid var(--pp-border-light);
+    border-left: 3px solid var(--pp-navy-light);
+    border-radius: var(--radius-sm);
+  }
+  .pp-assessment__mech > b {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--pp-navy);
+    margin-bottom: 5px;
+  }
+  .pp-assessment__mech p {
+    margin: 0;
+    font-size: 12.5px;
+    line-height: 1.9;
+    color: var(--pp-text-light);
+  }
+  /* 改善の見通し */
+  .pp-assessment__horizon {
+    margin: 8px 0 0;
+    font-size: 12.5px;
+    line-height: 1.8;
+    color: var(--pp-text-light);
+    padding-left: 5.5em;
+    text-indent: -5.5em;
+  }
+  .pp-assessment__horizon > b {
+    color: var(--pp-orange-text);
+    font-weight: 700;
+    margin-right: 0.6em;
+  }
+  /* 関連記事への導線 */
+  .pp-assessment__articles {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--pp-border-light);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .pp-assessment__articles-label {
+    flex-basis: 100%;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--pp-text-muted);
+    letter-spacing: 0.04em;
+  }
+  .pp-assessment__articles a {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--pp-navy);
+    text-decoration: none;
+    background: #ffffff;
+    border: 1px solid var(--pp-border);
+    border-radius: var(--radius-pill);
+    padding: 7px 13px;
+    min-height: 36px;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .pp-assessment__articles a::before { content: '📖'; font-size: 11px; }
+  .pp-assessment__articles a:hover { background: var(--pp-navy-soft); border-color: var(--pp-navy-light); }
+
   .pp-assessment__obs,
   .pp-assessment__fix {
     font-size: 13px;
@@ -8344,6 +8487,139 @@ const ISSUE_INSIGHT = {
 const SCORE_INSIGHT = {
   shine: 'low_shine', moisture: 'low_moisture', density: 'low_volume', elasticity: 'breakage'
 };
+
+/* ============================================
+   考察の学術的な深掘り
+   ・mechanism: 何がどう起きているのかを、獣医皮膚科学で
+     一般に受け入れられている範囲で説明する (断定を避け、
+     「〜とされます」「〜が関与します」の表現に留める)
+   ・articles: 「コートの科学」の該当記事への導線
+   ・horizon: 改善までの現実的な時間軸。毛は毛周期に沿って
+     生え替わるため、表面の改善と構造の改善で速度が違う
+   ============================================ */
+const ISSUE_DEEP = {
+  low_shine: {
+    mechanism: {
+      ja: '光沢は毛幹最外層のキューティクル（毛小皮）が瓦状に重なり、入射光を一定方向へ反射することで生じます。キューティクルが摩擦・熱・紫外線で持ち上がったり欠損すると反射が乱反射に変わり、同じ量の光でも「くすんで」見えます。加えて、皮脂由来の薄い脂質膜は毛表面を平滑化する役割をもつため、過度な脱脂も光沢低下の一因となります。色素（メラニン）量そのものは短期間では変化しないため、多くの場合「色が褪せた」のではなく「表面が荒れて光を返せていない」状態です。',
+      en: 'Shine arises when the cuticle — the overlapping outer scales of the hair shaft — lies flat and reflects light in a consistent direction. Friction, heat and UV lift or chip those scales, so light scatters instead and the coat reads as dull at the same light level. The thin sebum-derived lipid film also smooths the surface, so over-degreasing contributes as well. Melanin content does not change over short periods, so this is usually a surface-reflection problem rather than genuine fading.'
+    },
+    articles: ['learn-hair-skin-anatomy', 'learn-coat-colour-quality', 'learn-how-to-dry'],
+    horizon: {
+      ja: '表面の補修は洗浄・保湿の見直しで数日〜2週間ほどで体感しやすい項目です。',
+      en: 'Surface repair usually becomes noticeable within a few days to two weeks of revised washing and moisturising.'
+    }
+  },
+  low_moisture: {
+    mechanism: {
+      ja: '被毛の「しっとり感」は、毛自体の含水率よりも、皮膚バリア（角層の細胞間脂質＝セラミド等）が水分を保持できているかに左右されます。バリアが損なわれると経表皮水分蒸散（TEWL）が亢進し、皮膚が乾くと同時に毛への脂質供給も減ります。犬は全身性のエクリン汗腺をもたないため、ヒトのような発汗による表面加湿が期待できず、環境湿度と外用ケアの寄与が相対的に大きくなります。洗浄力の強いシャンプーの高頻度使用は細胞間脂質まで奪い、この循環を悪化させます。',
+      en: 'How "moist" a coat feels depends less on water inside the hair than on whether the skin barrier — the intercellular lipids of the stratum corneum, ceramides among them — is holding water. A damaged barrier raises transepidermal water loss (TEWL): the skin dries and the lipid supply to the hair falls with it. Dogs have no body-wide eccrine sweat glands, so they cannot humidify the surface by sweating as humans do, which makes ambient humidity and topical care relatively more important. Frequent use of strongly stripping shampoo removes intercellular lipids and worsens the cycle.'
+    },
+    articles: ['learn-skin-barrier-moisture', 'learn-how-to-bathe', 'learn-seasonal-care'],
+    horizon: {
+      ja: 'バリアの回復には通常2〜4週間程度を見込みます。洗浄頻度と保湿の見直しが最も効きます。',
+      en: 'Barrier recovery typically takes two to four weeks; revising wash frequency and moisturising has the largest effect.'
+    }
+  },
+  oily: {
+    mechanism: {
+      ja: 'ベタつきは皮脂腺の活動だけで決まるものではなく、皮膚バリアの破綻に対する代償反応として皮脂分泌が亢進する経路が知られています。バリアが弱まり水分が失われると、それを補うように脂質分泌が増え、分泌された皮脂は犬では酸化しやすく、酸化産物が刺激性を持ちにおいや痒みの一因となります。さらに皮脂はマラセチアなど脂質要求性の常在菌の増殖基質にもなり、菌叢バランスの偏りが痒み・炎症を助長します。したがって「脱脂を強めるほど良くなる」とは限らず、洗浄後の保湿が要になります。',
+      en: 'Greasiness is not set by sebaceous activity alone: sebum output can rise as a compensatory response to a damaged skin barrier. As the barrier weakens and water is lost, lipid secretion increases to compensate; in dogs that sebum oxidises readily, and the oxidation products are irritating and contribute to odour and itch. Sebum also feeds lipid-dependent commensals such as Malassezia, and a skewed microbial balance further drives itch and inflammation. Stripping harder is therefore not reliably better — moisturising after washing is the pivot.'
+    },
+    articles: ['learn-why-shampoo', 'learn-skin-barrier-moisture', 'learn-integrated-care'],
+    horizon: {
+      ja: '皮脂バランスの是正は数週間単位。洗いすぎを止めることが最初の一手です。',
+      en: 'Rebalancing sebum runs on a scale of weeks; stopping over-washing is the first move.'
+    }
+  },
+  breakage: {
+    mechanism: {
+      ja: '毛は中心部のコルテックス（皮質）が強度を担い、その周囲をキューティクルが保護する構造です。キューティクルが失われた部位はコルテックスが露出して機械的強度が落ち、そこに濡れた状態でのブラッシングや高温乾燥が加わると毛幹の途中で破断します。濡れた毛はケラチンの水素結合が一時的に緩み伸びやすい一方で破断しやすく、乾いた毛より慎重な扱いが必要です。細い毛ほど断面積が小さく同じ張力でも切れやすくなります。',
+      en: 'Strength comes from the cortex at the centre of the hair, protected by the surrounding cuticle. Where the cuticle is gone the cortex is exposed and mechanically weaker; brushing while wet or drying at high heat then snaps the shaft mid-length. Wet hair stretches more easily because keratin hydrogen bonds are temporarily loosened, but it also breaks more easily, so it needs more careful handling than dry hair. Finer hairs have a smaller cross-section and break under the same tension sooner.'
+    },
+    articles: ['learn-brushing-basics', 'learn-hair-skin-anatomy', 'learn-how-to-dry'],
+    horizon: {
+      ja: '切れた毛そのものは修復されません。新しい毛への入れ替わりを待つため、見た目の回復には毛周期に沿って数か月かかります。今日からの予防が最短の近道です。',
+      en: 'Broken hair does not repair. Visible recovery waits for replacement growth and therefore takes months, following the hair cycle — prevention from today is the fastest route.'
+    }
+  },
+  matting: {
+    mechanism: {
+      ja: '毛玉は、抜けた毛が毛流れから外れて周囲の毛に絡み、そこへ摩擦と静電気が加わって密に絡み合うことで形成されます。ダブルコートや細く柔らかい毛、ウェーブのある毛は毛同士の接触点が多く、絡みの起点が生まれやすい構造です。首輪・ハーネスの下、脇、内股、耳の後ろなど摩擦の集中する部位から発生しやすいのはこのためです。いったん密に絡むと内部に湿気がこもり、皮膚側の環境悪化（蒸れ・炎症）を招くことがあります。',
+      en: 'Mats form when shed hairs leave the lie of the coat, tangle with neighbouring hairs, and are then packed tight by friction and static. Double coats, fine soft hair and wavy hair have many contact points between fibres, so tangles start readily. That is why mats appear first where friction concentrates: under collars and harnesses, in the armpits, the inner thighs and behind the ears. Once packed, a mat traps moisture against the skin and can worsen conditions there.'
+    },
+    articles: ['learn-why-mats-form', 'learn-mat-prevention-handling', 'learn-mat-proneness'],
+    horizon: {
+      ja: '既存の毛玉は物理的に解く必要があります。予防は今日から効果が出ます。',
+      en: 'Existing mats must be physically removed; prevention starts working immediately.'
+    }
+  },
+  low_volume: {
+    mechanism: {
+      ja: 'ボリュームは毛の本数（毛包密度）、毛幹の太さ、そして毛が根元から立ち上がる角度の三つで決まります。毛包密度は遺伝的にほぼ決まっていますが、毛幹の太さは栄養状態の影響を受け、立ち上がりは乾燥時の毛流れの作り方に大きく左右されます。犬の毛包は1つの開口部から太い上毛と複数の細い下毛が出る「複合毛包」構造をとるため、下毛の状態が全体の厚みの体感を左右します。毛はケラチンというタンパク質でできており、タンパク質・必須アミノ酸の供給不足は毛幹の細径化として現れ得ます。',
+      en: 'Volume is set by three things: the number of hairs (follicular density), the thickness of each shaft, and the angle at which hair lifts from the root. Follicular density is largely genetic, but shaft thickness responds to nutritional status, and lift depends heavily on how the coat is dried. Dogs have compound follicles — one opening carries a thick primary hair plus several fine secondary hairs — so the state of the undercoat drives how full the coat feels. Hair is built from keratin, a protein, so inadequate protein and essential amino acids can show up as thinner shafts.'
+    },
+    articles: ['learn-coat-density', 'learn-why-nutrition', 'learn-tools-and-air'],
+    horizon: {
+      ja: '乾かし方の工夫は当日から差が出ます。毛幹の太さへの栄養の効果は、新しく生える毛に現れるため数か月単位です。',
+      en: 'Better drying shows a difference the same day. Nutritional effects on shaft thickness appear in newly grown hair, so they run on a scale of months.'
+    }
+  },
+  static: {
+    mechanism: {
+      ja: '静電気は摩擦帯電により毛に電荷が蓄積し、同符号の電荷どうしが反発して毛が広がる現象です。空気中の水分は電荷を逃がす経路になるため、湿度が下がる冬季や暖房環境で顕著になります。毛や皮膚の含水量が低いほど帯電しやすく、乾燥と静電気は相互に悪化させる関係にあります。ブラシの素材によっても帯電しやすさが変わります。',
+      en: 'Static is triboelectric charging: friction leaves charge on the hair, and like charges repel so the coat spreads. Airborne moisture provides a path for that charge to dissipate, which is why it is pronounced in winter and in heated rooms. The drier the hair and skin, the more readily they charge, so dryness and static aggravate each other. Brush material also changes how much charge builds.'
+    },
+    articles: ['learn-seasonal-care', 'learn-choosing-sprays', 'learn-brushing-basics'],
+    horizon: {
+      ja: '保湿と用具の見直しで、その日のうちに改善が見込めます。',
+      en: 'Moisturising and a change of tools can improve this the same day.'
+    }
+  },
+  yellowing: {
+    mechanism: {
+      ja: '白毛の黄ばみには複数の経路が関与します。涙液や唾液に含まれるポルフィリン（鉄代謝由来の色素）が毛に付着し酸化して赤褐色を呈するもの、皮脂の酸化産物が黄色く着色するもの、環境由来の汚れの蓄積などです。いずれも毛内部の色素が変化しているのではなく外側からの着色であることが多く、原因の切り分け（涙やけか、皮脂か、汚れか）が対処の第一歩になります。',
+      en: 'Yellowing in white coats has several routes. Porphyrins in tears and saliva — pigments from iron metabolism — deposit on the hair and oxidise to a red-brown stain; oxidised sebum leaves a yellow cast; environmental soil accumulates. In most cases the pigment inside the hair has not changed — the staining is external — so the first step is separating the cause: tear staining, sebum, or soiling.'
+    },
+    articles: ['learn-coat-colour-quality', 'learn-why-shampoo', 'learn-hard-soft-water'],
+    horizon: {
+      ja: '付着した着色の除去は洗浄で段階的に。すでに着色した毛は完全には戻らないため、伸びた分のカットも併用します。',
+      en: 'Deposited staining lifts gradually with washing; hair that is already stained will not fully revert, so trimming the grown-out length is used alongside.'
+    }
+  },
+  sensitive_skin: {
+    mechanism: {
+      ja: '犬の角層はヒトより薄く、皮膚pHもヒトの弱酸性域とは異なる傾向が報告されています（測定部位・犬種・方法で幅があります）。バリア機能が低下すると外来刺激やアレルゲンが侵入しやすくなり、痒み・発赤として現れます。近年は皮膚の常在菌叢（マイクロバイオーム）の構成が皮膚の健康に関与することも示されつつあり、過度な洗浄による菌叢の攪乱は避けたい要素です。刺激の少ない洗浄と洗浄後の保湿が基本方針となります。',
+      en: 'A dog\'s stratum corneum is thinner than a human\'s, and skin pH is reported to differ from the human acidic range (with variation by site, breed and method). When barrier function drops, irritants and allergens penetrate more easily and present as itch and redness. The composition of the skin microbiome is increasingly shown to matter for skin health, so disrupting it with excessive washing is best avoided. Low-irritant cleansing followed by moisturising is the basic approach.'
+    },
+    articles: ['learn-skin-coat-basics', 'learn-skin-barrier-moisture', 'learn-hair-loss-conditions'],
+    horizon: {
+      ja: '刺激要因を減らせば数週間で落ち着くことが多い一方、痒み・発赤が続く場合は皮膚疾患の可能性があるため獣医師の診察をおすすめします。',
+      en: 'Removing irritants often settles things within weeks; if itch or redness persists, a skin disease may be involved and a veterinary examination is advised.'
+    }
+  },
+  shedding: {
+    mechanism: {
+      ja: '毛は成長期（アナゲン）→退行期（カタゲン）→休止期（テロジェン）という毛周期をたどり、休止期の毛が押し出されて脱落します。多くの犬では日照時間の変化が引き金となって同調的に休止期へ移行するため、季節性の換毛が起こります。ダブルコート種では下毛が一斉に脱落し、抜けた毛が被毛内に留まると毛玉や蒸れの原因になります。抜け毛そのものは生理的な現象ですが、左右対称の脱毛や地肌の露出を伴う場合は病的脱毛との鑑別が必要です。',
+      en: 'Hair follows a cycle — anagen (growth), catagen (regression), telogen (rest) — and telogen hairs are pushed out and shed. In many dogs changing day length triggers a synchronised shift into telogen, producing seasonal moulting. In double-coated breeds the undercoat sheds all at once, and loose hair retained in the coat causes mats and trapped humidity. Shedding itself is physiological, but symmetrical hair loss or exposed skin needs to be distinguished from pathological alopecia.'
+    },
+    articles: ['learn-hair-cycle', 'learn-seasonal-care', 'learn-hair-loss-conditions'],
+    horizon: {
+      ja: '換毛期は通常数週間続きます。抜けた毛を計画的に除去することが最も効果的です。',
+      en: 'A moult usually runs for several weeks; systematically removing the loose hair is the most effective response.'
+    }
+  },
+  soft_coat: {
+    mechanism: {
+      ja: 'ワイヤー（剛毛）コートの硬さは、太く硬い上毛が十分に成熟していることで保たれます。バリカンによるクリッピングは毛を途中で切断するため先端の硬い部分が失われ、繰り返すうちに柔らかい下毛の比率が相対的に高まり、本来の質感が損なわれます。ハンドストリッピングは成熟した上毛を毛根から抜き、新しい硬い毛の成長を促す手法として犬種標準の維持に用いられます。柔軟剤的な作用をもつコンディショナーの多用も質感の軟化に働きます。',
+      en: 'The harshness of a wire coat depends on thick, hard primary hairs being allowed to mature. Clipping cuts hair mid-length, removing the hard tip; repeated over time the proportion of soft undercoat rises and the intended texture is lost. Hand-stripping removes mature primary hairs at the root to encourage new hard growth, and is used to maintain breed-standard texture. Heavy use of softening conditioners also works against harshness.'
+    },
+    articles: ['learn-coat-texture', 'learn-hair-cycle', 'learn-brushing-basics'],
+    horizon: {
+      ja: '質感の回復は新しい毛の成長を伴うため、数か月単位の取り組みになります。',
+      en: 'Texture recovery depends on new growth, so it is a project measured in months.'
+    }
+  }
+};
 const SCORE_LABEL_JP = { shine: '艶', moisture: '水分', density: '密度・毛量', elasticity: 'ハリ・弾力' };
 
 // 犬種の傾向 (脂漏症など) — 考察リードに添える教育的注記
@@ -8584,9 +8860,128 @@ function setAssessmentTone(tone) {
   }
 }
 
+/* ============================================
+   レーダー6軸の読み解き
+   チャートは描いていたが、その形が何を意味するのかを
+   文章で説明していなかった。最も低い軸・高い軸と、
+   よく見られる組み合わせのパターンを言語化する。
+   ============================================ */
+const RADAR_AXIS_JA = {
+  shine: '艶', density: '密度', moisture: '水分',
+  elasticity: 'ハリ', volume: '毛量', durability: 'ダメージの少なさ'
+};
+const RADAR_AXIS_EN = {
+  shine: 'shine', density: 'density', moisture: 'moisture',
+  elasticity: 'elasticity', volume: 'volume', durability: 'low damage'
+};
+
+function renderRadarReading(r) {
+  if (!r) return '';
+  const en = state.lang === 'en';
+  const L = en ? RADAR_AXIS_EN : RADAR_AXIS_JA;
+  const keys = ['shine', 'density', 'moisture', 'elasticity', 'volume', 'durability'];
+  const vals = keys.map(k => ({ k: k, v: Number(r[k]) })).filter(x => !isNaN(x.v));
+  if (vals.length < 6) return '';
+  const sorted = vals.slice().sort((x, y) => x.v - y.v);
+  const low = sorted.slice(0, 2);
+  const high = sorted.slice(-2).reverse();
+  const avg = vals.reduce((s, x) => s + x.v, 0) / vals.length;
+  const spread = sorted[sorted.length - 1].v - sorted[0].v;
+
+  // 形の解釈: 全体が低い / 特定軸が凹む / 均衡している
+  let shape;
+  if (spread < 0.8) {
+    shape = avg >= 4
+      ? (en ? 'The profile is even and high across all six axes — a well-balanced coat with no single weak point.'
+            : '6軸がそろって高く、突出した弱点のない均整のとれたプロファイルです。')
+      : avg <= 2.5
+        ? (en ? 'The profile is uniformly low. Rather than one specific problem, this pattern usually points to the overall foundation — washing, moisturising and nutrition — needing review.'
+              : '6軸が全体的に低く出ています。特定の一点というより、洗浄・保湿・栄養という土台全体の見直しが効きやすいパターンです。')
+        : (en ? 'The profile is even without a standout weakness — a steady baseline to build on.'
+              : '突出した弱点がなく平均的にまとまっています。土台が安定しているぶん、伸ばしたい軸を選んで重ねやすい状態です。');
+  } else {
+    const lowNames = low.map(x => L[x.k]).join(en ? ' and ' : '・');
+    const highNames = high.map(x => L[x.k]).join(en ? ' and ' : '・');
+    shape = en
+      ? 'The chart dips at <b>' + lowNames + '</b> while <b>' + highNames + '</b> hold up — an uneven profile, so targeting the low axes is more efficient than treating everything equally.'
+      : 'チャートは <b>' + lowNames + '</b> が凹み、<b>' + highNames + '</b> は保たれた形です。全体を一様にケアするより、凹んでいる軸に的を絞るほうが効率的です。';
+  }
+
+  // 軸の組み合わせから読み取れる関連 (機序として説明できるものだけ)
+  const v = {}; vals.forEach(x => { v[x.k] = x.v; });
+  const links = [];
+  if (v.moisture <= 2.5 && v.shine <= 2.5) {
+    links.push(en
+      ? 'Low moisture together with low shine is a common pair: when the barrier dries, the lipid film that smooths the hair surface thins as well, so light scatters.'
+      : '水分と艶がそろって低いのは典型的な組み合わせです。バリアが乾くと毛表面をならす脂質膜も薄くなり、光が乱反射するためです。');
+  }
+  if (v.moisture <= 2.5 && v.durability <= 2.5) {
+    links.push(en
+      ? 'Dryness with damage suggests mechanical stress on an already fragile shaft — brushing and drying method are worth reviewing first.'
+      : '乾燥とダメージが重なる場合、もろくなった毛に機械的な負荷が加わっている可能性があります。まずブラッシングと乾かし方の見直しが効きます。');
+  }
+  if (v.elasticity <= 2.5 && v.volume <= 2.5) {
+    links.push(en
+      ? 'Weak elasticity alongside low volume can reflect thinner shafts; hair is a protein structure, so this is one of the few axes where nutrition shows through — in newly grown hair.'
+      : 'ハリと毛量がともに低い場合、毛幹が細くなっている可能性があります。毛はタンパク質でできているため、この軸は栄養状態が現れやすく、効果は新しく生える毛に出ます。');
+  }
+  if (v.density >= 4 && v.durability <= 2.5) {
+    links.push(en
+      ? 'A dense coat with damage is a mat-prone combination: dense coats have more fibre-to-fibre contact, and damaged cuticles catch on each other.'
+      : '密度が高くダメージがある組み合わせは毛玉ができやすい状態です。密な被毛は毛どうしの接点が多く、傷んだキューティクルは互いに引っかかりやすいためです。');
+  }
+
+  let html = '<div class="pp-assessment__radar">' +
+    '<div class="pp-assessment__radar-head">' +
+      '<span data-lang-ja>チャートの読み解き</span><span data-lang-en>Reading the chart</span>' +
+    '</div>' +
+    '<p class="pp-assessment__radar-shape">' + shape + '</p>';
+  html += '<ul class="pp-assessment__radar-axes">' +
+    sorted.map(x => {
+      const pct = Math.max(0, Math.min(100, (x.v / 5) * 100));
+      const cls = x.v <= 2.5 ? ' is-low' : (x.v >= 4 ? ' is-high' : '');
+      return '<li class="pp-assessment__axis' + cls + '">' +
+        '<span class="pp-assessment__axis-name">' + escapeHtml(L[x.k]) + '</span>' +
+        '<span class="pp-assessment__axis-bar"><i style="width:' + pct + '%"></i></span>' +
+        '<b class="pp-assessment__axis-val">' + (Math.round(x.v * 10) / 10) + '</b>' +
+        '</li>';
+    }).join('') + '</ul>';
+  if (links.length) {
+    html += '<ul class="pp-assessment__radar-links">' +
+      links.map(t => '<li>' + t + '</li>').join('') + '</ul>';
+  }
+  html += '</div>';
+  return html;
+}
+
+/* 学びの場の該当記事へ誘導する。記事は既に個別アンカーを持つので
+   ハッシュで直接開ける。 */
+function articleLinksHtml(ids) {
+  if (!ids || !ids.length) return '';
+  const en = state.lang === 'en';
+  const items = ids.map(id => {
+    const el = document.getElementById(id);
+    if (!el) return null;
+    const sum = el.querySelector('summary');
+    const sp = sum && sum.querySelector(en ? '[data-lang-en]' : '[data-lang-ja]');
+    const label = (sp ? sp.textContent : (sum ? sum.textContent : '')).trim();
+    if (!label) return null;
+    return '<a href="#' + id + '" onclick="event.preventDefault();openEduArticle(document.getElementById(\'' + id + '\'),true);">' +
+      escapeHtml(label) + '</a>';
+  }).filter(Boolean);
+  if (!items.length) return '';
+  return '<div class="pp-assessment__articles">' +
+    '<span class="pp-assessment__articles-label">' +
+      (en ? 'Read more in Coat Science' : 'この項目をコートの科学で読む') + '</span>' +
+    items.join('') + '</div>';
+}
+
 function renderAssessment(a, coat) {
   const wrap = document.getElementById('resultAssessment');
   if (!wrap) return;
+  // 診断前に呼ばれても落ちないようにする。state.answers は初期値 {} で
+  // issues を持たないため、以前は a.issues.filter で例外になっていた。
+  if (!a || !Array.isArray(a.issues)) return;
   const tone = (state.tone === 'detailed') ? 'detailed' : 'gentle';
   const base = coatBaseKey(coat);
   const realIssues = a.issues.filter(i => i !== 'all_good');
@@ -8647,6 +9042,8 @@ function renderAssessment(a, coat) {
   if (bNote) lead += '<br>' + bNote;
   if (aNote) lead += '<br>' + aNote;
   html += '<p class="pp-assessment__lead">' + lead + '</p>';
+  // レーダーの形が何を意味するのかを言語化して添える
+  try { html += renderRadarReading(computeRadarScores(a)); } catch (e) {}
 
   const L_OBS = en ? 'Assessment' : '考察';
   const L_FIX = en ? 'Care' : '改善';
@@ -8670,11 +9067,27 @@ function renderAssessment(a, coat) {
       const fixHtml = (tone === 'detailed' && ins.fix.layers)
         ? '<div class="pp-assessment__fix-head"><b>' + L_FIX + '</b>' + (en ? 'Evidence-based steps' : 'エビデンス階層で対応') + '</div>' + renderCareLayers(ins.fix.layers, c.key)
         : '<p class="pp-assessment__fix"><b>' + L_FIX + '</b>' + ins.fix.gentle + '</p>';
+      const deep = ISSUE_DEEP[c.key];
+      const lang = en ? 'en' : 'ja';
+      // くわしくモードでは作用機序まで踏み込む
+      const mechHtml = (tone === 'detailed' && deep && deep.mechanism && deep.mechanism[lang])
+        ? '<div class="pp-assessment__mech">' +
+            '<b>' + (en ? 'Mechanism' : '背景・メカニズム') + '</b>' +
+            '<p>' + deep.mechanism[lang] + '</p>' +
+          '</div>'
+        : '';
+      const horizonHtml = (deep && deep.horizon && deep.horizon[lang])
+        ? '<p class="pp-assessment__horizon"><b>' + (en ? 'Outlook' : '改善の見通し') + '</b>' + deep.horizon[lang] + '</p>'
+        : '';
+      const artHtml = (deep && deep.articles) ? articleLinksHtml(deep.articles) : '';
       html += '<div class="pp-assessment__concern">' +
         '<div class="pp-assessment__concern-label">' + escapeHtml(c.label) + '</div>' +
         '<p class="pp-assessment__obs"><b>' + L_OBS + '</b>' + ins.obs[tone] + '</p>' +
+        mechHtml +
         fixHtml +
+        horizonHtml +
         recHtml(c.key, scored) +
+        artHtml +
         '</div>';
     });
     html += '</div>';
