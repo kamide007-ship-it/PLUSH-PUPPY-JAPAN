@@ -186,23 +186,67 @@
       if (window.Chart) return Promise.resolve();
       if (promise) return promise;
       promise = new Promise(function (resolve) {
+        // 同梱コピーを最優先にする。同一オリジンで確実に届き、
+        // 自前のキャッシュヘッダーが効き、第三者CDNへ閲覧情報が
+        // 漏れない。CDN が「エラーも返さず応答もしない」ときに
+        // 数秒待たされる問題も避けられる。CDN は保険として残す。
         var sources = [
+          'assets/vendor/chart.umd.min.js',
           'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js',
-          'https://unpkg.com/chart.js@4.4.0/dist/chart.umd.min.js',
-          'assets/vendor/chart.umd.min.js'
+          'https://unpkg.com/chart.js@4.4.0/dist/chart.umd.min.js'
         ];
         var idx = 0;
+        var done = false;
+        function finish() {
+          if (done) return;
+          done = true;
+          resolve();
+        }
+        // 全体の締切。何が起きても必ず解決させ、呼び出し側が
+        // 数値表示のフォールバックを出せるようにする。
+        var overall = setTimeout(function () {
+          console.warn('Chart.js: giving up; falling back to the numeric view.');
+          finish();
+        }, 9000);
         function tryLoad() {
+          if (done) return;
           if (idx >= sources.length) {
             console.warn('Chart.js could not be loaded from any source. Radar chart will be unavailable.');
-            resolve(); // 解決して呼び出し側のフォールバック表示に任せる
+            clearTimeout(overall);
+            finish(); // 解決して呼び出し側のフォールバック表示に任せる
             return;
           }
           var s = document.createElement('script');
+          var settled = false;
+          // 接続が「エラーも返さず応答も来ない」状態だと onerror が
+          // 発火せず、次の候補へ進めないまま止まってしまう。
+          // 候補ごとにタイムアウトを設けて必ず次へ進める。
+          var perSource = setTimeout(function () {
+            if (settled) return;
+            settled = true;
+            console.warn('Chart.js load timed out:', s.src);
+            s.onload = s.onerror = null;
+            // 応答しないままの要素は取り除く。残しておくと
+            // 後続候補の実行を待たせてしまう。
+            if (s.parentNode) s.parentNode.removeChild(s);
+            tryLoad();
+          }, 3500);
           s.src = sources[idx++];
-          s.async = false;
-          s.onload = function () { resolve(); };
+          // async=false は「挿入順に実行」を意味するため、先行候補が
+          // 応答しないと次の候補が実行されずタイムアウトが無意味になる。
+          // 1つ読めれば良いので順序は不要。
+          s.async = true;
+          s.onload = function () {
+            if (settled) return;
+            settled = true;
+            clearTimeout(perSource);
+            clearTimeout(overall);
+            finish();
+          };
           s.onerror = function () {
+            if (settled) return;
+            settled = true;
+            clearTimeout(perSource);
             console.warn('Chart.js load failed:', s.src);
             tryLoad();
           };
@@ -2275,6 +2319,18 @@
     border-color: var(--pp-navy);
     box-shadow: var(--shadow-hover);
   }
+  /* 「すべての犬に」バッジ (MSM アミノコンプリート) */
+  .pp-ess-supp__forall {
+    display: inline-block;
+    margin: 0 0 10px;
+    padding: 4px 12px;
+    background: var(--pp-orange);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    border-radius: var(--radius-pill);
+  }
   .pp-ess-supp__label {
     font-family: var(--font-en);
     font-size: 10px;
@@ -3593,6 +3649,19 @@
             <option value="senior" data-en="Senior (7+ yrs)">シニア (7歳以上)</option>
           </select>
         </div>
+        <!-- 体型 (BCS): 被毛の材料となる栄養が足りているかの手がかり。
+             痩せ気味の子には脂質・栄養の補給を提案する。 -->
+        <div class="pp-field">
+          <label class="pp-field__label" for="body">
+            <span data-lang-ja>体型 </span><span class="pp-field__label-en">Body condition</span>
+          </label>
+          <select id="body" class="pp-select">
+            <option value="" data-en="Not sure / skip">わからない / 選ばない</option>
+            <option value="thin" data-en="On the thin side">痩せ気味</option>
+            <option value="ideal" data-en="Ideal">標準</option>
+            <option value="heavy" data-en="On the heavy side">太り気味</option>
+          </select>
+        </div>
         <div class="pp-field">
           <label class="pp-field__label" for="color">
             <span data-lang-ja>毛色 </span><span class="pp-field__label-en">Color</span>
@@ -3896,8 +3965,10 @@
         <h3 class="pp-supp-intro__title"><span data-lang-ja>健やかな被毛は、体の中から</span><span data-lang-en>A healthy coat starts from within</span></h3>
         <p class="pp-supp-intro__lead">
           <span data-lang-ja>外側からの Plush Puppy ケアと、内側からの CanineVet サプリメントを組み合わせることで、
-          被毛と皮膚の健康を総合的にサポートします。特にコートケアには、以下の 2 製品が基本です。</span>
-          <span data-lang-en>Combining external Plush Puppy care with internal CanineVet supplements supports coat and skin health comprehensively. For coat care, these two products are the foundation. (CanineVet supplements ship within Japan.)</span>
+          被毛と皮膚の健康を総合的にサポートします。特にコートケアには、以下の 2 製品が基本です。
+          なかでも <strong>MSM アミノコンプリートは、すべての犬におすすめできる基本の1本</strong>です。
+          また <strong>痩せ気味の子には、脂質・栄養を補える「カミデミルク」</strong>を合わせてご検討ください。</span>
+          <span data-lang-en>Combining external Plush Puppy care with internal CanineVet supplements supports coat and skin health comprehensively. For coat care, these two products are the foundation — and <strong>MSM &amp; Amino Complete is the one we recommend for every dog</strong>. For dogs <strong>on the thin side, consider adding Kamide Milk</strong> for lipids and nutrition. (CanineVet supplements ship within Japan.)</span>
         </p>
         <p class="pp-supp-intro__credit">
           supervised by <strong>Dr. Kentaro Kamide, DVM</strong><span data-lang-ja> / 獣医師 上手 健太郎 監修</span>
@@ -3909,6 +3980,9 @@
         <div class="pp-ess-supp">
           <div class="pp-ess-supp__label">Essential 01</div>
           <h4 class="pp-ess-supp__name"><span data-lang-ja>MSM アミノコンプリート</span><span data-lang-en>MSM &amp; Amino Complete</span></h4>
+          <p class="pp-ess-supp__forall">
+            <span data-lang-ja>すべての犬に</span><span data-lang-en>For every dog</span>
+          </p>
           <p class="pp-ess-supp__name-en" data-lang-ja>MSM &amp; Amino Complete</p>
           <div class="pp-ess-supp__compo">
             <span><span data-lang-ja>有機イオウ (MSM)</span><span data-lang-en>Organic sulphur (MSM)</span></span>
@@ -7084,6 +7158,7 @@ function collectAnswers() {
     breed: breedVal,           // 空文字許容
     breedLabel: breedLabel,
     age: document.getElementById('age').value,    // 空文字許容
+    body: (document.getElementById('body') || {}).value || '',   // 体型 (BCS)
     color: document.getElementById('color').value, // 空文字許容
     issues, scores, goal,
     showDate: document.getElementById('showDate').value
@@ -7457,18 +7532,28 @@ function computeRadarScores(a) {
 }
 
 function drawRadar(r, prev) {
+  // 代替テキストはチャートの描画可否に関わらず先に更新する。
+  // 以前は Chart.js 未読込時に早期 return してしまい、通信が不安定な
+  // 環境では読み上げ用の数値が入らないままだった。
+  updateRadarAria(r);
   // Chart.js が読み込めなかった場合のフォールバック
   if (typeof Chart === 'undefined') {
     const wrap = document.querySelector('.pp-chart-wrap');
     if (wrap) {
+      // 数値そのものは読めるようにテキストで併記する
+      const en = state.lang === 'en';
+      const axes = en
+        ? [['Shine', r.shine], ['Density', r.density], ['Moisture', r.moisture], ['Elasticity', r.elasticity], ['Volume', r.volume], ['Low damage', r.durability]]
+        : [['艶', r.shine], ['密度', r.density], ['水分', r.moisture], ['ハリ', r.elasticity], ['毛量', r.volume], ['ダメージの少なさ', r.durability]];
       wrap.innerHTML =
-        '<div style="display:flex;align-items:center;justify-content:center;' +
-        'height:100%;min-height:300px;padding:30px;color:#666;text-align:center;' +
-        'border:1px dashed #e5e7eb;border-radius:8px;font-size:13px;">' +
-        (state.lang === 'en'
-          ? 'The chart could not be displayed.<br>Check your connection and reload the page.'
-          : 'チャートを表示できません。<br>インターネット接続をご確認のうえ、ページを再読み込みしてください。') +
-        '</div>';
+        '<div style="padding:20px;color:#555;border:1px dashed #e5e7eb;border-radius:8px;font-size:13px;">' +
+        '<p style="margin:0 0 10px;text-align:center;">' +
+        (en ? 'The chart could not be displayed, so the scores are listed below.'
+            : 'チャートを表示できないため、数値で表示します。') +
+        '</p><ul style="margin:0;padding:0;list-style:none;max-width:320px;margin-inline:auto;">' +
+        axes.map(x => '<li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f2f5;">' +
+          '<span>' + escapeHtml(x[0]) + '</span><b>' + escapeHtml(String(x[1])) + ' / 5</b></li>').join('') +
+        '</ul></div>';
     }
     return;
   }
@@ -7623,14 +7708,14 @@ function collectDraft() {
   return {
     v: 1,
     name: get('dogName'), breed: get('breed'), age: get('age'),
-    color: get('color'), showDate: get('showDate'),
+    color: get('color'), showDate: get('showDate'), body: get('body'),
     goal: goalEl ? goalEl.value : 'daily',
     issues: Array.from(document.querySelectorAll('#conditionGroup input:checked')).map(i => i.dataset.issue),
     scores: scores
   };
 }
 function isDraftEmpty(d) {
-  return !d.name && !d.breed && !d.age && !d.color && !d.showDate &&
+  return !d.name && !d.breed && !d.age && !d.color && !d.showDate && !d.body &&
     d.goal === 'daily' && (!d.issues || !d.issues.length) &&
     Object.keys(d.scores || {}).every(k => d.scores[k] === '3');
 }
@@ -7652,7 +7737,7 @@ function applyDraft(d) {
   if (!d || d.v !== 1) return false;
   const set = (id, v) => { const el = document.getElementById(id); if (el && typeof v === 'string' && v) el.value = v; };
   set('dogName', d.name); set('breed', d.breed); set('age', d.age);
-  set('color', d.color); set('showDate', d.showDate);
+  set('color', d.color); set('showDate', d.showDate); set('body', d.body);
   if (d.goal) {
     const r = document.querySelector('input[name="goal"][value="' + String(d.goal).replace(/[^a-z_]/g, '') + '"]');
     if (r) r.checked = true;
@@ -7737,7 +7822,7 @@ function showDraftRestoredNotice() {
   });
 }
 function resetFormFields() {
-  ['dogName', 'breed', 'age', 'color', 'showDate'].forEach(id => {
+  ['dogName', 'breed', 'age', 'color', 'showDate', 'body'].forEach(id => {
     const el = document.getElementById(id); if (el) el.value = '';
   });
   document.querySelectorAll('#conditionGroup input:checked').forEach(cb => { cb.checked = false; });
@@ -7789,6 +7874,18 @@ const SCORE_CRITERIA = {
                ['Moist', 'Fingers slide through smoothly'],
                ['Well hydrated', 'Feels supple and springs back when released']] }
   },
+  /* 体型 (BCS) — 獣医学で一般的なボディコンディションスコアの
+     見方に沿った、飼い主が自分で確かめられる手がかり。 */
+  body: {
+    ja: { how: '肋骨を手のひらでなでて、上と横から体型を見てください。',
+      levels: [['痩せ気味', '肋骨が浮いて見え、脂肪をほとんど感じない'],
+               ['標準', '薄い脂肪ごしに肋骨が触れ、上から見て腰にくびれがある'],
+               ['太り気味', '脂肪が厚く肋骨が触りにくい。くびれが分かりにくい']] },
+    en: { how: 'Run your palm over the ribs, and look at the outline from above and the side.',
+      levels: [['On the thin side', 'Ribs stand out; almost no fat over them'],
+               ['Ideal', 'Ribs felt under a thin fat layer; a waist is visible from above'],
+               ['On the heavy side', 'Ribs hard to feel under fat; little or no waist']] }
+  },
   elasticity: {
     ja: { how: '毛束を持ち上げて離す、または毛を1本つまんで軽く引いてください。',
       levels: [['弱め', '力なく垂れ、すぐ寝てしまう'],
@@ -7805,7 +7902,8 @@ const SCORE_CRITERIA = {
 
 function initScoreCriteria() {
   Object.keys(SCORE_CRITERIA).forEach(key => {
-    const sel = document.querySelector('[data-score="' + key + '"]');
+    // 評価スライダーは data-score、体型は id で引く
+    const sel = document.querySelector('[data-score="' + key + '"]') || document.getElementById(key);
     if (!sel) return;
     const field = sel.closest('.pp-field');
     const label = field && field.querySelector('.pp-field__label');
@@ -8628,11 +8726,12 @@ const CV_ADDONS = [
     tag: 'Lipid & Nutrition',
     name: '脂質・栄養補給 (カミデミルク)',
     en: 'Lipid &amp; nutrition (Kamide Milk)',
-    desc: '被毛の材料となる脂質や栄養を補給。乾燥・パサつき・艶不足が気になる被毛の栄養サポートに。',
-    descEn: 'Supplies lipids and nutrients that build the coat; nutritional support for dry, brittle or dull coats.',
+    desc: '被毛の材料となる脂質や栄養を補給。とくに痩せ気味の子や、乾燥・パサつき・艶不足が気になる被毛の栄養サポートに。',
+    descEn: 'Supplies lipids and nutrients that build the coat — especially for dogs on the thin side, and for dry, brittle or dull coats.',
     url: 'https://www.caninevet.jp/canineサプリメント/カミデミルク-1kg/',
     image: 'https://image.jimcdn.com/app/cms/image/transf/dimension=480x10000:format=jpg/path/s23b9aba54a40d6b8/image/ic462b96b63474ce0/version/1745062413/image.jpg',
-    triggers: ['low_moisture', 'breakage', 'low_shine']
+    // 監修方針: 痩せ気味の子には第一に本製品を提案する
+    triggers: ['underweight', 'low_moisture', 'breakage', 'low_shine']
   }
 ];
 
@@ -8647,12 +8746,20 @@ function renderSupplements(a) {
   if (s.density <= 2) sig.push('low_volume');
   // 加齢: 乾燥・艶低下・栄養必要性が高まる → 脂質/栄養(カミデミルク)・タンパク質を提案
   if (a.age === 'senior') sig.push('low_moisture', 'low_shine', 'breakage');
+  // 監修方針: 痩せ気味の子は脂質・栄養補給(カミデミルク)を第一に提案する
+  const underweight = a.body === 'thin';
+  if (underweight) sig.push('underweight');
   let picks = CV_ADDONS.filter(p =>
     p.triggers.some(t => sig.includes(t) || a.goal === t)
   );
   // 該当なし時は基本サポート2点を提示
   if (picks.length === 0) {
     picks = [CV_ADDONS[0], CV_ADDONS[1]];
+  }
+  // 痩せ気味ならカミデミルクを先頭に置く
+  if (underweight) {
+    const milk = CV_ADDONS.find(p => (p.triggers || []).indexOf('underweight') >= 0);
+    if (milk) picks = [milk].concat(picks.filter(p => p !== milk));
   }
   wrap.innerHTML = picks.map(p => `
     <a class="pp-supp-add-item" href="${p.url}" target="_blank" rel="noopener">
@@ -9703,6 +9810,7 @@ function buildShareUrl() {
   if (a.breed) sp.set('b', a.breed);
   if (a.age) sp.set('a', a.age);
   if (a.color) sp.set('c', a.color);
+  if (a.body) sp.set('bc', a.body);
   if (a.goal && a.goal !== 'daily') sp.set('g', a.goal);
   if (a.issues && a.issues.length) sp.set('i', a.issues.join('.'));
   const sc = Object.keys(a.scores || {})
@@ -9724,6 +9832,7 @@ function applySharedAnswers(sp) {
   setVal('breed', sp.get('b'));
   setVal('age', sp.get('a'));
   setVal('color', sp.get('c'));
+  setVal('body', sp.get('bc'));
   setVal('showDate', sp.get('sd'));
   const goal = sp.get('g');
   if (goal) {
