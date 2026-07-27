@@ -1,5 +1,13 @@
-# Render Static Site Headers
-# https://render.com/docs/static-sites#custom-headers
+# ⚠️ このファイルは Render では読み込まれません。
+#
+# Render の静的サイトは Netlify 形式の `_headers` を解釈せず、
+# `render.yaml` の `headers:` セクションのみを使用します。
+# （実際に本番レスポンスを確認したところ、ここに書いた
+#   Link: rel="canonical" や Cache-Control は配信されていませんでした）
+#
+# ヘッダーを変更する場合は必ず render.yaml を編集してください。
+# このファイルは、Netlify / Cloudflare Pages など
+# `_headers` を解釈するホストへ移行した場合の互換用として残しています。
 
 /*
   X-Frame-Options: ALLOWALL

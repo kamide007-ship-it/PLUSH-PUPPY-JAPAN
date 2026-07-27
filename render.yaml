@@ -30,6 +30,22 @@ services:
       - path: /assets/*
         name: Cache-Control
         value: public, max-age=86400
+      # SEO: 正規URLを HTTP ヘッダーでも明示 (HTML の <link rel=canonical> と併用)
+      # 注意: Netlify 形式の _headers ファイルは Render では読まれないため、
+      #       ヘッダー設定は必ずこの render.yaml に書くこと。
+      - path: /
+        name: Link
+        value: <https://plush-puppy-coat-clinic.onrender.com/>; rel="canonical"
+      - path: /index.html
+        name: Link
+        value: <https://plush-puppy-coat-clinic.onrender.com/>; rel="canonical"
+      # クローラ向けファイルは短めのキャッシュで更新を反映しやすくする
+      - path: /robots.txt
+        name: Cache-Control
+        value: public, max-age=3600
+      - path: /sitemap.xml
+        name: Cache-Control
+        value: public, max-age=3600
     routes:
       # SPA ではないので不要だが、404 を index.html に倒さない
       - type: rewrite
