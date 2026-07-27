@@ -1398,6 +1398,116 @@
   .pp-rec-chip--supp { color: #2f9e7e; }
   .pp-rec-chip--supp:hover { border-color: #2f9e7e; }
   /* ============================================
+     結果ページ: ケアルーティン (4点の流れ)
+     ============================================ */
+  .pp-routine {
+    margin: 0 0 24px;
+    padding: 18px 20px;
+    background: var(--pp-navy-soft);
+    border-radius: var(--radius-sm);
+  }
+  .pp-routine__head {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--pp-navy);
+    margin-bottom: 14px;
+  }
+  .pp-routine__steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .pp-routine__step {
+    display: grid;
+    grid-template-columns: 5.5em 1fr;
+    gap: 4px 12px;
+    align-items: baseline;
+    background: #ffffff;
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    position: relative;
+  }
+  .pp-routine__step-role {
+    font-size: 12px;
+    font-weight: 700;
+    color: #ffffff;
+    background: var(--pp-navy);
+    border-radius: var(--radius-pill);
+    padding: 4px 0;
+    text-align: center;
+  }
+  .pp-routine__step-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--pp-text);
+    line-height: 1.5;
+  }
+  .pp-routine__step-when {
+    grid-column: 2;
+    font-size: 11px;
+    color: var(--pp-text-muted);
+  }
+  .pp-routine__note {
+    margin: 14px 0 0;
+    font-size: 12px;
+    line-height: 1.85;
+    color: var(--pp-text-light);
+  }
+  .pp-routine__note strong { color: var(--pp-navy); }
+
+  /* 製品カード: ルーティン内の役割と選定理由 */
+  .pp-product__role {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 8px;
+  }
+  .pp-product__role-step {
+    font-family: var(--font-en);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #ffffff;
+    background: var(--pp-navy);
+    border-radius: var(--radius-pill);
+    padding: 3px 9px;
+  }
+  .pp-product__role-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--pp-navy);
+  }
+  .pp-product__role-when {
+    font-size: 11px;
+    color: var(--pp-text-muted);
+  }
+  .pp-product__reason {
+    margin: 10px 0 0;
+    padding: 11px 13px;
+    background: var(--pp-bg-soft);
+    border-left: 3px solid var(--pp-orange);
+    border-radius: var(--radius-sm);
+    text-align: left;
+  }
+  .pp-product__reason > b {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--pp-orange-text);
+    margin-bottom: 4px;
+  }
+  .pp-product__reason p {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--pp-text-light);
+  }
+  .pp-product__reason b { color: var(--pp-navy); }
+
+  /* ============================================
      結果ページ: チャートの読み解き
      ============================================ */
   .pp-assessment__radar {
@@ -4085,6 +4195,8 @@
         <h2 class="pp-section-title__jp">あなたの愛犬専用ケアプログラム</h2>
       </div>
       <div id="programSummary"></div>
+      <!-- 4点をバラバラの商品ではなく「一連のケア」として示す -->
+      <div class="pp-routine" id="careRoutine"></div>
       <div class="pp-products" id="productList"></div>
     </div>
 
@@ -7775,9 +7887,108 @@ function drawRadar(r, prev) {
 }
 
 
+/* ============================================
+   推奨4点は「一式」だが、どういう順番で・いつ使うのかを
+   説明していなかった。カテゴリごとの役割を定義し、
+   ルーティンとして読めるようにする。
+   ============================================ */
+const CARE_ROLE = {
+  shampoo: {
+    step: 1,
+    ja: { when: '入浴時 / 最初', role: '洗う', note: '汚れと酸化した皮脂を落とし、この後のケアが届く土台をつくります。' },
+    en: { when: 'Bath time / first', role: 'Cleanse', note: 'Removes dirt and oxidised sebum so the later steps can reach the coat.' }
+  },
+  conditioner: {
+    step: 2,
+    ja: { when: '入浴時 / すすぎの後', role: '補う', note: '洗浄で失われた水分と脂質を補い、バリアと毛表面を整えます。ここを省くと乾燥と毛切れにつながります。' },
+    en: { when: 'Bath time / after rinsing', role: 'Replenish', note: 'Puts back the water and lipids washing removes, restoring the barrier and the hair surface. Skipping this leads to dryness and breakage.' }
+  },
+  finishing: {
+    step: 3,
+    ja: { when: '乾かす時 / 仕上げ', role: '仕上げる', note: '乾燥中〜乾燥後に使い、質感・毛流れ・ボリュームを決めます。' },
+    en: { when: 'Drying / finishing', role: 'Finish', note: 'Used during and after drying to set texture, the lie of the coat and volume.' }
+  },
+  brush: {
+    step: 4,
+    ja: { when: '毎日', role: 'ととのえる', note: '日々のブラッシングは抜け毛を除き、毛玉を未然に防ぎます。必ず保湿してから当ててください。' },
+    en: { when: 'Daily', role: 'Maintain', note: 'Daily brushing lifts shed hair and prevents mats before they form. Always moisturise first.' }
+  }
+};
+
+/* この犬の回答と、この製品を結ぶ一文を組み立てる。
+   選定理由タグ(matchReasons)は根拠を並べるだけなので、
+   「あなたの入力のどれに効くのか」を文章で示す。 */
+function whyThisProduct(p, a, coat, reasons) {
+  const en = state.lang === 'en';
+  const role = CARE_ROLE[p.cat];
+  if (!role) return '';
+  const r = role[en ? 'en' : 'ja'];
+  // 症状ラベルだけを抽出 (コート名・目的は文脈として別に扱う)
+  const issueSet = {};
+  (a.issues || []).forEach(i => { if (i !== 'all_good') issueSet[issueLabel(i)] = 1; });
+  const s = a.scores || {};
+  if (s.shine <= 2) issueSet[issueLabel('low_shine')] = 1;
+  if (s.moisture <= 2) issueSet[issueLabel('low_moisture')] = 1;
+  if (s.density <= 2) issueSet[issueLabel('low_volume')] = 1;
+  if (s.elasticity <= 2) issueSet[issueLabel('breakage')] = 1;
+  const hits = (reasons || []).filter(t => issueSet[t]);
+
+  let head;
+  if (hits.length) {
+    const list = hits.slice(0, 2).join(en ? ' and ' : '・');
+    head = en
+      ? 'Chosen for <b>' + escapeHtml(list) + '</b>'
+      : '<b>' + escapeHtml(list) + '</b>に対応する1本として選んでいます';
+  } else if (coat && coat !== 'all') {
+    head = en
+      ? 'Chosen to suit a <b>' + escapeHtml(coatLabel(coat)) + '</b>'
+      : '<b>' + escapeHtml(coatLabel(coat)) + '</b>に合う1本として選んでいます';
+  } else {
+    head = en ? 'A dependable everyday choice' : '日常ケアの土台として選んでいます';
+  }
+  if (a.goal === 'show_prep') {
+    head += en ? ', with show preparation in mind' : '（ショー準備を前提に選定）';
+  }
+  return head + (en ? '. ' : '。') + r.note;
+}
+
+/* 4点を「洗う → 補う → 仕上げる → ととのえる」の流れとして俯瞰させる。
+   個々の商品説明の前に全体像を置くことで、なぜこの組み合わせなのかが伝わる。 */
+function renderCareRoutine(picks) {
+  const el = document.getElementById('careRoutine');
+  if (!el) return;
+  const en = state.lang === 'en';
+  const steps = (picks || [])
+    .filter(p => p && CARE_ROLE[p.cat])
+    .sort((x, y) => CARE_ROLE[x.cat].step - CARE_ROLE[y.cat].step);
+  if (steps.length < 2) { el.style.display = 'none'; el.innerHTML = ''; return; }
+  el.style.display = 'block';
+  el.innerHTML =
+    '<div class="pp-routine__head">' +
+      '<span data-lang-ja>この4点は「一連の流れ」です</span>' +
+      '<span data-lang-en>These four work as one routine</span>' +
+    '</div>' +
+    '<ol class="pp-routine__steps">' +
+      steps.map(p => {
+        const r = CARE_ROLE[p.cat][en ? 'en' : 'ja'];
+        return '<li class="pp-routine__step">' +
+          '<span class="pp-routine__step-role">' + escapeHtml(r.role) + '</span>' +
+          '<span class="pp-routine__step-name">' + escapeHtml(pName(p)) + '</span>' +
+          '<span class="pp-routine__step-when">' + escapeHtml(r.when) + '</span>' +
+          '</li>';
+      }).join('') +
+    '</ol>' +
+    '<p class="pp-routine__note">' +
+      '<span data-lang-ja>とくに<strong>「補う」を省かない</strong>ことが大切です。洗ったまま乾かすと、' +
+      '水分と脂質が失われた状態で摩擦と熱が加わり、乾燥と毛切れの原因になります。</span>' +
+      '<span data-lang-en>The step to protect is <strong>replenishing</strong>. Drying straight after washing exposes a coat stripped of water and lipids to friction and heat — the route to dryness and breakage.</span>' +
+    '</p>';
+}
+
 function renderProducts(picks) {
   const list = document.getElementById('productList');
   list.innerHTML = '';
+  try { renderCareRoutine(picks); } catch (e) {}
   picks.forEach((p, i) => {
     const card = document.createElement('article');
     card.className = 'pp-product';
@@ -7799,12 +8010,31 @@ function renderProducts(picks) {
     // structured info / "誰に・いつ・使い方" panel is one tap away.
     const detailsLink = `<a class="pp-product__details-link" href="#product-${p.id}" onclick="event.preventDefault();menuGo('products');setTimeout(()=>{location.hash='#product-${p.id}';openProductFromHash();},80);"><span data-lang-ja>製品の詳しい解説を見る</span><span data-lang-en>See the full product explainer</span></a>`;
     card.id = 'recommend-' + p.id;
+    // ルーティン内での役割 (いつ・何をする一本か)
+    const role = CARE_ROLE[p.cat];
+    const en = state.lang === 'en';
+    const roleHtml = role
+      ? `<div class="pp-product__role">
+           <span class="pp-product__role-step">STEP ${role.step}</span>
+           <span class="pp-product__role-name">${escapeHtml(role[en ? 'en' : 'ja'].role)}</span>
+           <span class="pp-product__role-when">${escapeHtml(role[en ? 'en' : 'ja'].when)}</span>
+         </div>`
+      : '';
+    const why = whyThisProduct(p, state.answers || {}, state.coat || 'all', reasons);
+    const whyHtml = why
+      ? `<div class="pp-product__reason">
+           <b>${en ? 'Why this one' : 'なぜこの製品か'}</b>
+           <p>${why}</p>
+         </div>`
+      : '';
     card.innerHTML = `
       <div class="pp-product__rank">${i + 1}</div>
       ${imageHtml}
       <div class="pp-product__cat">${CAT_LABEL[p.cat] || ''}</div>
       <h4 class="pp-product__name">${pName(p)}</h4>
+      ${roleHtml}
       ${matchHtml}
+      ${whyHtml}
       <p class="pp-product__why">${pDesc(p)}</p>
       <div class="pp-product__price">${pPriceText(p)}<small>${p.size}</small></div>
       <a href="${shopUrl(p.url)}" target="_blank" rel="noopener" class="pp-product__cta"><span data-lang-ja>今すぐ購入する</span><span data-lang-en>Buy now</span></a>
