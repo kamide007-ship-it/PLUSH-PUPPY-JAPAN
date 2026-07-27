@@ -3048,6 +3048,72 @@
      モバイルでは 01→02→03 を順に表示。入力値は非表示中も保持される。
      .pp-wizard クラスは JS がモバイル幅でのみ付与する。
      ============================================ */
+  /* ============================================
+     「見分け方」ヘルパー
+     艶・密度・水分・ハリは飼い主が自己評価しにくい。
+     何を見て/触って判断するかを、その場で開ける形で示す。
+     ============================================ */
+  .pp-criteria__btn {
+    appearance: none;
+    -webkit-appearance: none;
+    background: none;
+    border: none;
+    color: var(--pp-navy);
+    font-family: var(--font-jp);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 8px;
+    margin-left: 2px;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    text-decoration: underline;
+    text-decoration-color: var(--pp-navy-light);
+    text-underline-offset: 2px;
+    min-height: 32px;
+  }
+  .pp-criteria__btn::before { content: '？'; font-size: 10px; }
+  .pp-criteria__btn:hover { background: var(--pp-navy-soft); }
+  .pp-criteria__panel {
+    margin: 8px 0 0;
+    padding: 12px 14px;
+    background: var(--pp-bg-soft);
+    border: 1px solid var(--pp-border-light);
+    border-left: 3px solid var(--pp-orange);
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--pp-text-light);
+  }
+  .pp-criteria__panel[hidden] { display: none; }
+  .pp-criteria__how {
+    display: block;
+    color: var(--pp-navy);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .pp-criteria__list { margin: 0; padding: 0; list-style: none; }
+  .pp-criteria__list li {
+    display: grid;
+    /* 「とても艶やか」など長いラベルが折り返しても
+       説明文の開始位置がずれないよう2カラムで固定する */
+    grid-template-columns: 6.5em 1fr;
+    gap: 4px 10px;
+    padding: 4px 0;
+    align-items: start;
+  }
+  .pp-criteria__list b {
+    color: var(--pp-navy);
+    font-weight: 700;
+    line-height: 1.5;
+  }
+  @media (max-width: 380px) {
+    .pp-criteria__list li { grid-template-columns: 1fr; gap: 0; }
+    .pp-criteria__list b { margin-top: 4px; }
+  }
+
   /* 所要時間・ステップ数の事前提示 */
   .pp-form-meta {
     display: flex;
@@ -3194,7 +3260,7 @@
     line-height: 1.6;
   }
 
-  /* 入力の自動復元を知らせる通知 (取り消し可能) */
+/* 入力の自動復元を知らせる通知 (取り消し可能) */
   .pp-draft-notice {
     display: flex;
     align-items: center;
@@ -3226,6 +3292,17 @@
     white-space: nowrap;
   }
   .pp-draft-notice button:hover { background: var(--pp-navy); color: #ffffff; }
+  /* 再診断の案内は下書き復元と役割が違うのでオレンジ系で区別する */
+  .pp-recheck-notice {
+    background: #fdf6e9;
+    border-color: var(--pp-orange);
+    color: var(--pp-text);
+  }
+  .pp-recheck-notice button {
+    border-color: var(--pp-orange);
+    color: var(--pp-orange-text);
+  }
+  .pp-recheck-notice button:hover { background: var(--pp-orange); color: #ffffff; }
 
   /* タップ遅延・ダブルタップズームの抑止 (モバイル全般の操作感向上) */
   button, a, label, select, input, summary { touch-action: manipulation; }
@@ -6940,6 +7017,7 @@ function setLang(lang) {
   try { renderAllProductsCatalog(); } catch (e) {}
   try { renderSupplements((state.answers && state.answers.issues) ? state.answers : { issues: [], goal: 'daily', scores: {}, age: '' }); } catch (e) {}
   try { buildEduIndex(); } catch (e) {}
+  try { repaintScoreCriteria(); } catch (e) {}
   const resultEl = document.getElementById('result');
   if (resultEl && resultEl.classList.contains('is-shown') && state.answers && state.coat) {
     try { renderAssessment(state.answers, state.coat); } catch (e) {}
@@ -7591,6 +7669,51 @@ function applyDraft(d) {
   return true;
 }
 /* 復元したことを黙って行わず、取り消せる形で知らせる */
+/* ============================================
+ 再診断の案内
+ 被毛の状態は季節・換毛期で変わる。前回診断から一定期間が
+ 経っていれば、そのことだけを伝えて再診断を促す
+ (前回の結果は既に localStorage にあるので日付比較のみ)。
+ ============================================ */
+const RECHECK_WEEKS = 6;
+function showRecheckNoticeIfDue() {
+  const panel = document.getElementById('diagnosisFormPanel');
+  if (!panel || document.getElementById('recheckNotice')) return;
+  const h = loadHistory();
+  if (!h.length) return;
+  const last = h[h.length - 1];
+  if (!last || !last.date) return;
+  const parts = String(last.date).split('-').map(Number);
+  if (parts.length !== 3 || parts.some(isNaN)) return;
+  const then = new Date(parts[0], parts[1] - 1, parts[2]);
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const weeks = Math.floor((today - then) / (7 * 86400000));
+  if (weeks < RECHECK_WEEKS) return;
+
+  const el = document.createElement('div');
+  el.className = 'pp-draft-notice pp-recheck-notice';
+  el.id = 'recheckNotice';
+  el.setAttribute('role', 'status');
+  const who = last.name && last.name !== '愛犬' ? last.name : '';
+  el.innerHTML =
+    '<span>' +
+      '<span data-lang-ja>前回の診断から約' + weeks + '週間たちました。' +
+        (who ? escapeHtml(who) + 'の' : '') + '被毛は季節や換毛期で変わります。' +
+        'もう一度診断すると、前回との違いをグラフで比べられます。</span>' +
+      '<span data-lang-en>It has been about ' + weeks + ' weeks since the last check. ' +
+        'Coats change with the seasons and moulting — run it again to compare with last time.</span>' +
+    '</span>' +
+    '<button type="button" id="recheckDismissBtn">' +
+      '<span data-lang-ja>閉じる</span><span data-lang-en>Dismiss</span></button>';
+  const anchor = panel.querySelector('.pp-form-note');
+  if (anchor && anchor.nextSibling) panel.insertBefore(el, anchor.nextSibling);
+  else panel.insertBefore(el, panel.firstChild);
+  el.querySelector('#recheckDismissBtn').addEventListener('click', () => {
+    el.remove();
+    try { notifyHeight(); } catch (e) {}
+  });
+}
+
 function showDraftRestoredNotice() {
   const panel = document.getElementById('diagnosisFormPanel');
   if (!panel || document.getElementById('draftNotice')) return;
@@ -7622,6 +7745,110 @@ function resetFormFields() {
   const daily = document.querySelector('input[name="goal"][value="daily"]');
   if (daily) daily.checked = true;
 }
+/* ============================================
+   「見分け方」ヘルパー
+   艶・密度・水分・ハリは主観になりやすく、飼い主が自信を持って
+   選べない項目。何を見て・触って判断するかを具体的に示すことで、
+   「わからないから普通のまま」を減らし診断精度を上げる。
+   記載は実際に観察できる事象のみ (医学的な判断は含めない)。
+   ============================================ */
+const SCORE_CRITERIA = {
+  shine: {
+    ja: { how: '明るい場所で、毛の表面に光が当たる角度から見てください。',
+      levels: [['物足りない', '光をあまり返さず、全体に白っぽく見える'],
+               ['普通', '角度によってうっすら光る'],
+               ['良好', '毛の流れに沿って光の筋が見える'],
+               ['とても艶やか', '毛先までなめらかに光がまわる']] },
+    en: { how: 'Look at the coat surface in good light, from an angle where light hits it.',
+      levels: [['Lacking', 'Reflects little light; looks flat or chalky'],
+               ['Normal', 'Faintly catches the light at some angles'],
+               ['Good', 'A band of light follows the lie of the coat'],
+               ['Very glossy', 'Light travels smoothly right to the tips']] }
+  },
+  density: {
+    ja: { how: '背中の毛を指で左右に分け、地肌の見え方を確かめてください。',
+      levels: [['少なめ', '分けなくても地肌が透けて見える'],
+               ['普通', '分けると地肌が見える'],
+               ['多い', '分けても地肌が見えにくい'],
+               ['豊富', '指が入りにくいほど詰まっている']] },
+    en: { how: 'Part the coat on the back with your fingers and see how much skin shows.',
+      levels: [['Sparse', 'Skin shows through without parting'],
+               ['Normal', 'Skin is visible once parted'],
+               ['Dense', 'Hard to see skin even when parted'],
+               ['Very dense', 'So packed your fingers barely go in']] }
+  },
+  moisture: {
+    ja: { how: '乾いた状態で毛束を軽く握り、指を滑らせてください。',
+      levels: [['乾燥気味', 'ゴワつき、指が引っかかる'],
+               ['普通', '少しかさつく程度'],
+               ['しっとり', 'なめらかに指が通る'],
+               ['うるおい十分', 'しっとりして、離すとふわりと戻る']] },
+    en: { how: 'With the coat dry, gently grip a section and run your fingers through it.',
+      levels: [['Dry', 'Feels coarse; fingers catch'],
+               ['Normal', 'Slightly rough'],
+               ['Moist', 'Fingers slide through smoothly'],
+               ['Well hydrated', 'Feels supple and springs back when released']] }
+  },
+  elasticity: {
+    ja: { how: '毛束を持ち上げて離す、または毛を1本つまんで軽く引いてください。',
+      levels: [['弱め', '力なく垂れ、すぐ寝てしまう'],
+               ['普通', 'ゆっくり元に戻る'],
+               ['しっかり', '手を離すとすぐ戻る'],
+               ['理想的', '弾力があり、形がしっかり保たれる']] },
+    en: { how: 'Lift a section and let it go, or pinch a single hair and pull gently.',
+      levels: [['Weak', 'Falls limp and stays flat'],
+               ['Normal', 'Returns slowly'],
+               ['Firm', 'Springs back as soon as you let go'],
+               ['Ideal', 'Resilient; holds its shape well']] }
+  }
+};
+
+function initScoreCriteria() {
+  Object.keys(SCORE_CRITERIA).forEach(key => {
+    const sel = document.querySelector('[data-score="' + key + '"]');
+    if (!sel) return;
+    const field = sel.closest('.pp-field');
+    const label = field && field.querySelector('.pp-field__label');
+    if (!field || !label || field.querySelector('.pp-criteria__btn')) return;
+
+    const panelId = 'criteria-' + key;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'pp-criteria__btn';
+    btn.setAttribute('aria-expanded', 'false');
+    btn.setAttribute('aria-controls', panelId);
+    btn.innerHTML = '<span data-lang-ja>見分け方</span><span data-lang-en>How to judge</span>';
+    label.appendChild(btn);
+
+    const panel = document.createElement('div');
+    panel.className = 'pp-criteria__panel';
+    panel.id = panelId;
+    panel.hidden = true;
+    field.appendChild(panel);
+
+    const paint = () => {
+      const c = SCORE_CRITERIA[key][state.lang === 'en' ? 'en' : 'ja'] || SCORE_CRITERIA[key].ja;
+      panel.innerHTML =
+        '<span class="pp-criteria__how">' + escapeHtml(c.how) + '</span>' +
+        '<ul class="pp-criteria__list">' +
+        c.levels.map(l => '<li><b>' + escapeHtml(l[0]) + '</b><span>' + escapeHtml(l[1]) + '</span></li>').join('') +
+        '</ul>';
+    };
+    btn.addEventListener('click', () => {
+      const open = panel.hidden;
+      if (open) paint();
+      panel.hidden = !open;
+      btn.setAttribute('aria-expanded', String(open));
+      try { notifyHeight(); } catch (e) {}
+    });
+    // 言語切替後に開いたままなら中身も切り替える
+    btn._repaint = () => { if (!panel.hidden) paint(); };
+  });
+}
+function repaintScoreCriteria() {
+  document.querySelectorAll('.pp-criteria__btn').forEach(b => { if (b._repaint) b._repaint(); });
+}
+
 function initDraftPersistence() {
   const panel = document.getElementById('diagnosisFormPanel');
   if (!panel) return;
@@ -9459,6 +9686,8 @@ function initMobileWizard() {
   catch (e) { try { mq.addListener(e2 => apply(e2.matches)); } catch (e3) {} }
 }
 try { initMobileWizard(); } catch (e) {}
+try { initScoreCriteria(); } catch (e) {}
+try { showRecheckNoticeIfDue(); } catch (e) {}
 try { initDraftPersistence(); } catch (e) {}
 
 /* ============================================
